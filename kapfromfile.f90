@@ -92,9 +92,9 @@ volq(ix,iy,iz) = volq(ix,iy,iz)+float(aaq(i))/(delta**3)
             jx = mod(jx-1+5*dimx, dimx) + 1
             jy = mod(jy-1+5*dimy, dimy) + 1
             jz = iz+az
-            if((jz.ge.1).and.(jz.le.dimz)) then
+            if((jz.ge.1).and.(jz.le.dimz).and.(aah(i).ne.0)) then
                hh = hydroph(aah(i))
-               voleps(jx,jy,jz) = voleps(jx,jy,jz)+Xu(ax,ay,az)*henergy(hh)
+               voleps(jx,jy,jz) = voleps(jx,jy,jz)+Xu(ax,ay,az)*henergy(hh)/(delta**3)/2.0
             endif
         enddo
        enddo
