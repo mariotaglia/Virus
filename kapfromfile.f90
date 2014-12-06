@@ -18,6 +18,9 @@ integer ix,iy,iz
 integer counter
 character*5 title
 integer hh,ax,ay,az,jx,jy,jz
+real*8 avpol2
+
+avpol2 = 0.120/vsol
 
 flag = .false.
 
@@ -100,6 +103,16 @@ volq(ix,iy,iz) = volq(ix,iy,iz)+float(aaq(i))/(delta**3)
        enddo
       enddo
 
+enddo
+
+!!! voleps = 0 if volprot != 0
+
+do ix = 1, dimx
+do iy = 1, dimy
+do iz = 1, dimz
+if(volprot(ix,iy,iz).ne.0.0)voleps(ix,iy,iz)=0.0
+enddo
+enddo
 enddo
 
 where (volprot > 1.0) volprot = 1.0
