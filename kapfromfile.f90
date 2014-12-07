@@ -10,8 +10,7 @@ use kai
 implicit none
 logical flag
 real*8, allocatable :: aapos(:,:)
-integer, allocatable :: aaq(:)
-integer, allocatable :: aah(:)
+integer, allocatable :: aat(:)
 integer naa
 integer i
 integer ix,iy,iz
@@ -20,7 +19,8 @@ character*5 title
 integer hh,ax,ay,az,jx,jy,jz
 real*8 avpol2
 
-avpol2 = 0.120/vsol
+avpol2 = (delta**3)/vsol
+
 
 flag = .false.
 
@@ -30,11 +30,10 @@ open(file='kap.txt', unit=3333)
 read(3333,*)naa
 
 allocate(aapos(naa,3))
-allocate(aaq(naa))
-allocate(aah(naa))
+allocate(aat(naa))
 
 do i = 1, naa
-read(3333,*)aapos(i,1),aapos(i,2),aapos(i,3),aaq(i),aah(i)
+read(3333,*)aapos(i,1),aapos(i,2),aapos(i,3),aat(i)
 enddo
 
 ! translate to initial postion and rotate
@@ -85,7 +84,7 @@ if((iz.gt.dimz).or.(iz.lt.1)) then
 endif
 
 volprot(ix,iy,iz) = volprot(ix,iy,iz)+vpol*vsol/(delta**3)
-volq(ix,iy,iz) = volq(ix,iy,iz)+float(aaq(i))/(delta**3)
+volq(aat(i),ix,iy,iz) = volq(aat(i),ix,iy,iz)+(vsol/delta**3) ! units of vsol/delta**3   ! float(aaq(i))/(delta**3)
 
      do ax = -Xulimit,Xulimit
       do ay = -Xulimit,Xulimit
@@ -95,8 +94,8 @@ volq(ix,iy,iz) = volq(ix,iy,iz)+float(aaq(i))/(delta**3)
             jx = mod(jx-1+5*dimx, dimx) + 1
             jy = mod(jy-1+5*dimy, dimy) + 1
             jz = iz+az
-            if((jz.ge.1).and.(jz.le.dimz).and.(aah(i).ne.0)) then
-               hh = hydroph(aah(i))
+            if((jz.ge.1).and.(jz.le.dimz).and.(hydroph(aat(i)).ne.0)) then
+               hh = hydroph(aat(i))
                voleps(jx,jy,jz) = voleps(jx,jy,jz)+Xu(ax,ay,az)*henergy(hh)/(delta**3)/2.0
             endif
         enddo

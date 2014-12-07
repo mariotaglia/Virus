@@ -98,7 +98,7 @@ do j = 1, NNN
  voleps1 = voleps1-volprot1
  voleps1 = voleps1*eeps(j)
 
- volq1 = volprot1-volq1
+ volq1(1,:,:,:) = volprot1(:,:,:)-volq1(1,:,:,:)
  temp = sum(volq1)
  volq1 = volq1/temp*echarge(j)/(delta**3) ! sum(volq) is echarge
 

@@ -438,15 +438,15 @@ do ix=1,dimx
   
          fv = (1.0-volprot(ix,iy,iz))
 
-         qtot(ix, iy, iz) =  (zpos*xpos(ix, iy, iz)+zneg*xneg(ix, iy, iz))/vsalt + xHplus(ix, iy, iz) - xOHmin(ix, iy, iz)
+         qtot(ix, iy, iz) =  ((zpos*xpos(ix, iy, iz)+zneg*xneg(ix, iy, iz))/vsalt + xHplus(ix, iy, iz) - xOHmin(ix, iy, iz))*fv
 
 
          do im = 1, N_monomer
-         qtot(ix,iy,iz)=qtot(ix,iy,iz)+avpol(im,ix,iy,iz)*zpol(im)/vpol*fdis(im,ix,iy,iz)
-         qtot(ix,iy,iz)=qtot(ix,iy,iz)+xprot(im,ix,iy,iz)*zpol(im)/vpol*fdis(im,ix,iy,iz)
+         qtot(ix,iy,iz)=qtot(ix,iy,iz)+avpol(im,ix,iy,iz)*zpol(im)/vpol*fdis(im,ix,iy,iz)*fv
+         qtot(ix,iy,iz)=qtot(ix,iy,iz)+xprot(im,ix,iy,iz)*zpol(im)/vpol*fdis(im,ix,iy,iz)*fv
+         qtot(ix,iy,iz)=qtot(ix,iy,iz)+volq(im,ix,iy,iz)*zpol(im)*fdis(im,ix,iy,iz)   
          enddo
 
-         qtot(ix,iy,iz) = qtot(ix,iy,iz)*fv + volq(ix,iy,iz)*vsol    ! OJO
 
         enddo
    enddo

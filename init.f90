@@ -64,6 +64,7 @@ if(rank.eq.0) then
        open(unit=306, file='F_mixOH.dat')
        open(unit=307, file='F_conf.dat')
        open(unit=308, file='F_eq.dat')
+       open(unit=318, file='F_eq_P.dat')
        open(unit=309, file='F_vdW.dat')
        open(unit=410, file='F_eps.dat')
        open(unit=311, file='F_electro.dat')

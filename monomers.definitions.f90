@@ -53,12 +53,14 @@
 
 ! Segment type 5 for NPC = Histidine
 
+!      zpol(5) = 0
       zpol(5) = 1
       hydroph(5) = 2
       pKa(5) = 6.08 ! set any number if zpol = 0....
 
 ! Segment type 6 for NPC = Cysteamine
 
+!      zpol(6) = 0
       zpol(6) = -1
       hydroph(6) = 2
       pKa(6) = 8.3 ! set any number if zpol = 0....
