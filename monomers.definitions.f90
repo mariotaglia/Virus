@@ -29,13 +29,15 @@
 
 ! Segment type 1 for NPC, positive base, hydrophilic
 
-      zpol(1) = 1
+!      zpol(1) = 1
+      zpol(1) = 0
       hydroph(1) = 2
       pKa(1) = 11.0
 
 ! Segment type 2 for NPC, negative , hydrophilic
 
-      zpol(2) = -1
+      zpol(2) = 0
+!      zpol(2) = -1
       hydroph(2) = 2
       pKa(2) = 5.0
 
