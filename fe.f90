@@ -258,8 +258,9 @@ endif
 
       Free_Energy = Free_Energy + F_Conf
 
+
 ! 7. Chemical Equilibrium
-      F_eq = 0.0 
+      F_eq = 0.0
 
       do im = 1, N_monomer
 
@@ -268,39 +269,30 @@ endif
       do ix  = 1, dimx
       do iy  = 1, dimy
       do iz  = 1, dimz
-      
+
       fv=(1.0-volprot(ix,iy,iz))
 
       F_eq = F_Eq + fdis(im,ix,iy,iz)*dlog(fdis(im,ix,iy,iz)) &
-      *((avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv)
-  
+      *(avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv
 ! bulk
-
       F_eq = F_Eq  - fdisbulk(im)*dlog(fdisbulk(im))*xkapbulk*ntypes(im)/sum(ntypes)/vpol*fv
 
 !
-
       F_eq = F_Eq + (1.0-fdis(im,ix,iy,iz)) &
-      *dlog(1.0-fdis(im,ix,iy,iz))*((avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv)
-
+      *dlog(1.0-fdis(im,ix,iy,iz))*(avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv
 ! bulk
-
       F_eq = F_Eq - (1.0-fdisbulk(im)) &
       *dlog(1.0-fdisbulk(im))*xkapbulk*ntypes(im)/sum(ntypes)/vpol*fv
 
-!
-      F_eq = F_Eq + (1.0-fdis(im,ix,iy,iz))*dlog(K0(im)) &
-      *((avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv)
-
+      F_eq = F_Eq + (1.0-fdis(im,ix,iy,iz))*dlog(K0(im))* &
+      (avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv
 ! bulk
-
       F_eq = F_Eq - (1.0-fdisbulk(im))*dlog(K0(im))*xkapbulk*ntypes(im)/sum(ntypes)/vpol*fv
-
  !
       select case (zpol(im))
       case (1) ! base 
       F_eq = F_Eq + (1.0-fdis(im,ix,iy,iz)) &
-      *(-dlog(expmuOHmin))*((avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv)
+      *(-dlog(expmuOHmin))*(avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv
 ! bulk
       F_eq = F_Eq - (1.0-fdisbulk(im)) &
       *(-dlog(expmuOHmin))*xkapbulk*ntypes(im)/sum(ntypes)/ &
@@ -308,7 +300,7 @@ endif
 
       case (-1) ! acid
       F_eq = F_Eq + (1.0-fdis(im,ix,iy,iz)) &
-      *(-dlog(expmuHplus))*((avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv)
+      *(-dlog(expmuHplus))*(avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv
 ! bulk
 
       F_eq = F_Eq - (1.0-fdisbulk(im)) &
@@ -326,8 +318,9 @@ endif
 
       F_eq = F_eq *delta**3/vsol
 
+      Free_Energy = Free_Energy + F_eq
 
-! 7.2 Chemical Equilibrium
+! 7.2 Chemical Equilibrium particle
       F_eq_p = 0.0 
 
       do im = 1, N_monomer
