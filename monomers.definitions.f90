@@ -29,15 +29,13 @@
 
 ! Segment type 1 for NPC, positive base, hydrophilic
 
-!      zpol(1) = 1
-      zpol(1) = 0
+      zpol(1) = 1
       hydroph(1) = 2
       pKa(1) = 11.0
 
 ! Segment type 2 for NPC, negative , hydrophilic
 
-      zpol(2) = 0
-!      zpol(2) = -1
+      zpol(2) = -1
       hydroph(2) = 2
       pKa(2) = 5.0
 
@@ -55,14 +53,12 @@
 
 ! Segment type 5 for NPC = Histidine
 
-!      zpol(5) = 0
       zpol(5) = 1
       hydroph(5) = 2
       pKa(5) = 6.08 ! set any number if zpol = 0....
 
 ! Segment type 6 for NPC = Cysteamine
 
-!      zpol(6) = 0
       zpol(6) = -1
       hydroph(6) = 2
       pKa(6) = 8.3 ! set any number if zpol = 0....
