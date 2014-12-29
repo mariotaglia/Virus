@@ -18,7 +18,7 @@ integer counter
 character*5 title
 integer hh,ax,ay,az,jx,jy,jz
 real*8 avpol2
-
+integer iii
 avpol2 = (delta**3)/vsol
 
 
@@ -96,7 +96,7 @@ volq(aat(i),ix,iy,iz) = volq(aat(i),ix,iy,iz)+(vsol/delta**3) ! units of vsol/de
             jz = iz+az
             if((jz.ge.1).and.(jz.le.dimz).and.(hydroph(aat(i)).ne.0)) then
                hh = hydroph(aat(i))
-               voleps(jx,jy,jz) = voleps(jx,jy,jz)+Xu(ax,ay,az)*henergy(hh)/(delta**3)/2.0
+               voleps(jx,jy,jz,hh) = voleps(jx,jy,jz,hh)+Xu(ax,ay,az)/(delta**3)
             endif
         enddo
        enddo
@@ -109,7 +109,7 @@ enddo
 do ix = 1, dimx
 do iy = 1, dimy
 do iz = 1, dimz
-if(volprot(ix,iy,iz).ne.0.0)voleps(ix,iy,iz)=0.0
+if(volprot(ix,iy,iz).ne.0.0)voleps(ix,iy,iz,:)=0.0
 enddo
 enddo
 enddo
@@ -123,7 +123,11 @@ call savetodisk(volprot, title, counter)
 
 title = 'aveps'
 counter = 1
-call savetodisk(voleps, title, counter)
+voleps1 = 0.0
+do iii = 1, N_poorsol
+voleps1(:,:,:) = voleps1(:,:,:) + voleps(:,:,:,iii)*st_matrix(iii,iii) 
+enddo
+call savetodisk(voleps1, title, counter)
 
 title = 'avcha'
 counter = 1

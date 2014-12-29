@@ -112,7 +112,7 @@ do j = 1, NNN
    exit
  endif
  
- voleps = voleps + voleps1
+ voleps(:,:,:,1) = voleps(:,:,:,1) + voleps1(:,:,:)
  volq = volq + volq1 
 
 enddo

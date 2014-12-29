@@ -454,7 +454,11 @@ endif
       do iy = 1, dimy
       do iz = 1, dimz
       fv= (1.0-volprot(ix,iy,iz))
-      F_eps = F_eps - xtotal(ii,ix,iy,iz)*st*henergy(ii)*voleps(ix,iy,iz)*(delta**3)/vpol/vsol*fv
+
+      do iii = 1, N_poorsol
+      F_eps = F_eps - xtotal(ii,ix,iy,iz)*st*st_matrix(ii,iii)*voleps(ix,iy,iz,iii)*(delta**3)/vpol/vsol*fv
+      enddo
+   
       enddo
       enddo
       enddo

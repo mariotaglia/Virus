@@ -128,15 +128,6 @@ logical flag
 
 flag =.false.
 
-select case (kaptype)
-case (1)
- henergy(1) =  st_matrix(1,1)
- henergy(2) =  st_matrix(1,2)
-case(2)
- henergy(1) =  sqrt(st_matrix(1,1))
- henergy(2) =  sqrt(st_matrix(2,2))
-endselect
-
 if (NNN.ne.0) then
 select case (kaptype)
  case (1)

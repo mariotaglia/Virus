@@ -25,7 +25,7 @@ real*8 f((2+N_poorsol)*dimx*dimy*dimz)
 
 real*8 protemp
 integer i,j, ix, iy, iz, ii, ax, ay, az
-integer jx, jy, jz, jj
+integer jx, jy, jz, jj, iii
 real*8 xpot(N_monomer,dimx, dimy, dimz+1)
 ! Charge
 real*8 psitemp
@@ -204,7 +204,9 @@ do ix=1,dimx
      endif
 
      if(hydroph(im).ne.0) then
-     xpot(im,ix,iy,iz) = xpot(im,ix,iy,iz)*dexp(voleps(ix,iy,iz)*st*henergy(hydroph(im))) ! eps particle-aa interaction
+     do iii = 1, N_poorsol
+     xpot(im,ix,iy,iz) = xpot(im,ix,iy,iz)*dexp(voleps(ix,iy,iz,iii)*st*st_matrix(hydroph(im),iii)) ! eps particle-aa interaction
+     enddo
      endif     
 
      gradpsi2 = (psi(ix+1,iy,iz)-psi(ix,iy,iz))**2+(psi(ix,iy+1,iz)-psi(ix,iy,iz))**2+(psi(ix,iy,iz+1)-psi(ix,iy,iz))**2
