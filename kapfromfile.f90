@@ -125,7 +125,7 @@ title = 'aveps'
 counter = 1
 voleps1 = 0.0
 do iii = 1, N_poorsol
-voleps1(:,:,:) = voleps1(:,:,:) + voleps(:,:,:,iii)*st_matrix(iii,iii) 
+voleps1(:,:,:) = voleps1(:,:,:) + voleps(:,:,:,iii)*st_matrix(iii,3) 
 enddo
 call savetodisk(voleps1, title, counter)
 
