@@ -26,8 +26,8 @@ real*8  q_tosend(ncha)
 real*8  q0(ncha)
 real*8 F_Mix_s, F_Mix_pos, F_mix_prot
 real*8 F_Mix_neg, F_Mix_Hplus
-real*8 Free_energy2, sumpi, sumrho, sumel, sumdiel, suma, mupol
-real*8 F_Mix_OHmin, F_Conf, F_eq, F_vdW, F_eps, F_electro
+real*8 Free_energy2, sumpi, sumrho, sumel, sumelp, sumdiel, suma, mupol
+real*8 F_Mix_OHmin, F_Conf, F_eq_p, F_eq, F_vdW, F_eps, F_electro
 real*8 pro0(cuantas, cpp)
  
 ! MPI
@@ -258,8 +258,9 @@ endif
 
       Free_Energy = Free_Energy + F_Conf
 
+
 ! 7. Chemical Equilibrium
-      F_eq = 0.0 
+      F_eq = 0.0
 
       do im = 1, N_monomer
 
@@ -268,34 +269,25 @@ endif
       do ix  = 1, dimx
       do iy  = 1, dimy
       do iz  = 1, dimz
-      
+
       fv=(1.0-volprot(ix,iy,iz))
 
       F_eq = F_Eq + fdis(im,ix,iy,iz)*dlog(fdis(im,ix,iy,iz)) &
       *(avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv
-  
 ! bulk
-
       F_eq = F_Eq  - fdisbulk(im)*dlog(fdisbulk(im))*xkapbulk*ntypes(im)/sum(ntypes)/vpol*fv
 
 !
-
       F_eq = F_Eq + (1.0-fdis(im,ix,iy,iz)) &
       *dlog(1.0-fdis(im,ix,iy,iz))*(avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv
-
 ! bulk
-
       F_eq = F_Eq - (1.0-fdisbulk(im)) &
       *dlog(1.0-fdisbulk(im))*xkapbulk*ntypes(im)/sum(ntypes)/vpol*fv
 
-!
       F_eq = F_Eq + (1.0-fdis(im,ix,iy,iz))*dlog(K0(im))* &
       (avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv
-
 ! bulk
-
       F_eq = F_Eq - (1.0-fdisbulk(im))*dlog(K0(im))*xkapbulk*ntypes(im)/sum(ntypes)/vpol*fv
-
  !
       select case (zpol(im))
       case (1) ! base 
@@ -327,6 +319,48 @@ endif
       F_eq = F_eq *delta**3/vsol
 
       Free_Energy = Free_Energy + F_eq
+
+! 7.2 Chemical Equilibrium particle
+      F_eq_p = 0.0 
+
+      do im = 1, N_monomer
+
+      if(zpol(im).ne.0) then
+
+      do ix  = 1, dimx
+      do iy  = 1, dimy
+      do iz  = 1, dimz
+      
+      F_eq_p = F_Eq_p + fdis(im,ix,iy,iz)*dlog(fdis(im,ix,iy,iz)) &
+      *(volq(im,ix,iy,iz))
+  
+      F_eq_p = F_Eq_p + (1.0-fdis(im,ix,iy,iz)) &
+      *dlog(1.0-fdis(im,ix,iy,iz))*(volq(im,ix,iy,iz))
+
+      F_eq_p = F_Eq_p + (1.0-fdis(im,ix,iy,iz))*dlog(K0(im)) &
+      *(volq(im,ix,iy,iz))
+
+      select case (zpol(im))
+      case (1) ! base 
+      F_eq_p = F_Eq_p + (1.0-fdis(im,ix,iy,iz)) &
+      *(-dlog(expmuOHmin))*(volq(im,ix,iy,iz))
+
+      case (-1) ! acid
+      F_eq_p = F_Eq_p + (1.0-fdis(im,ix,iy,iz)) &
+      *(-dlog(expmuHplus))*(volq(im,ix,iy,iz))
+
+      endselect
+
+      enddo
+      enddo
+      enddo
+
+      endif ! zpol
+      enddo ! im
+
+      F_eq_p = F_eq_p*delta**3/vsol
+
+      Free_Energy = Free_Energy + F_eq_p
 ! 8.vdW ! Ojo, los kai son negativos => atraccion
 
        F_vdW = 0.0
@@ -375,7 +409,7 @@ endif
 
       Free_Energy = Free_Energy + F_vdW
 
-! 9. Electrostatic ! OJO
+! 9. Electrostatic 
 
       F_electro = 0.0    
 
@@ -403,8 +437,8 @@ endif
 !       + (delta**3)/vsol*(psi(ix, iy, iz)*qtot(ix, iy, iz) - 0.5/constq*gradpsi2*epsfcn(ix,iy,iz))
 
       enddo
-!      F_electro = F_electro + sigmaq*psi(ix, iy, 0)/2.0 ! OJO!!! REVISAR!!!!
-!      F_electro = F_electro + sigmaq*psi(ix, iy, dimz+1)/2.0 ! OJO!!! REVISAR!!!!
+!      F_electro = F_electro + sigmaq*psi(ix, iy, 0)/2.0
+!      F_electro = F_electro + sigmaq*psi(ix, iy, dimz+1)/2.0 
       enddo
       enddo
 
@@ -420,7 +454,11 @@ endif
       do iy = 1, dimy
       do iz = 1, dimz
       fv= (1.0-volprot(ix,iy,iz))
-      F_eps = F_eps - xtotal(ii,ix,iy,iz)*st*henergy(ii)*voleps(ix,iy,iz)*(delta**3)/vpol/vsol*fv
+
+      do iii = 1, N_poorsol
+      F_eps = F_eps - xtotal(ii,ix,iy,iz)*st*st_matrix(ii,iii)*voleps(ix,iy,iz,iii)*(delta**3)/vpol/vsol*fv
+      enddo
+   
       enddo
       enddo
       enddo
@@ -440,6 +478,7 @@ endif
         sumpi = 0.0
         sumrho=0.0
         sumel=0.0
+        sumelp=0.0
         sumdiel = 0.0
 
         do ix=1,dimx
@@ -459,8 +498,17 @@ endif
        -xOHminbulk - (xposbulk+xnegbulk)/vsalt - xkapbulk/vkap)*fv ! sum over  rho_i i=+,-,s
 
          sumel = sumel - qtot(ix, iy, iz)*psi(ix, iy, iz)/2.0 
-      
-         sumel = sumel + volq(ix,iy,iz)*psi(ix,iy,iz)*vsol                   
+
+         do im = 1, N_monomer
+!         sumel = sumel + volq(im,ix,iy,iz)*psi(ix,iy,iz)*zpol(im)*fdis(im,ix,iy,iz)
+         sumel = sumel + volq(im,ix,iy,iz)*psi(ix,iy,iz)*zpol(im) 
+         enddo
+
+         do im = 1, N_monomer     
+         if(zpol(im).ne.0) then
+         sumelp = sumelp + dlog(fdis(im,ix,iy,iz))*volq(im,ix,iy,iz)
+         endif
+         enddo               
 
          gradpsi2 = (psi(ix+1,iy,iz)-psi(ix,iy,iz))**2+(psi(ix,iy+1,iz)-psi(ix,iy,iz))**2+(psi(ix,iy,iz+1)-psi(ix,iy,iz))**2
 
@@ -479,10 +527,11 @@ endif
          sumpi = (delta**3/vsol)*sumpi
          sumrho = (delta**3/vsol)*sumrho
          sumel = (delta**3/vsol)*sumel
+         sumelp = (delta**3/vsol)*sumelp
          sumdiel = (delta**3/vsol)*sumdiel
 
 
-         suma = sumpi + sumrho + sumel + sumdiel
+         suma = sumpi + sumrho + sumelp + sumel + sumdiel
 
 
          do ii = 1, ncha
@@ -518,6 +567,7 @@ endif
          write(306,*)looped, F_Mix_OHmin
          write(307,*)looped, F_Conf
          write(308,*)looped, F_eq
+         write(318,*)looped, F_eq_p
          write(309,*)looped, F_vdW
          write(410,*)looped, F_eps
          write(311,*)looped, F_electro

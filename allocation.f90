@@ -40,10 +40,10 @@ ALLOCATE (Depsfcn(0:dimx+1,0:dimy+1,0:dimz+1))
 ! ematrix
 ALLOCATE (volprot(dimx,dimy,dimz))
 ALLOCATE (volprot1(dimx,dimy,dimz))
-ALLOCATE (voleps(dimx,dimy,dimz))
+ALLOCATE (voleps(dimx,dimy,dimz, N_poorsol))
 ALLOCATE (voleps1(dimx,dimy,dimz))
-ALLOCATE (volq(dimx,dimy,dimz))
-ALLOCATE (volq1(dimx,dimy,dimz))
+ALLOCATE (volq(N_monomer,dimx,dimy,dimz))
+ALLOCATE (volq1(N_monomer,dimx,dimy,dimz))
 
 ! mkinsol
 ALLOCATE (pp((2+N_poorsol)*dimx*dimy*dimz))
@@ -59,8 +59,8 @@ ALLOCATE (Rell_old(3,NNN))
 
 allocate (xflag_old(2*dimx*dimy*dimz))
 allocate (volprot_old(dimx,dimy,dimz))
-allocate (voleps_old(dimx,dimy,dimz))
-allocate (volq_old(dimx,dimy,dimz))
+allocate (voleps_old(dimx,dimy,dimz, N_poorsol))
+allocate (volq_old(N_monomer,dimx,dimy,dimz))
 
 ALLOCATE (avpol_old(N_monomer,dimx,dimy,dimz))
 ALLOCATE (xpos_old(dimx, dimy, dimz)) ! pos ion

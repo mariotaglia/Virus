@@ -18,7 +18,7 @@ integer nchas
 
 
 ! MK generator parameters
-dseg = 0.55 ! segment diameter [nm] (nups: 0.35), classical chain (dseg=lseg)
+dseg = 0.5 ! segment diameter [nm] (nups: 0.35), classical chain (dseg=lseg)
 nearbonds = 5 ! characterizes chain model. nups: 5, classical flexible chain: 1
 wantedCPUsecs = 20 ! target CPU time, use > 100 for production, only important for calq = -1
 calq = 0 ! 1=calulate qprob and stop, 0=use qprob from below

@@ -14,7 +14,6 @@
       ALLOCATE (zpol(N_monomer))    ! charge of monomer segment: 1: base, -1: acid, 0:neutral
       ALLOCATE (hydroph(N_monomer)) ! 0: hydrophilic, 1 < x < N_poorsol, type of poor solvent
       ALLOCATE (pKa(N_monomer), Ka(N_monomer), K0(N_monomer))
-      ALLOCATE (henergy(N_poorsol))
       ALLOCATE (ntypes(N_monomer))
       ALLOCATE (fdisbulk(N_monomer))
       ALLOCATE (xtotalbulk(N_poorsol))

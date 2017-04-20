@@ -24,6 +24,7 @@ zpos = 1.0
 zneg = -1.0
 vsol = 0.030
 vsalt=((4.0/3.0)*pi*(0.27)**3)/vsol  ! volume salt in units of vsol 0.2=radius salt  
+!vpol= 0.100/vsol ! ((4.0/3.0)*pi*(0.2)**3)/vsol  ! volume polymer segment in units of vsol 
 vpol= 0.095/vsol ! ((4.0/3.0)*pi*(0.2)**3)/vsol  ! volume polymer segment in units of vsol 
 constq=delta*delta*4.0*pi*lb/vsol   ! multiplicative factor in poisson eq  
 pKw = 14
@@ -64,6 +65,7 @@ if(rank.eq.0) then
        open(unit=306, file='F_mixOH.dat')
        open(unit=307, file='F_conf.dat')
        open(unit=308, file='F_eq.dat')
+       open(unit=318, file='F_eq_P.dat')
        open(unit=309, file='F_vdW.dat')
        open(unit=410, file='F_eps.dat')
        open(unit=311, file='F_electro.dat')

@@ -30,8 +30,8 @@ real*8, allocatable :: rotmatrix_old(:,:,:)
 real*8, allocatable :: Rell_old(:,:)
 real*8, allocatable :: xflag_old(:)
 real*8, allocatable :: volprot_old(:,:,:)
-real*8, allocatable :: voleps_old(:,:,:)
-real*8, allocatable :: volq_old(:,:,:)
+real*8, allocatable :: voleps_old(:,:,:,:)
+real*8, allocatable :: volq_old(:,:,:,:)
 real*8, allocatable :: avpol_old(:,:,:,:)
 real*8, allocatable :: epsfcn_old(:,:,:)
 real*8, allocatable :: Depsfcn_old(:,:,:)
@@ -75,7 +75,6 @@ real*8 vpol
 real*8 vsalt
 real*8 zpos,zneg
 integer, ALLOCATABLE :: zpol(:)
-real*8, ALLOCATABLE :: henergy(:)
 real*8 st
 integer nst
 real*8 st0(100)
@@ -195,10 +194,10 @@ use system
 integer kaptype
 real*8, allocatable :: volprot(:,:,:)
 real*8, allocatable :: volprot1(:,:,:)
-real*8, allocatable :: voleps(:,:,:)
+real*8, allocatable :: voleps(:,:,:,:)
 real*8, allocatable :: voleps1(:,:,:)
-real*8, allocatable :: volq(:,:,:)
-real*8, allocatable :: volq1(:,:,:)
+real*8, allocatable :: volq(:,:,:,:)
+real*8, allocatable :: volq1(:,:,:,:)
 end module
 
 module inputtemp
