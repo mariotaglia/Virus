@@ -192,6 +192,8 @@ end module
 module ematrix
 use system
 integer kaptype
+integer, allocatable :: aagrid(:,:)
+integer naa
 real*8, allocatable :: volprot(:,:,:)
 real*8, allocatable :: volprot1(:,:,:)
 real*8, allocatable :: voleps(:,:,:,:)

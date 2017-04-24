@@ -255,6 +255,7 @@ use ematrix
 use fields_fkfun
 use MPI
 use kinsol
+use inputtemp, only : pHbulk 
 implicit none
 integer cccc
 character*20 filename
@@ -262,6 +263,8 @@ character*5  title
 real*8 temp(dimx,dimy,dimz)
 integer im,ix,iy,iz
 real*8 meanz, sumpol
+real*8 ftemp
+integer i
 
 !----------------------------------------------------------
 !  OUTPUT
@@ -374,7 +377,29 @@ enddo
 write(310,*)'meanz     =',meanz/sumpol
   close(310)
 
+! save apparent pKas and f for each aminoacid in the system
+open(file='pKaapp.dat', unit=311)
+open(file='pKabulk.dat', unit=313)
+open(file='fdisaa.dat', unit=312)
+do i = 1, naa ! loop over aa
+ if(zpol(aagrid(i,4)).ne.0)write(312,*)i,fdis(aagrid(i,4),aagrid(i,1),aagrid(i,2),aagrid(i,3))
+ ftemp = fdis(aagrid(i,4),aagrid(i,1),aagrid(i,2),aagrid(i,3))
+ 
+ if(zpol(aagrid(i,4)).eq.1) then ! base
+! pH = pKa + log10(1-f/f)
+       write(311,*)i,pHbulk-log10((1.0-ftemp)/ftemp)
+       write(313,*)i,pKa(aagrid(i,4))
+ endif
+ if(zpol(aagrid(i,4)).eq.-1) then ! base
+! pH = pKa + log10(f/1-f)
+       write(311,*)i,pHbulk-log10(ftemp/(1.0-ftemp))
+       write(313,*)i,pKa(aagrid(i,4))
+ endif
+enddo
 
+close(311)
+close(312)
+close(313)
 
 endif
 
