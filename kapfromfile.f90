@@ -7,6 +7,7 @@ use molecules
 use ellipsoid
 use chainsdat
 use kai
+use probe
 implicit none
 logical flag
 real*8, allocatable :: aapos(:,:)
@@ -19,7 +20,6 @@ integer hh,ax,ay,az,jx,jy,jz
 real*8 avpol2
 integer iii
 avpol2 = (delta**3)/vsol
-
 
 flag = .false.
 
@@ -88,6 +88,11 @@ aagrid(i,2) = iy
 aagrid(i,3) = iz
 aagrid(i,4) = aat(i)
 
+if(i.eq.probenum) then
+ probex = ix
+ probey = iy
+ probez = iz
+endif
 
 volprot(ix,iy,iz) = volprot(ix,iy,iz)+vpol*vsol/(delta**3)
 volq(aat(i),ix,iy,iz) = volq(aat(i),ix,iy,iz)+(vsol/delta**3) ! units of vsol/delta**3   ! float(aaq(i))/(delta**3)

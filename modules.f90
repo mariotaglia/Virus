@@ -1,3 +1,7 @@
+module probe
+integer probenum, probex, probey, probez
+endmodule
+
 module saves
 integer vtkflag
 endmodule

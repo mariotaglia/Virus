@@ -259,108 +259,6 @@ endif
       Free_Energy = Free_Energy + F_Conf
 
 
-! 7. Chemical Equilibrium
-      F_eq = 0.0
-
-      do im = 1, N_monomer
-
-      if(zpol(im).ne.0) then
-
-      do ix  = 1, dimx
-      do iy  = 1, dimy
-      do iz  = 1, dimz
-
-      fv=(1.0-volprot(ix,iy,iz))
-
-      F_eq = F_Eq + fdis(im,ix,iy,iz)*dlog(fdis(im,ix,iy,iz)) &
-      *(avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv
-! bulk
-      F_eq = F_Eq  - fdisbulk(im)*dlog(fdisbulk(im))*xkapbulk*ntypes(im)/sum(ntypes)/vpol*fv
-
-!
-      F_eq = F_Eq + (1.0-fdis(im,ix,iy,iz)) &
-      *dlog(1.0-fdis(im,ix,iy,iz))*(avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv
-! bulk
-      F_eq = F_Eq - (1.0-fdisbulk(im)) &
-      *dlog(1.0-fdisbulk(im))*xkapbulk*ntypes(im)/sum(ntypes)/vpol*fv
-
-      F_eq = F_Eq + (1.0-fdis(im,ix,iy,iz))*dlog(K0(im))* &
-      (avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv
-! bulk
-      F_eq = F_Eq - (1.0-fdisbulk(im))*dlog(K0(im))*xkapbulk*ntypes(im)/sum(ntypes)/vpol*fv
- !
-      select case (zpol(im))
-      case (1) ! base 
-      F_eq = F_Eq + (1.0-fdis(im,ix,iy,iz)) &
-      *(-dlog(expmuOHmin))*(avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv
-! bulk
-      F_eq = F_Eq - (1.0-fdisbulk(im)) &
-      *(-dlog(expmuOHmin))*xkapbulk*ntypes(im)/sum(ntypes)/ &
-      vpol*fv
-
-      case (-1) ! acid
-      F_eq = F_Eq + (1.0-fdis(im,ix,iy,iz)) &
-      *(-dlog(expmuHplus))*(avpol(im,ix,iy,iz)+xprot(im,ix,iy,iz))/vpol*fv
-! bulk
-
-      F_eq = F_Eq - (1.0-fdisbulk(im)) &
-      *(-dlog(expmuHplus))*xkapbulk*ntypes(im)/sum(ntypes) &
-      /vpol*fv
-
-      endselect
-
-      enddo
-      enddo
-      enddo
-
-      endif ! zpol
-      enddo ! im
-
-      F_eq = F_eq *delta**3/vsol
-
-      Free_Energy = Free_Energy + F_eq
-
-! 7.2 Chemical Equilibrium particle
-      F_eq_p = 0.0 
-
-      do im = 1, N_monomer
-
-      if(zpol(im).ne.0) then
-
-      do ix  = 1, dimx
-      do iy  = 1, dimy
-      do iz  = 1, dimz
-      
-      F_eq_p = F_Eq_p + fdis(im,ix,iy,iz)*dlog(fdis(im,ix,iy,iz)) &
-      *(volq(im,ix,iy,iz))
-  
-      F_eq_p = F_Eq_p + (1.0-fdis(im,ix,iy,iz)) &
-      *dlog(1.0-fdis(im,ix,iy,iz))*(volq(im,ix,iy,iz))
-
-      F_eq_p = F_Eq_p + (1.0-fdis(im,ix,iy,iz))*dlog(K0(im)) &
-      *(volq(im,ix,iy,iz))
-
-      select case (zpol(im))
-      case (1) ! base 
-      F_eq_p = F_Eq_p + (1.0-fdis(im,ix,iy,iz)) &
-      *(-dlog(expmuOHmin))*(volq(im,ix,iy,iz))
-
-      case (-1) ! acid
-      F_eq_p = F_Eq_p + (1.0-fdis(im,ix,iy,iz)) &
-      *(-dlog(expmuHplus))*(volq(im,ix,iy,iz))
-
-      endselect
-
-      enddo
-      enddo
-      enddo
-
-      endif ! zpol
-      enddo ! im
-
-      F_eq_p = F_eq_p*delta**3/vsol
-
-      Free_Energy = Free_Energy + F_eq_p
 ! 8.vdW ! Ojo, los kai son negativos => atraccion
 
        F_vdW = 0.0
@@ -500,15 +398,14 @@ endif
          sumel = sumel - qtot(ix, iy, iz)*psi(ix, iy, iz)/2.0 
 
          do im = 1, N_monomer
-!         sumel = sumel + volq(im,ix,iy,iz)*psi(ix,iy,iz)*zpol(im)*fdis(im,ix,iy,iz)
-         sumel = sumel + volq(im,ix,iy,iz)*psi(ix,iy,iz)*zpol(im) 
+         sumel = sumel + volq(im,ix,iy,iz)*psi(ix,iy,iz)*zpol(im)*fdis(im,ix,iy,iz) 
          enddo
 
-         do im = 1, N_monomer     
-         if(zpol(im).ne.0) then
-         sumelp = sumelp + dlog(fdis(im,ix,iy,iz))*volq(im,ix,iy,iz)
-         endif
-         enddo               
+!         do im = 1, N_monomer     
+!         if(zpol(im).ne.0) then
+!         sumelp = sumelp + dlog(fdis(im,ix,iy,iz))*volq(im,ix,iy,iz)
+!         endif
+!         enddo               
 
          gradpsi2 = (psi(ix+1,iy,iz)-psi(ix,iy,iz))**2+(psi(ix,iy+1,iz)-psi(ix,iy,iz))**2+(psi(ix,iy,iz+1)-psi(ix,iy,iz))**2
 
@@ -566,8 +463,6 @@ endif
          write(305,*)looped, F_Mix_Hplus
          write(306,*)looped, F_Mix_OHmin
          write(307,*)looped, F_Conf
-         write(308,*)looped, F_eq
-         write(318,*)looped, F_eq_p
          write(309,*)looped, F_vdW
          write(410,*)looped, F_eps
          write(311,*)looped, F_electro

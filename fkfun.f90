@@ -142,12 +142,17 @@ do ix=1,dimx
     xOHmin(ix, iy,iz) = expmuOHmin*(xh(ix,iy,iz))*dexp(+psi(ix,iy,iz))           ! OH-  volume fraction
 
     do im = 1, N_monomer
-       if(zpol(im).eq.1) then ! BASE
-           fdis(im,ix,iy,iz)=1.0 /(1.0 + xOHmin(ix,iy,iz)/(K0(im)*xh(ix,iy,iz)))
-       else if (zpol(im).eq.-1.0) then ! ACID
-           fdis(im,ix,iy,iz)=1.0 /(1.0 + xHplus(ix,iy,iz)/(K0(im)*xh(ix,iy,iz)))
-       endif
+!       if(zpol(im).eq.1) then ! BASE
+!           fdis(im,ix,iy,iz)=1.0 /(1.0 + xOHmin(ix,iy,iz)/(K0(im)*xh(ix,iy,iz)))
+!       else if (zpol(im).eq.-1.0) then ! ACID
+!           fdis(im,ix,iy,iz)=1.0 /(1.0 + xHplus(ix,iy,iz)/(K0(im)*xh(ix,iy,iz)))
+!       endif
+
+    fdis(im,ix,iy,iz) = 0.5
+
     enddo
+
+    
 
    enddo
  enddo  
@@ -200,7 +205,7 @@ do ix=1,dimx
      xpot(im, ix, iy, iz) = xh(ix,iy,iz)**vpol
 
      if(zpol(im).ne.0) then
-     xpot(im,ix,iy,iz) = xpot(im,ix,iy,iz)*dexp(-psi(ix, iy, iz)*zpol(im))/(fdis(im,ix,iy,iz))
+     xpot(im,ix,iy,iz) = xpot(im,ix,iy,iz)*dexp(-psi(ix, iy, iz)*zpol(im)*fdis(im,ix,iy,iz))
      endif
 
      if(hydroph(im).ne.0) then
