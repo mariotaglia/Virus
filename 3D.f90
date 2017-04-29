@@ -12,9 +12,8 @@ use MPI
 use ellipsoid
 use ematrix
 implicit none
-external fcn
 integer ii,i, ix, iy, iz
-
+integer counter
 !-----  varables de la resolucion -----------
 
 real*8 x1((2+N_poorsol)*dimx*dimy*dimz)
@@ -61,8 +60,62 @@ if(infile.eq.0) then
     x1(i)=xtotalbulk(ii)
   enddo
   enddo
+fdisaa = 0.5
+
+counter = 1
+fdisaa(5) = 0.0
+call solve_one(x1, xg1)
+call Free_Energy_Calc(counter)
+
+counter = 2
+fdisaa(5) = 1.0
+call solve_one(x1, xg1)
+call Free_Energy_Calc(counter)
+
+
 
 endif
+
+end subroutine
+
+subroutine solve_one(x1, xg1)
+
+use system
+use const
+use kai
+use chainsdat
+use molecules
+use results
+use kinsol
+use bulk
+use MPI
+use ellipsoid
+use ematrix
+implicit none
+
+external fcn
+integer ii,i, ix, iy, iz
+
+!-----  varables de la resolucion -----------
+
+real*8 x1((2+N_poorsol)*dimx*dimy*dimz)
+real*8 xg1((2+N_poorsol)*dimx*dimy*dimz)
+
+integer n
+
+! Volumen fraction
+real*8 xh(dimx, dimy, dimz)
+real*8 psi(dimx, dimy, dimz) ! potencial
+
+! MPI
+integer tag, source
+parameter(tag = 0)
+integer err
+integer ier_tosend
+double  precision norma_tosend
+
+
+
 
 !--------------------------------------------------------------
 ! Solve               
@@ -139,20 +192,4 @@ do i = 1, n*(2+N_poorsol)
 enddo
 infile = 2 ! no vuelve a leer infile
 
-!----------------------------------------------------------
-!  OUTPUT
-!----------------------------------------------------------
-
-!if(rank.eq.0) then ! solo el jefe escribe a disco....
-  ! Guarda infile
-!  write(filename,'(A4, I3.3, A4)')'out.', cccc, '.dat'
-!  open(unit=45, file=filename)
-!   do i = 1, 2*n
-!    write(45, *)x1(i)
-!   enddo
-!  close(45)
-! endif
-
 end subroutine
-
-

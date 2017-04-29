@@ -108,7 +108,6 @@ do counter = 1,nst
 
  call initall
  call solve
- call Free_Energy_Calc(counter)
  call savedata(counter/saveevery)
  if(rank.eq.0)print*, 'Free energy after solving', free_energy
  call savedata(counter)

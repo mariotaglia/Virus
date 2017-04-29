@@ -148,11 +148,10 @@ do ix=1,dimx
 !           fdis(im,ix,iy,iz)=1.0 /(1.0 + xHplus(ix,iy,iz)/(K0(im)*xh(ix,iy,iz)))
 !       endif
 
-    fdis(im,ix,iy,iz) = 0.5
+    fdis(im,ix,iy,iz) = 0.0
 
     enddo
 
-    fdisaa = 0.5
 
    enddo
  enddo  
