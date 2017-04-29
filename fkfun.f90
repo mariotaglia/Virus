@@ -466,8 +466,10 @@ enddo
              iz = aapos(i,3)
              qtot(ix,iy,iz)=qtot(ix,iy,iz)+zpol(im)*fdisaa(i)*(vsol/delta**3)
            endif
+           print*, ix,iy,iz,zpol(im), fdisaa(i)
         enddo
 
+stop
 
 ! Volume fraction
 
