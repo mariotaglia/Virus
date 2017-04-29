@@ -14,7 +14,7 @@ use conformations
 use ematrix
 use ellipsoid
 use mprotein
-
+use aa
 implicit none
 
 integer*4 ier2
@@ -152,7 +152,7 @@ do ix=1,dimx
 
     enddo
 
-    
+    fdisaa = 0.5
 
    enddo
  enddo  
@@ -451,13 +451,23 @@ do ix=1,dimx
          do im = 1, N_monomer
          qtot(ix,iy,iz)=qtot(ix,iy,iz)+avpol(im,ix,iy,iz)*zpol(im)/vpol*fdis(im,ix,iy,iz)*fv
          qtot(ix,iy,iz)=qtot(ix,iy,iz)+xprot(im,ix,iy,iz)*zpol(im)/vpol*fdis(im,ix,iy,iz)*fv
-         qtot(ix,iy,iz)=qtot(ix,iy,iz)+volq(im,ix,iy,iz)*zpol(im)*fdis(im,ix,iy,iz)   
          enddo
-
-
         enddo
    enddo
 enddo
+
+
+
+         do i = 1, naa ! loop over aminoacids
+             im = aat(i)
+           if(zpol(im).ne.0) then ! charged aminoacid
+             ix = aapos(i,1)
+             iy = aapos(i,2)
+             iz = aapos(i,3)
+             qtot(ix,iy,iz)=qtot(ix,iy,iz)+zpol(im)*fdisaa(i)*(vsol/delta**3)
+           endif
+        enddo
+
 
 ! Volume fraction
 

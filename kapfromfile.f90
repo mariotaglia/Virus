@@ -7,11 +7,10 @@ use molecules
 use ellipsoid
 use chainsdat
 use kai
-use probe
+use aa
+use results, only : fdisaa
 implicit none
 logical flag
-real*8, allocatable :: aapos(:,:)
-integer, allocatable :: aat(:)
 integer i
 integer ix,iy,iz
 integer counter
@@ -31,6 +30,7 @@ read(3333,*)naa
 allocate(aapos(naa,3))
 allocate(aat(naa))
 allocate(aagrid(naa,4)) ! keeps info of position of original aminoacids index 1=x,2=y,3=z,4=aat
+allocate(fdisaa(naa))
 
 do i = 1, naa
 read(3333,*)aapos(i,1),aapos(i,2),aapos(i,3),aat(i)
@@ -52,7 +52,6 @@ enddo
 ! clear matrixes
 voleps = 0.0
 volprot = 0.0
-volq = 0.0
 
 ! add aa to volprot
 
@@ -88,14 +87,7 @@ aagrid(i,2) = iy
 aagrid(i,3) = iz
 aagrid(i,4) = aat(i)
 
-if(i.eq.probenum) then
- probex = ix
- probey = iy
- probez = iz
-endif
-
 volprot(ix,iy,iz) = volprot(ix,iy,iz)+vpol*vsol/(delta**3)
-volq(aat(i),ix,iy,iz) = volq(aat(i),ix,iy,iz)+(vsol/delta**3) ! units of vsol/delta**3   ! float(aaq(i))/(delta**3)
 
      do ax = -Xulimit,Xulimit
       do ay = -Xulimit,Xulimit
@@ -139,10 +131,6 @@ do iii = 1, N_poorsol
 voleps1(:,:,:) = voleps1(:,:,:) + voleps(:,:,:,iii)*st_matrix(iii,3) 
 enddo
 call savetodisk(voleps1, title, counter)
-
-title = 'avcha'
-counter = 1
-call savetodisk(volq, title, counter)
 
 close(3333)
 

@@ -12,7 +12,7 @@ use mprotein
 use saves
 use ematrix
 use kai
-use probe
+use aa
 implicit none
 
 ! Input related variables
@@ -92,10 +92,6 @@ do while (ios == 0)
 
  case ('vtkflag')
    read(buffer, *, iostat=ios) vtkflag
-   if(rank.eq.0)print*,'Set ',trim(label),' = ',trim(buffer)
-
- case ('probe')
-   read(buffer, *, iostat=ios) probenum
    if(rank.eq.0)print*,'Set ',trim(label),' = ',trim(buffer)
 
  case ('dimx')

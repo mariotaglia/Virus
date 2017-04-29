@@ -1,5 +1,6 @@
-module probe
-integer probenum, probex, probey, probez
+module aa
+real*8, allocatable :: aapos(:,:)
+integer, allocatable :: aat(:)
 endmodule
 
 module saves
@@ -167,6 +168,7 @@ real*8, allocatable :: qtot(:,:,:) ! Carga total
 real*8, allocatable :: xHplus(:,:,:) ! H+
 real*8, allocatable :: xOHmin(:,:,:) ! OH-
 real*8, allocatable :: fdis(:,:,:,:)
+real*8, allocatable :: fdisaa(:)
 endmodule
 
 module bulk

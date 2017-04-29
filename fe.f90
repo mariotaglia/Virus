@@ -18,7 +18,7 @@ use ematrix
 use montecarlo
 use ellipsoid
 use mprotein
-
+use aa
 implicit none
 
 integer looped
@@ -397,16 +397,6 @@ endif
 
          sumel = sumel - qtot(ix, iy, iz)*psi(ix, iy, iz)/2.0 
 
-         do im = 1, N_monomer
-         sumel = sumel + volq(im,ix,iy,iz)*psi(ix,iy,iz)*zpol(im)*fdis(im,ix,iy,iz) 
-         enddo
-
-!         do im = 1, N_monomer     
-!         if(zpol(im).ne.0) then
-!         sumelp = sumelp + dlog(fdis(im,ix,iy,iz))*volq(im,ix,iy,iz)
-!         endif
-!         enddo               
-
          gradpsi2 = (psi(ix+1,iy,iz)-psi(ix,iy,iz))**2+(psi(ix,iy+1,iz)-psi(ix,iy,iz))**2+(psi(ix,iy,iz+1)-psi(ix,iy,iz))**2
 
          do ii = 1, N_poorsol
@@ -416,7 +406,18 @@ endif
          enddo
          enddo
          enddo
-         
+        
+
+         do i = 1, naa
+         im = aat(i)
+         if(zpol(im).ne.0) then ! charged aa
+          ix = aapos(i,1)
+          iy = aapos(i,2)
+          iz = aapos(i,3)
+          sumel = sumel + psi(ix,iy,iz)*zpol(im)*fdisaa(i)*(vsol/delta**3)
+         endif
+         enddo
+ 
 !     gradpsi2 = (psi(ix+1,iy,iz)-psi(ix-1,iy,iz))**2+(psi(ix,iy+1,iz)-psi(ix,iy-1,iz))**2+(psi(ix,iy,iz+1)-psi(ix,iy,iz-1))**2
 !     xpot(ix, iy, iz) = xpot(ix,iy,iz)*exp(-Depsfcn(ix,iy,iz)*(gradpsi2)/constq/2.0*vpol/4.0)
 

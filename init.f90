@@ -45,7 +45,6 @@ use inputtemp
 use mprotein
 use kai
 use system
-use probe
 
 
 implicit none
@@ -257,7 +256,6 @@ use ematrix
 use fields_fkfun
 use MPI
 use kinsol
-use probe
 use inputtemp, only : pHbulk 
 implicit none
 integer cccc
@@ -384,7 +382,6 @@ write(310,*)'meanz     =',meanz/sumpol
 open(file='pKaapp.dat', unit=311)
 open(file='pKabulk.dat', unit=313)
 open(file='fdisaa.dat', unit=312)
-open(unit=1300, file='probe.dat')
 
 do i = 1, naa ! loop over aa
  if(zpol(aagrid(i,4)).ne.0)write(312,*)i,fdis(aagrid(i,4),aagrid(i,1),aagrid(i,2),aagrid(i,3))
@@ -401,9 +398,6 @@ do i = 1, naa ! loop over aa
        write(313,*)i,pKa(aagrid(i,4))
  endif
 enddo
-
-! probe
-write(1300,*), probenum, psi(probex,probey,probez)
 
 close(311)
 close(312)
