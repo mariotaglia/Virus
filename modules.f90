@@ -1,6 +1,7 @@
 module aa
 real*8, allocatable :: aapos(:,:)
 integer, allocatable :: aat(:)
+integer, allocatable :: aagrid(:,:)
 endmodule
 
 module saves
@@ -198,7 +199,6 @@ end module
 module ematrix
 use system
 integer kaptype
-integer, allocatable :: aagrid(:,:)
 integer naa
 real*8, allocatable :: volprot(:,:,:)
 real*8, allocatable :: volprot1(:,:,:)

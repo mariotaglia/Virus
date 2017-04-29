@@ -29,7 +29,7 @@ read(3333,*)naa
 
 allocate(aapos(naa,3))
 allocate(aat(naa))
-allocate(aagrid(naa,4)) ! keeps info of position of original aminoacids index 1=x,2=y,3=z,4=aat
+allocate(aagrid(naa,3)) ! keeps info of position of original aminoacids index 1=x,2=y,3=z,4=aat
 allocate(fdisaa(naa))
 
 do i = 1, naa
@@ -85,7 +85,6 @@ endif
 aagrid(i,1) = ix
 aagrid(i,2) = iy
 aagrid(i,3) = iz
-aagrid(i,4) = aat(i)
 
 volprot(ix,iy,iz) = volprot(ix,iy,iz)+vpol*vsol/(delta**3)
 

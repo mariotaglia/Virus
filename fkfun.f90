@@ -461,15 +461,13 @@ enddo
          do i = 1, naa ! loop over aminoacids
              im = aat(i)
            if(zpol(im).ne.0) then ! charged aminoacid
-             ix = aapos(i,1)
-             iy = aapos(i,2)
-             iz = aapos(i,3)
+             ix = aagrid(i,1)
+             iy = aagrid(i,2)
+             iz = aagrid(i,3)
              qtot(ix,iy,iz)=qtot(ix,iy,iz)+zpol(im)*fdisaa(i)*(vsol/delta**3)
            endif
-           print*, ix,iy,iz,zpol(im), fdisaa(i)
         enddo
 
-stop
 
 ! Volume fraction
 

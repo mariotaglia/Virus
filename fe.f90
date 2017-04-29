@@ -411,9 +411,9 @@ endif
          do i = 1, naa
          im = aat(i)
          if(zpol(im).ne.0) then ! charged aa
-          ix = aapos(i,1)
-          iy = aapos(i,2)
-          iz = aapos(i,3)
+          ix = aagrid(i,1)
+          iy = aagrid(i,2)
+          iz = aagrid(i,3)
           sumel = sumel + psi(ix,iy,iz)*zpol(im)*fdisaa(i)*(vsol/delta**3)
          endif
          enddo

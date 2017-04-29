@@ -257,6 +257,7 @@ use fields_fkfun
 use MPI
 use kinsol
 use inputtemp, only : pHbulk 
+use aa
 implicit none
 integer cccc
 character*20 filename
@@ -384,18 +385,18 @@ open(file='pKabulk.dat', unit=313)
 open(file='fdisaa.dat', unit=312)
 
 do i = 1, naa ! loop over aa
- if(zpol(aagrid(i,4)).ne.0)write(312,*)i,fdis(aagrid(i,4),aagrid(i,1),aagrid(i,2),aagrid(i,3))
- ftemp = fdis(aagrid(i,4),aagrid(i,1),aagrid(i,2),aagrid(i,3))
+ if(zpol(aat(i)).ne.0)write(312,*)i,fdis(aat(i),aagrid(i,1),aagrid(i,2),aagrid(i,3))
+ ftemp = fdis(aat(i),aagrid(i,1),aagrid(i,2),aagrid(i,3))
  
- if(zpol(aagrid(i,4)).eq.1) then ! base
+ if(zpol(aat(i)).eq.1) then ! base
 ! pH = pKa + log10(1-f/f)
        write(311,*)i,pHbulk-log10((1.0-ftemp)/ftemp)
-       write(313,*)i,pKa(aagrid(i,4))
+       write(313,*)i,pKa(aat(i))
  endif
- if(zpol(aagrid(i,4)).eq.-1) then ! base
+ if(zpol(aat(i)).eq.-1) then ! base
 ! pH = pKa + log10(f/1-f)
        write(311,*)i,pHbulk-log10(ftemp/(1.0-ftemp))
-       write(313,*)i,pKa(aagrid(i,4))
+       write(313,*)i,pKa(aat(i))
  endif
 enddo
 
