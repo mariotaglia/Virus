@@ -46,7 +46,6 @@ ncha = ndi
 long = ndi
 cuantas = ndi
 infile = ndi
-nst = ndi
 randominput = ndi
 kapd = ndi
 Xulimit = ndi
@@ -148,14 +147,23 @@ do while (ios == 0)
    read(buffer, *, iostat=ios) pHbulk
    if(rank.eq.0)print*,'Set ',trim(label),' = ',trim(buffer)
 
+ case ('st')
+   read(buffer, *, iostat=ios) st
+   if(rank.eq.0)print*,'Set ',trim(label),' = ',trim(buffer)
+
+
  case ('infile')
    read(buffer, *, iostat=ios) infile
    if(rank.eq.0)print*,'Set ',trim(label),' = ',trim(buffer)
 
- case ('nst')
-   read(buffer, *, iostat=ios) nst
+ case ('npH')
+   read(buffer, *, iostat=ios) npH
    if(rank.eq.0)print*,'Set ',trim(label),' = ',trim(buffer)
-   read(fh, *)(st0(i),i=1,nst)
+
+ case ('pHstep')
+   read(buffer, *, iostat=ios) pHstep
+   if(rank.eq.0)print*,'Set ',trim(label),' = ',trim(buffer)
+
 
  case ('randominput')
    read(buffer, *, iostat=ios) randominput
@@ -262,7 +270,6 @@ if(ncha.eq.ndi)call stopundef('ncha')
 if(long.eq.ndi)call stopundef('long')
 if(cuantas.eq.ndi)call stopundef('cuantas')
 if(infile.eq.ndi)call stopundef('infile')
-if(nst.eq.ndi)call stopundef('nst')
 if(randominput.eq.ndi)call stopundef('randominput')
 if(kapd.eq.ndi)call stopundef('kapd')
 if(Xulimit.eq.ndi)call stopundef('Xulimit')

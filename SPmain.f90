@@ -94,8 +94,7 @@ if(infile.eq.1) then
 !   endif
 endif
 
-do counter = 1,nst
- st=st0(counter)
+ counter = 1
  call update_matrix(flag) ! updates 'the matrix'
 
   if(flag.eqv..true.) then
@@ -107,12 +106,6 @@ do counter = 1,nst
   endif
 
  call solve
- call savedata(counter/saveevery)
- if(rank.eq.0)print*, 'Free energy after solving', free_energy
- call savedata(counter)
- if(rank.eq.0)print*, 'Save OK'
- call store2disk(counter)
-enddo
 
 call endall
 end 

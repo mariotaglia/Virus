@@ -98,7 +98,7 @@ if(zpol(aat(i)).ne.0) then
   open(unit=10000+i,file=filename)
   write(filename,'(A7, I3.3, A4)')'pKaapp.', i, '.dat'
   open(unit=20000+i,file=filename)
-  write(filename,'(A7, I3.3, A4)')'fdissaa.', i, '.dat'
+  write(filename,'(A8, I3.3, A4)')'fdissaa.', i, '.dat'
   open(unit=30000+i,file=filename)
 endif
 enddo  
@@ -117,8 +117,10 @@ DG = 0.0
 counter = 1
 
 ! loop over pH starts here
+do counter = 1, npH
 
 call initall
+
 !
 ! 1. Calculate DG for pos and neg in bulk
 ! 
@@ -217,12 +219,8 @@ enddo
 
 do i = 1, naa
 im = aat(i)
-if(zpol(im).eq.1) then
- Kaapp(i) = Ka(i) + 0.43429*(DG(i)-DGpos)
-endif
-if(zpol(im).eq.-1) then
- Kaapp(i) = Ka(i) - 0.43429*(DG(i)-DGneg)
-endif
+if(zpol(im).eq.1)Kaapp(i) = Ka(i)*exp(-(DG(i)-DGpos))
+if(zpol(im).eq.-1)Kaapp(i) = Ka(i)*exp(DG(i)-DGpos)
 enddo
 
 !
@@ -242,6 +240,9 @@ if(zpol(aat(i)).ne.0) then
 endif
 enddo
 
+pHbulk = pHbulk + pHstep
+
+enddo ! counter
 
 do i = 1, naa
 if(zpol(aat(i)).ne.0) then

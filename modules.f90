@@ -84,9 +84,9 @@ real*8 vsalt
 real*8 zpos,zneg
 integer, ALLOCATABLE :: zpol(:)
 integer, ALLOCATABLE :: zpolT(:)
+real*8 pHstep
+integer npH
 real*8 st
-integer nst
-real*8 st0(100)
 real*8, ALLOCATABLE :: st_matrix(:,:)
 integer, ALLOCATABLE :: hydroph(:)
 real*8, ALLOCATABLE :: pKa(:), Ka(:)
