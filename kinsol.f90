@@ -119,8 +119,8 @@ integer ncells
 ncells = dimx*dimy*dimz
 neq = (2+N_poorsol)*dimx*dimy*dimz
 msbpre  = 10 ! maximum number of iterations without prec. setup (?)
-fnormtol = 1.0d-8 ! Function-norm stopping tolerance
-scsteptol = 1.0d-8 ! Function-norm stopping tolerance
+fnormtol = 1.0d-5 ! Function-norm stopping tolerance
+scsteptol = 1.0d-5 ! Function-norm stopping tolerance
 
 maxl = 1000 ! maximum Krylov subspace dimesion (?!?!?!) ! Esto se usa para el preconditioner
 maxlrst = 20 ! maximum number of restarts
@@ -159,8 +159,8 @@ enddo
 
 call fkinsetvin('CONSTR_VEC', constr, ier) ! constraint vector
 ! CALL FKINSPTFQMR (MAXL, IER)
-call fkinspgmr(maxl, maxlrst, ier) !  Scale Preconditioned GMRES solution of linear system (???)
-!call fkinspbcg(maxl, ier) !  Scale Preconditioned BCG
+!call fkinspgmr(maxl, maxlrst, ier) !  Scale Preconditioned GMRES solution of linear system (???)
+call fkinspbcg(maxl, ier) !  Scale Preconditioned BCG
 
 if (ier .ne. 0) then
   print*, 'call_kinsol: SUNDIALS_ERROR: FKINSPGMR returned IER = ', ier

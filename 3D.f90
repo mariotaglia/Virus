@@ -219,8 +219,8 @@ enddo
 
 do i = 1, naa
 im = aat(i)
-if(zpol(im).eq.1)Kaapp(i) = Ka(im)*exp(-(DG(i)-DGpos))
-if(zpol(im).eq.-1)Kaapp(i) = Ka(im)*exp(DG(i)-DGpos)
+if(zpol(im).eq.1)Kaapp(i) = Ka(im)*exp(DG(i)-DGpos)
+if(zpol(im).eq.-1)Kaapp(i) = Ka(im)*exp(-(DG(i)-DGneg))
 enddo
 
 !

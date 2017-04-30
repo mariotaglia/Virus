@@ -26,12 +26,13 @@ zneg = -1.0
 vsol = 0.030
 vsalt=((4.0/3.0)*pi*(0.27)**3)/vsol  ! volume salt in units of vsol 0.2=radius salt  
 !vpol= 0.100/vsol ! ((4.0/3.0)*pi*(0.2)**3)/vsol  ! volume polymer segment in units of vsol 
-vpol= 0.095/vsol ! ((4.0/3.0)*pi*(0.2)**3)/vsol  ! volume polymer segment in units of vsol 
+vpol= 0.124/vsol ! ((4.0/3.0)*pi*(0.2)**3)/vsol  ! volume polymer segment in units of vsol 
+!vpol= 0.095/vsol ! ((4.0/3.0)*pi*(0.2)**3)/vsol  ! volume polymer segment in units of vsol 
 constq=delta*delta*4.0*pi*lb/vsol   ! multiplicative factor in poisson eq  
 pKw = 14
 Kw = 10**(-pKw)
-error = 1e-4 ! para comparar con la norma...
-errel=1d-6
+error = 1e-2 ! para comparar con la norma...
+errel=1d-2
 itmax=200
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
