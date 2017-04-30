@@ -232,8 +232,8 @@ enddo
 do i = 1, naa
 if(zpol(aat(i)).ne.0) then
  write(10000+i,*)pHbulk, DG(i)
- write(20000+i,*)pHbulk, fdisaa(i) 
- write(30000+i,*)pHbulk, -log10(Kaapp(i))
+ write(30000+i,*)pHbulk, fdisaa(i) 
+ write(20000+i,*)pHbulk, -log10(Kaapp(i))
 
  flush(10000+i)
  flush(20000+i)
