@@ -207,7 +207,7 @@ fdisaaT(i) = 1.0
 call solve_one(x1, xg1)
 call Free_Energy_Calc(counter, G1)
 DG(i) = G1-G0
-print*, 'G(',') =', DG(i), 'zpol =', zpol(aat(i))
+print*, 'G(',i,') =', DG(i), 'zpol =', zpol(aat(i))
 endif
 
 enddo
@@ -219,8 +219,8 @@ enddo
 
 do i = 1, naa
 im = aat(i)
-if(zpol(im).eq.1)Kaapp(i) = Ka(i)*exp(-(DG(i)-DGpos))
-if(zpol(im).eq.-1)Kaapp(i) = Ka(i)*exp(DG(i)-DGpos)
+if(zpol(im).eq.1)Kaapp(i) = Ka(im)*exp(-(DG(i)-DGpos))
+if(zpol(im).eq.-1)Kaapp(i) = Ka(im)*exp(DG(i)-DGpos)
 enddo
 
 !
