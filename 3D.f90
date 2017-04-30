@@ -11,8 +11,11 @@ use bulk
 use MPI
 use ellipsoid
 use ematrix
+use aa
+use inputtemp, only : cHplus, cOHmin, pHbulk
+
 implicit none
-integer ii,i, ix, iy, iz
+integer ii,i, ix, iy, iz, im
 integer counter
 !-----  varables de la resolucion -----------
 
@@ -31,12 +34,24 @@ parameter(tag = 0)
 integer err
 integer ier_tosend
 double  precision norma_tosend
+character*20 filename
+
+real*8 DGpos, DGneg
+real*8, allocatable :: DG(:), Kaapp(:)
+real*8 G0, G1
+
+! alocate
+
+allocate(DG(naa))
+allocate(Kaapp(naa))
 
 ! number of equations
 
 n = dimx*dimy*dimz
 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! Initial guess
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 if(infile.eq.2) then
   do i = 1, (2+N_poorsol)*n  
@@ -47,8 +62,8 @@ endif
 
 if(infile.eq.0) then
   do i=1,n
-    xg1(i)=xsolbulk
-    x1(i)=xsolbulk
+    xg1(i)=0.99
+    x1(i)=0.99
   enddo
   do i=n+1, 2*n
     xg1(i)=0.0d0
@@ -60,22 +75,181 @@ if(infile.eq.0) then
     x1(i)=xtotalbulk(ii)
   enddo
   enddo
-fdisaa = 0.5
-
-counter = 1
-fdisaa(5) = 0.0
-call solve_one(x1, xg1)
-call Free_Energy_Calc(counter)
-
-counter = 2
-fdisaa(5) = 1.0
-call solve_one(x1, xg1)
-call Free_Energy_Calc(counter)
-
-
-
 endif
 
+! Initial pKaapp = pKa
+
+do i = 1, naa
+ if(zpol(aat(i)).ne.0) then
+   Kaapp(i) = Ka(aat(i))
+ endif
+enddo
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! open files
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+  open(unit=9999,file='DGpos.dat')
+  open(unit=10000,file='DGneg.dat')
+do i = 1, naa
+if(zpol(aat(i)).ne.0) then
+  write(filename,'(A3, I3.3, A4)')'DG.', i, '.dat'
+  open(unit=10000+i,file=filename)
+  write(filename,'(A7, I3.3, A4)')'pKaapp.', i, '.dat'
+  open(unit=20000+i,file=filename)
+  write(filename,'(A7, I3.3, A4)')'fdissaa.', i, '.dat'
+  open(unit=30000+i,file=filename)
+endif
+enddo  
+
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Start calculation
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+! initial DG
+ 
+DG = 0.0
+
+! counter
+
+counter = 1
+
+! loop over pH starts here
+
+call initall
+!
+! 1. Calculate DG for pos and neg in bulk
+! 
+
+! pos
+zpolT = 0
+aagridT = 1
+aatT = 2 ! all segments are type 2
+
+zpolT(1) = 1 ! only segment type 1 is charged
+aatT(1) = 1 ! aa 1 is type 1 and has +1 charge
+aagridT(1,1) = dimx/2 ! center aa 1 in box
+aagridT(1,2) = dimy/2
+aagridT(1,3) = dimz/2
+volprot(aagridT(1,1),aagridT(1,2),aagridT(1,3)) = vpol*vsol/(delta**3) ! adds size
+
+! calc uncharged semgent
+fdisaaT(1) = 0.0
+call solve_one(x1, xg1)
+call Free_Energy_Calc(counter, G0)
+fdisaaT(1) = 1.0
+call solve_one(x1, xg1)
+call Free_Energy_Calc(counter, G1)
+DGpos = G1-G0
+write(9999,*)pHbulk, DGpos
+print*, 'Gpos =', DGpos
+! neg
+zpolT(1) = -1
+! calc uncharged semgent
+fdisaaT(1) = 0.0
+call solve_one(x1, xg1)
+call Free_Energy_Calc(counter, G0)
+fdisaaT(1) = 1.0
+call solve_one(x1, xg1)
+call Free_Energy_Calc(counter, G1)
+DGneg = G1-G0
+write(10000,*)pHbulk, DGneg
+print*, 'Gneg =', DGpos
+
+!
+! 1. Calculate f from pKaapps
+! 
+
+do i = 1, naa
+im = aat(i)
+ix = aagrid(i,1)
+iy = aagrid(i,2)
+iz = aagrid(i,3)
+
+  if(zpol(im).eq.1) then ! BASE
+     fdisaa(i) = 1.0 /(1.0 + cOHmin/(Kw/Kaapp(i)))
+  else if (zpol(im).eq.-1.0) then ! ACID
+     fdisaa(i)=1.0 /(1.0 + cHplus/Kaapp(i))
+  endif
+enddo ! i
+
+!
+! 2. Calculate DG for all aminocids with charge
+!
+zpolT = zpol
+aagridT = aagrid
+aatT = aat
+volprotT = volprot
+
+do i = 1, naa
+
+fdisaaT = fdisaa
+
+im = aat(i)
+ix = aagrid(i,1)
+iy = aagrid(i,2)
+iz = aagrid(i,3)
+
+if(zpol(im).ne.0) then
+
+print*, 'AA #', i
+
+! protein, zero
+fdisaaT(i) = 0.0
+call solve_one(x1, xg1)
+call Free_Energy_Calc(counter, G0)
+! protein, one
+fdisaaT(i) = 1.0
+call solve_one(x1, xg1)
+call Free_Energy_Calc(counter, G1)
+DG(i) = G1-G0
+print*, 'G(',') =', DG(i), 'zpol =', zpol(aat(i))
+endif
+
+enddo
+
+!
+! 3. Calculate new values for Kaaap
+!
+
+
+do i = 1, naa
+im = aat(i)
+if(zpol(im).eq.1) then
+ Kaapp(i) = Ka(i) + 0.43429*(DG(i)-DGpos)
+endif
+if(zpol(im).eq.-1) then
+ Kaapp(i) = Ka(i) - 0.43429*(DG(i)-DGneg)
+endif
+enddo
+
+!
+! 4. Save to disk
+!
+
+do i = 1, naa
+if(zpol(aat(i)).ne.0) then
+ write(10000+i,*)pHbulk, DG(i)
+ write(20000+i,*)pHbulk, fdisaa(i) 
+ write(30000+i,*)pHbulk, -log10(Kaapp(i))
+
+ flush(10000+i)
+ flush(20000+i)
+ flush(30000+i)
+
+endif
+enddo
+
+
+do i = 1, naa
+if(zpol(aat(i)).ne.0) then
+close(10000+i)
+close(10000+i)
+close(10000+i)
+endif
+enddo
 end subroutine
 
 subroutine solve_one(x1, xg1)
@@ -120,6 +294,8 @@ double  precision norma_tosend
 !--------------------------------------------------------------
 ! Solve               
 !--------------------------------------------------------------
+
+n=dimx*dimy*dimz
 
 ! JEFE
 if(rank.eq.0) then ! solo el jefe llama al solver

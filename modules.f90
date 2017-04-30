@@ -1,7 +1,9 @@
 module aa
 real*8, allocatable :: aapos(:,:)
 integer, allocatable :: aat(:)
+integer, allocatable :: aatT(:)
 integer, allocatable :: aagrid(:,:)
+integer, allocatable :: aagridT(:,:)
 endmodule
 
 module saves
@@ -81,6 +83,7 @@ real*8 vpol
 real*8 vsalt
 real*8 zpos,zneg
 integer, ALLOCATABLE :: zpol(:)
+integer, ALLOCATABLE :: zpolT(:)
 real*8 st
 integer nst
 real*8 st0(100)
@@ -170,6 +173,7 @@ real*8, allocatable :: xHplus(:,:,:) ! H+
 real*8, allocatable :: xOHmin(:,:,:) ! OH-
 real*8, allocatable :: fdis(:,:,:,:)
 real*8, allocatable :: fdisaa(:)
+real*8, allocatable :: fdisaaT(:)
 endmodule
 
 module bulk
@@ -201,6 +205,7 @@ use system
 integer kaptype
 integer naa
 real*8, allocatable :: volprot(:,:,:)
+real*8, allocatable :: volprotT(:,:,:)
 real*8, allocatable :: volprot1(:,:,:)
 real*8, allocatable :: voleps(:,:,:,:)
 real*8, allocatable :: voleps1(:,:,:)

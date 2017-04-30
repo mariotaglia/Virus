@@ -106,7 +106,6 @@ do counter = 1,nst
     if(rank.eq.0)print*, 'Particle OK'
   endif
 
- call initall
  call solve
  call savedata(counter/saveevery)
  if(rank.eq.0)print*, 'Free energy after solving', free_energy

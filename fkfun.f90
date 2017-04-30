@@ -180,7 +180,7 @@ enddo
 enddo ! N_poorsol
 
 ! Compute dielectric permitivity
-call dielectfcn(xtotal,volprot,epsfcn,Depsfcn)
+call dielectfcn(xtotal,volprotT,epsfcn,Depsfcn)
 
 !------------------------------------------------------------------------
 ! PDFs polimero
@@ -200,11 +200,11 @@ do ix=1,dimx
  do iy=1,dimy
    xpot(im,ix,iy,dimz+1) = xpotbulk(im)
    do iz=1,dimz
-     fv = (1.0 - volprot(ix,iy,iz))
+     fv = (1.0 - volprotT(ix,iy,iz))
      xpot(im, ix, iy, iz) = xh(ix,iy,iz)**vpol
 
-     if(zpol(im).ne.0) then
-     xpot(im,ix,iy,iz) = xpot(im,ix,iy,iz)*dexp(-psi(ix, iy, iz)*zpol(im)*fdis(im,ix,iy,iz))
+     if(zpolT(im).ne.0) then
+     xpot(im,ix,iy,iz) = xpot(im,ix,iy,iz)*dexp(-psi(ix, iy, iz)*zpolT(im)*fdis(im,ix,iy,iz))
      endif
 
      if(hydroph(im).ne.0) then
@@ -229,7 +229,7 @@ do ix=1,dimx
             jx = mod(jx-1+5*dimx, dimx) + 1
             jy = mod(jy-1+5*dimy, dimy) + 1
             if(((iz+az).ge.1).and.(iz+az).le.dimz) then
-               fv = (1.0-volprot(jx,jy,iz+az))
+               fv = (1.0-volprotT(jx,jy,iz+az))
             else
                fv = 1.0
             endif
@@ -392,7 +392,7 @@ do jj = 1, cpp
    do j=1,long
    at = segtype(j) ! segment type
 
-   fv = (1.0-volprot(px(i,j,jj),py(i,j,jj),pz(i,j,jj)))
+   fv = (1.0-volprotT(px(i,j,jj),py(i,j,jj),pz(i,j,jj)))
 
    avpol_temp(at,px(i,j, jj),py(i,j, jj),pz(i,j, jj))= &
    avpol_temp(at,px(i,j, jj),py(i,j, jj),pz(i,j, jj))+pro(i,jj)*vpol*vsol/(delta**3)/fv
@@ -442,14 +442,14 @@ do ix=1,dimx
    do iy=1,dimy
         do iz=1,dimz
   
-         fv = (1.0-volprot(ix,iy,iz))
+         fv = (1.0-volprotT(ix,iy,iz))
 
          qtot(ix, iy, iz) =  ((zpos*xpos(ix, iy, iz)+zneg*xneg(ix, iy, iz))/vsalt + xHplus(ix, iy, iz) - xOHmin(ix, iy, iz))*fv
 
 
          do im = 1, N_monomer
-         qtot(ix,iy,iz)=qtot(ix,iy,iz)+avpol(im,ix,iy,iz)*zpol(im)/vpol*fdis(im,ix,iy,iz)*fv
-         qtot(ix,iy,iz)=qtot(ix,iy,iz)+xprot(im,ix,iy,iz)*zpol(im)/vpol*fdis(im,ix,iy,iz)*fv
+         qtot(ix,iy,iz)=qtot(ix,iy,iz)+avpol(im,ix,iy,iz)*zpolT(im)/vpol*fdis(im,ix,iy,iz)*fv
+         qtot(ix,iy,iz)=qtot(ix,iy,iz)+xprot(im,ix,iy,iz)*zpolT(im)/vpol*fdis(im,ix,iy,iz)*fv
          enddo
         enddo
    enddo
@@ -458,12 +458,12 @@ enddo
 
 
          do i = 1, naa ! loop over aminoacids
-             im = aat(i)
-           if(zpol(im).ne.0) then ! charged aminoacid
-             ix = aagrid(i,1)
-             iy = aagrid(i,2)
-             iz = aagrid(i,3)
-             qtot(ix,iy,iz)=qtot(ix,iy,iz)+zpol(im)*fdisaa(i)*(vsol/delta**3)
+             im = aatT(i)
+           if(zpolT(im).ne.0) then ! charged aminoacid
+             ix = aagridT(i,1)
+             iy = aagridT(i,2)
+             iz = aagridT(i,3)
+             qtot(ix,iy,iz)=qtot(ix,iy,iz)+zpolT(im)*fdisaaT(i)*(vsol/delta**3)
            endif
         enddo
 
@@ -535,7 +535,7 @@ enddo
 
 iter = iter + 1
 if(verbose.ge.3) then
-if(rank.eq.0)print*,'fkfun:', iter, norma, q(1)
+!if(rank.eq.0)print*,'fkfun:', iter, norma, q(1)
 endif
 
 3333 continue

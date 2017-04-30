@@ -19,6 +19,7 @@
 
       ALLOCATE (st_matrix(N_poorsol, N_poorsol)) ! interaction between monomer types in fraction of st, scaled by st-scale during running....
       ALLOCATE (zpol(N_monomer))    ! charge of monomer segment: 1: base, -1: acid, 0:neutral
+      ALLOCATE (zpolT(N_monomer))    ! charge of monomer segment: 1: base, -1: acid, 0:neutral
       ALLOCATE (hydroph(N_monomer)) ! 0: hydrophilic, 1 < x < N_poorsol, type of poor solvent
       ALLOCATE (pKa(N_monomer), Ka(N_monomer), K0(N_monomer))
       ALLOCATE (ntypes(N_monomer))

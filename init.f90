@@ -15,6 +15,7 @@ use system
 use const
 use molecules
 use ellipsoid
+use mpi
 implicit none
 pi = acos(-1.0)
 seed = 15615
@@ -32,26 +33,6 @@ Kw = 10**(-pKw)
 error = 1e-4 ! para comparar con la norma...
 errel=1d-6
 itmax=200
-end subroutine
-
-subroutine initall
-use molecules
-use const
-use bulk
-use MPI
-use ellipsoid
-use chainsdat
-use inputtemp
-use mprotein
-use kai
-use system
-
-
-implicit none
-integer im
-real*8 prokap
-real*8 temp
-integer ii
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! Open common files
@@ -74,6 +55,29 @@ if(rank.eq.0) then
        open(unit=314, file='F_mixpos2.dat')
        open(unit=315, file='F_mixprot.dat')
 endif
+
+
+
+end subroutine
+
+subroutine initall
+use molecules
+use const
+use bulk
+use MPI
+use ellipsoid
+use chainsdat
+use inputtemp
+use mprotein
+use kai
+use system
+
+
+implicit none
+integer im
+real*8 prokap
+real*8 temp
+integer ii
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! Input-dependent variables

@@ -4,8 +4,7 @@
 !
 !
 !
-subroutine Free_Energy_Calc(looped)
-
+subroutine Free_Energy_Calc(looped, FE)
 use system
 use const
 use fields_fkfun
@@ -21,6 +20,7 @@ use mprotein
 use aa
 implicit none
 
+real*8 FE
 integer looped
 real*8  q_tosend(ncha)
 real*8  q0(ncha)
@@ -86,7 +86,7 @@ endif
       do iy = 1, dimy
       do iz = 1, dimz
       
-      fv=(1.0-volprot(ix,iy,iz))
+      fv=(1.0-volprotT(ix,iy,iz))
 
       if (rhoprot(ix,iy,iz).ne.0.0) then
       F_Mix_prot = F_Mix_prot + rhoprot(ix,iy,iz)*vkap &
@@ -113,7 +113,7 @@ endif
       do ix = 1, dimx
       do iy = 1, dimy
       do iz = 1, dimz
-      fv=(1.0-volprot(ix,iy,iz))
+      fv=(1.0-volprotT(ix,iy,iz))
       F_Mix_s = F_Mix_s + xh(ix, iy,iz)*(dlog(xh(ix, iy, iz))-1.0)*fv
       F_Mix_s = F_Mix_s - xsolbulk*(dlog(xsolbulk)-1.0)*fv
       enddo      
@@ -130,7 +130,7 @@ endif
       do iy = 1, dimy
       do iz = 1, dimz
       
-      fv=(1.0-volprot(ix,iy,iz))
+      fv=(1.0-volprotT(ix,iy,iz))
 
       F_Mix_pos = F_Mix_pos + xpos(ix, iy,iz) &
       *(dlog(xpos(ix, iy, iz)/vsalt)-1.0-dlog(expmupos) + dlog(vsalt))*fv
@@ -152,7 +152,7 @@ endif
       do iy = 1, dimy
       do iz = 1, dimz
 
-      fv=(1.0-volprot(ix,iy,iz))
+      fv=(1.0-volprotT(ix,iy,iz))
 
       F_Mix_neg = F_Mix_neg + xneg(ix, iy,iz) &
       *(dlog(xneg(ix, iy, iz)/vsalt)-1.0- dlog(expmuneg) + dlog(vsalt))*fv
@@ -174,7 +174,7 @@ endif
       do iy = 1, dimy
       do iz = 1, dimz
 
-      fv=(1.0-volprot(ix,iy,iz))
+      fv=(1.0-volprotT(ix,iy,iz))
 
       F_Mix_Hplus = F_Mix_Hplus &
      +xHplus(ix, iy, iz)*(dlog(xHplus(ix,iy,iz))-1.0 -dlog(expmuHplus))*fv
@@ -196,7 +196,7 @@ endif
       do iy = 1, dimy
       do iz = 1, dimz
 
-      fv=(1.0-volprot(ix,iy,iz))
+      fv=(1.0-volprotT(ix,iy,iz))
 
       F_Mix_OHmin = F_Mix_OHmin + xOHmin(ix, iy,iz)*(dlog(xOHmin(ix, iy, iz))-1.0-dlog(expmuOHmin))*fv
 
@@ -270,7 +270,7 @@ endif
       do iy = 1, dimy
       do iz = 1, dimz
 
-      fv=(1.0-volprot(ix,iy,iz))
+      fv=(1.0-volprotT(ix,iy,iz))
 
             do ax = -Xulimit,Xulimit
             do ay = -Xulimit,Xulimit
@@ -283,7 +283,7 @@ endif
             jy = mod(jy-1+5*dimy, dimy) + 1
   
       if(((iz+az).ge.1).and.((iz+az).le.dimz)) then 
-         fv2 = (1.0-volprot(jx,jy,iz+az)) 
+         fv2 = (1.0-volprotT(jx,jy,iz+az)) 
       else
          fv2 = 1.0
       endif 
@@ -351,7 +351,7 @@ endif
       do ix = 1, dimx
       do iy = 1, dimy
       do iz = 1, dimz
-      fv= (1.0-volprot(ix,iy,iz))
+      fv= (1.0-volprotT(ix,iy,iz))
 
       do iii = 1, N_poorsol
       F_eps = F_eps - xtotal(ii,ix,iy,iz)*st*st_matrix(ii,iii)*voleps(ix,iy,iz,iii)*(delta**3)/vpol/vsol*fv
@@ -383,7 +383,7 @@ endif
         do iy=1,dimy
         do iz=1,dimz
 
-      fv=(1.0-volprot(ix,iy,iz))
+      fv=(1.0-volprotT(ix,iy,iz))
 
            sumpi = sumpi+dlog(xh(ix, iy, iz))*fv     
            sumpi = sumpi-dlog(xsolbulk)*fv
@@ -409,12 +409,12 @@ endif
         
 
          do i = 1, naa
-         im = aat(i)
-         if(zpol(im).ne.0) then ! charged aa
-          ix = aagrid(i,1)
-          iy = aagrid(i,2)
-          iz = aagrid(i,3)
-          sumel = sumel + psi(ix,iy,iz)*zpol(im)*fdisaa(i)*(vsol/delta**3)
+         im = aatT(i)
+         if(zpolT(im).ne.0) then ! charged aa
+          ix = aagridT(i,1)
+          iy = aagridT(i,2)
+          iz = aagridT(i,3)
+          sumel = sumel + psi(ix,iy,iz)*zpolT(im)*fdisaaT(i)*(vsol/delta**3)
          endif
          enddo
  
@@ -477,6 +477,8 @@ endif
  
  888     call MPI_BCAST(free_energy, 1, MPI_DOUBLE_PRECISION,0, MPI_COMM_WORLD, err)
 
+
+         FE = free_energy
          return
 
          end

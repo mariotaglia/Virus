@@ -8,7 +8,7 @@ use ellipsoid
 use chainsdat
 use kai
 use aa
-use results, only : fdisaa
+use results, only : fdisaa, fdisaaT
 implicit none
 logical flag
 integer i
@@ -29,8 +29,11 @@ read(3333,*)naa
 
 allocate(aapos(naa,3))
 allocate(aat(naa))
+allocate(aatT(naa))
 allocate(aagrid(naa,3)) ! keeps info of position of original aminoacids index 1=x,2=y,3=z,4=aat
+allocate(aagridT(naa,3)) ! keeps info of position of original aminoacids index 1=x,2=y,3=z,4=aat
 allocate(fdisaa(naa))
+allocate(fdisaaT(naa))
 
 do i = 1, naa
 read(3333,*)aapos(i,1),aapos(i,2),aapos(i,3),aat(i)
