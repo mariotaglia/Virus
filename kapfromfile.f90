@@ -120,7 +120,7 @@ enddo
 enddo
 
 where (volprot > 1.0) volprot = 1.0
-volprot = volprot*0.99
+volprot = volprot*0.999
 
 title = 'avpro'
 counter = 1

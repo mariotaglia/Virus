@@ -37,13 +37,16 @@ double  precision norma_tosend
 character*20 filename
 
 real*8 DGpos, DGneg
-real*8, allocatable :: DG(:), Kaapp(:)
+real*8, allocatable :: DG(:), Kaapp(:), Kaapp_last(:)
 real*8 G0, G1
+real*8 maxerror
+real*8, parameter :: errorpKa = 0.01
 
 ! alocate
 
 allocate(DG(naa))
 allocate(Kaapp(naa))
+allocate(Kaapp_last(naa))
 
 ! number of equations
 
@@ -77,14 +80,6 @@ if(infile.eq.0) then
   enddo
 endif
 
-! Initial pKaapp = pKa
-
-do i = 1, naa
- if(zpol(aat(i)).ne.0) then
-   Kaapp(i) = Ka(aat(i))
- endif
-enddo
-
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! open files
@@ -108,16 +103,28 @@ enddo
 ! Start calculation
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-! initial DG
- 
+! initial DG and pKaapp
 DG = 0.0
 
-! counter
+! Initial pKaapp = pKa
+do i = 1, naa
+ if(zpol(aat(i)).ne.0) then
+   Kaapp(i) = Ka(aat(i))
+ endif
+enddo
 
+! norma
+maxerror = errorpKa+1.0
+
+! counter
 counter = 1
 
 ! loop over pH starts here
 do counter = 1, npH
+
+Kaapp_last = Kaapp 
+
+do while (maxerror.gt.errorpKa)
 
 call initall
 
@@ -224,7 +231,22 @@ if(zpol(im).eq.-1)Kaapp(i) = Ka(im)*exp(-(DG(i)-DGneg))
 enddo
 
 !
-! 4. Save to disk
+! 4. Calculate maxerror
+!
+maxerror = 0.0
+do i = 1, naa
+im = aat(i)
+if(zpol(im).ne.0) then
+ if(abs(-log10(Kaapp(i)) + log10(Kaapp_last(i))).gt.maxerror)maxerror=abs(-log10(Kaapp(i)) + log10(Kaapp_last(i)))
+endif
+enddo
+
+print*, 'Maximum error in iteration: ', maxerror, ' pH units'
+
+enddo ! maxerror > errorpKa
+
+!
+! 5. Save to disk
 !
 
 do i = 1, naa

@@ -102,7 +102,7 @@ do j = 1, NNN
  temp = sum(volq1)
  volq1 = volq1/temp*echarge(j)/(delta**3) ! sum(volq) is echarge
 
- volprot1 = volprot1 * 0.99
+ volprot1 = volprot1 * 0.999
 
 ! CHECK COLLISION HERE...
 
