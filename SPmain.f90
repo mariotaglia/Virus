@@ -1,7 +1,6 @@
 !## Montecarlo - Molecular theory for the adsorption of a particle on a brush
 
 use system
-use MPI
 use ellipsoid
 use kinsol
 use const
@@ -27,19 +26,12 @@ integer j
 counter = 0
 counterr = 1
 
-call initmpi
 call monomer_definitions
 call readinput
-if(rank.eq.0)print*, 'MPI OK'
-
-call chains_definitions
-
-call kap ! calculate Kaps matrices
-call kais
-if(rank.eq.0)print*, 'Kai OK'
 
 call initconst
 call allocation
+
 
 !!! General files
 
@@ -56,42 +48,13 @@ open(file='free_energy.dat', unit=9000)
 open(file='acceptance.dat', unit=9001)
 
 verbose = 5
-moves = 0
-rots = 0
-maxmove = delta*2.0
-maxrot = pi/180.0*30.0
-MCpoints = 10000
-saveevery = 10
-
-! Calculate poor-solvent coefficients
-call  graftpoints
-if(rank.eq.0)print*, 'Graftpoints OK'
-
-call creador ! Genera cadenas
-if(rank.eq.0)print*, 'Creador OK'
-
-!call update_matrix(flag) ! updates 'the matrix'
-!
-!  if(flag.eqv..true.) then
-!    print*, 'Initial position of particle does not fit in z'
-!    print*, 'or particles collide'
-!    stop
-!  else
-!    if(rank.eq.0)print*, 'Particle OK'
-!  endif
 
 if(infile.eq.1) then
    call retrivefromdisk(counter)
    counterr = counter
-   if(rank.eq.0)print*, 'Load input from file'
-   if(rank.eq.0)print*, 'Free energy', free_energy
+   print*, 'Load input from file'
+   print*, 'Free energy', free_energy
    infile = 2
-!   call update_matrix(flag)
-!   if(flag.eqv..true.) then
-!    print*, 'Initial position of particle does not fit in z'
-!    print*, 'or particles collide'
-!    stop
-!   endif
 endif
 
  counter = 1
@@ -102,8 +65,9 @@ endif
     print*, 'or particles collide'
     stop
   else
-    if(rank.eq.0)print*, 'Particle OK'
+    print*, 'Particle OK'
   endif
+
 
  call solve
 

@@ -3,12 +3,10 @@ subroutine solve
 use system
 use const
 use kai
-use chainsdat
 use molecules
 use results
 use kinsol
 use bulk
-use MPI
 use ellipsoid
 use ematrix
 use aa
@@ -19,8 +17,8 @@ integer ii,i, ix, iy, iz, im
 integer counter
 !-----  varables de la resolucion -----------
 
-real*8 x1((2+N_poorsol)*dimx*dimy*dimz)
-real*8 xg1((2+N_poorsol)*dimx*dimy*dimz)
+real*8 x1(2*dimx*dimy*dimz)
+real*8 xg1(2*dimx*dimy*dimz)
        
 integer n
 
@@ -28,25 +26,22 @@ integer n
 real*8 xh(dimx, dimy, dimz)
 real*8 psi(dimx, dimy, dimz) ! potencial
 
-! MPI
-integer tag, source
-parameter(tag = 0)
-integer err
-integer ier_tosend
-double  precision norma_tosend
-character*20 filename
-
 real*8 DGpos, DGneg
 real*8, allocatable :: DG(:), Kaapp(:), Kaapp_last(:)
 real*8 G0, G1
 real*8 maxerror
 real*8, parameter :: errorpKa = 0.01
 
+character*20 filename
+
+
+
 ! alocate
 
 allocate(DG(naa))
 allocate(Kaapp(naa))
 allocate(Kaapp_last(naa))
+
 
 ! number of equations
 
@@ -57,7 +52,7 @@ n = dimx*dimy*dimz
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 if(infile.eq.2) then
-  do i = 1, (2+N_poorsol)*n  
+  do i = 1, 2*n  
       xg1(i) = xflag(i)     
       x1(i) = xflag(i)
   enddo
@@ -71,12 +66,6 @@ if(infile.eq.0) then
   do i=n+1, 2*n
     xg1(i)=0.0d0
     x1(i)=0.0d0
-  enddo
-  do ii = 1, N_poorsol
-  do i=n*(1+ii)+1, n*(2+ii)
-    xg1(i)=xtotalbulk(ii)
-    x1(i)=xtotalbulk(ii)
-  enddo
   enddo
 endif
 
@@ -108,6 +97,8 @@ DG = 0.0
 
 ! Initial pKaapp = pKa
 call initall
+
+
 do i = 1, naa
  if(zpol(aat(i)).ne.0) then
    Kaapp(i) = Ka(aat(i))
@@ -126,7 +117,6 @@ do while (maxerror.gt.errorpKa)
 Kaapp_last = Kaapp 
 call initall
 
-!
 ! 1. Calculate DG for pos and neg in bulk
 ! 
 
@@ -141,6 +131,7 @@ aagridT(1,1) = dimx/2 ! center aa 1 in box
 aagridT(1,2) = dimy/2
 aagridT(1,3) = dimz/2
 volprot(aagridT(1,1),aagridT(1,2),aagridT(1,3)) = vpol*vsol/(delta**3) ! adds size
+
 
 ! calc uncharged semgent
 fdisaaT(1) = 0.0
@@ -279,12 +270,10 @@ subroutine solve_one(x1, xg1)
 use system
 use const
 use kai
-use chainsdat
 use molecules
 use results
 use kinsol
 use bulk
-use MPI
 use ellipsoid
 use ematrix
 implicit none
@@ -294,8 +283,8 @@ integer ii,i, ix, iy, iz
 
 !-----  varables de la resolucion -----------
 
-real*8 x1((2+N_poorsol)*dimx*dimy*dimz)
-real*8 xg1((2+N_poorsol)*dimx*dimy*dimz)
+real*8 x1(2*dimx*dimy*dimz)
+real*8 xg1(2*dimx*dimy*dimz)
 
 integer n
 
@@ -303,66 +292,17 @@ integer n
 real*8 xh(dimx, dimy, dimz)
 real*8 psi(dimx, dimy, dimz) ! potencial
 
-! MPI
-integer tag, source
-parameter(tag = 0)
-integer err
-integer ier_tosend
-double  precision norma_tosend
-
-
-
-
 !--------------------------------------------------------------
 ! Solve               
 !--------------------------------------------------------------
 
 n=dimx*dimy*dimz
 
-! JEFE
-if(rank.eq.0) then ! solo el jefe llama al solver
+
    iter = 0
-   print*, 'solve: Enter solver ', (2+N_poorsol)*n, ' eqs'
+   print*, 'solve: Enter solver ', 2*n, ' eqs'
    call call_kinsol(x1, xg1, ier)
-   flagsolver = 0
-   CALL MPI_BCAST(flagsolver, 1, MPI_INTEGER, 0, MPI_COMM_WORLD,err)
-endif
   
-! Subordinados
-
-if(rank.ne.0) then
-  do
-     flagsolver = 0
-     source = 0
-     CALL MPI_BCAST(flagsolver, 1, MPI_INTEGER, 0, MPI_COMM_WORLD,err)
-     if(flagsolver.eq.1) then
-        call call_fkfun(x1) ! todavia no hay solucion => fkfun 
-     endif ! flagsolver
-     if(flagsolver.eq.0) exit ! Detiene el programa para este nodo
-   enddo
-endif
-
-! Recupero el valor de ier y de la norma
-! Asi los subordinados se enteran si el solver convergio o si hay que
-! cambiar la   estrategia...
-! Jefe
-
-if (rank.eq.0) then
-   norma_tosend = norma
-   ier_tosend = ier ! distinto tipo de integer
-   CALL MPI_BCAST(norma_tosend, 1, MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,err)
-   CALL MPI_BCAST(ier_tosend,1, MPI_INTEGER,0,MPI_COMM_WORLD,err)
-endif
-
-! Subordinados
-
-if (rank.ne.0) then
-   CALL MPI_BCAST(norma_tosend, 1, MPI_DOUBLE_PRECISION,0,MPI_COMM_WORLD,err)
-   CALL MPI_BCAST(ier_tosend, 1, MPI_INTEGER,0,MPI_COMM_WORLD,err)
-   norma = norma_tosend
-   ier = ier_tosend
-endif
-
 ! Recupera xh y psi (NO SON COMMON!)
 do ix=1,dimx
    do iy=1,dimy
@@ -377,15 +317,14 @@ enddo
 
 if(infile.ne.5) then
   if((ier.lt.0).or.(.not.((norma.gt.0).or.(norma.lt.0))).or.(norma.gt.error)) then ! exploto...
-    if(rank.eq.0)print*, 'solve: Error in solver: ', ier
-    if(rank.eq.0)print*, 'solve: norma ', norma
-    call MPI_FINALIZE(ierr) ! finaliza MPI
+    print*, 'solve: Error in solver: ', ier
+    print*, 'solve: norma ', norma
     stop
   endif
 endif    
 
 ! No exploto, guardo xflag
-do i = 1, n*(2+N_poorsol)
+do i = 1, 2*n
   xflag(i) = x1(i) ! xflag sirve como input para la proxima iteracion
 enddo
 infile = 2 ! no vuelve a leer infile

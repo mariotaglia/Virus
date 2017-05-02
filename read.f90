@@ -4,11 +4,8 @@ use system
 use molecules
 use const
 use bulk
-use MPI
 use ellipsoid
-use chainsdat
 use inputtemp
-use mprotein
 use saves
 
 implicit none

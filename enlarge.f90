@@ -103,13 +103,11 @@ use news
 implicit none
 integer counter
 
-if(rank.eq.0) then
 open (unit=8, file='newout.out', form='unformatted')
 write(8)counter
 write(8)seed
 write(8)free_energy
 write(8)xflag_new
 close(8)
-endif
 end subroutine
 

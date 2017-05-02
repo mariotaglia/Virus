@@ -55,7 +55,6 @@ subroutine update_matrix_ellipsoid(flag)
 use system
 use ellipsoid
 use ematrix
-use MPI
 use const
 implicit none
 integer npoints ! points per cell for numerical integration 
@@ -69,7 +68,6 @@ flag = .false.
 call make_ellipsoid ! update matrixes for all particles
 
 ! clear all
-voleps = 0.0
 volprot = 0.0
 volq = 0.0
 
@@ -86,17 +84,11 @@ do j = 1, NNN
  npoints = 10
 
  flag = .false.
-
- call integrate(AAAL(:,:,j),AellL(:,j), Rell(:,j),npoints, voleps1 ,flag)
- flag = .false. ! not a problem if eps lays outside boundaries
  call integrate(AAA(:,:,j),Aell(:,j), Rell(:,j),npoints, volprot1, flag)
  call integrate(AAAS(:,:,j),AellS(:,j), Rell(:,j),npoints, volq1, flag)
 
  temp = 4.0/3.0*pi*Aell(1,j)*Aell(2,j)*Aell(3,j)/(sum(volprot1)*delta**3) ! rescales volume
  volprot1 = volprot1*temp
-
- voleps1 = voleps1-volprot1
- voleps1 = voleps1*eeps(j)
 
  volq1(1,:,:,:) = volprot1(:,:,:)-volq1(1,:,:,:)
  temp = sum(volq1)
@@ -112,7 +104,6 @@ do j = 1, NNN
    exit
  endif
  
- voleps(:,:,:,1) = voleps(:,:,:,1) + voleps1(:,:,:)
  volq = volq + volq1 
 
 enddo
@@ -126,15 +117,9 @@ temp = 0
 do j = 1, NNN
 temp = temp + 4.0/3.0*pi*Aell(1,j)*Aell(2,j)*Aell(3,j)
 enddo
-if (rank.eq.0) then
 print*, 'update_matrix: Total volumen real space= ', temp
 print*, 'update_matrix: Total discretized volumen =', sum(volprot)*delta**3
 endif
-endif
-
-title = 'aveps'
-counter = 1
-call savetodisk(voleps, title, counter)
 
 title = 'avcha'
 counter = 1
