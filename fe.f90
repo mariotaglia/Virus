@@ -35,22 +35,6 @@ real*8 t1, t2
 Free_Energy = 0.0
 Free_Energy2 = 0.0
 
-! 1. Mezcla solvente
-
-      F_Mix_s = 0.0 
-
-      do ix = 1, dimx
-      do iy = 1, dimy
-      do iz = 1, dimz
-      fv=(1.0-volprotT(ix,iy,iz))
-      F_Mix_s = F_Mix_s + xh(ix, iy,iz)*(dlog(xh(ix, iy, iz))-1.0)*fv
-      F_Mix_s = F_Mix_s - xsolbulk*(dlog(xsolbulk)-1.0)*fv
-      enddo      
-      enddo      
-      enddo      
-      F_Mix_s = F_Mix_s * delta**3/vsol
-      Free_Energy = Free_Energy + F_Mix_s
-
 ! 2. Mezcla ion positivo
 
       F_Mix_pos = 0.0 
@@ -171,14 +155,11 @@ Free_Energy2 = 0.0
 
       fv=(1.0-volprotT(ix,iy,iz))
 
-           sumpi = sumpi+dlog(xh(ix, iy, iz))*fv     
-           sumpi = sumpi-dlog(xsolbulk)*fv
-     
-           sumrho = sumrho + ( - xh(ix, iy, iz) -xHplus(ix, iy, iz)  &
+           sumrho = sumrho + ( -xHplus(ix, iy, iz)  &
         - xOHmin(ix, iy, iz) - (xpos(ix, iy, iz)+xneg(ix, iy, iz))/vsalt)*fv! sum over  rho_i i=+,-,s
 
 
-           sumrho = sumrho - ( - xsolbulk -xHplusbulk &
+           sumrho = sumrho - ( -xHplusbulk &
        -xOHminbulk - (xposbulk+xnegbulk)/vsalt )*fv ! sum over  rho_i i=+,-,s
 
          sumel = sumel - qtot(ix, iy, iz)*psi(ix, iy, iz)/2.0 
@@ -219,7 +200,6 @@ Free_Energy2 = 0.0
 ! Guarda energia libre
 
          write(301,*)looped, Free_energy
-         write(302,*)looped, F_Mix_s 
          write(303,*)looped, F_Mix_pos
          write(304,*)looped, F_Mix_neg
          write(305,*)looped, F_Mix_Hplus

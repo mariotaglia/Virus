@@ -15,8 +15,8 @@ implicit none
 integer*4 ier2
 integer ntot
 
-real*8 x(2*dimx*dimy*dimz)
-real*8 f(2*dimx*dimy*dimz)
+real*8 x(dimx*dimy*dimz)
+real*8 f(dimx*dimy*dimz)
 
 real*8 protemp
 integer i,j, ix, iy, iz, ii, ax, ay, az
@@ -37,8 +37,6 @@ integer im, at
 
 integer zmin, zmax
 
-shift = 1.0d150
-
 
 ! Recupera xh y psi desde x()
 
@@ -46,8 +44,7 @@ ntot = dimx*dimy*dimz ! numero de celdas
 do ix=1,dimx
  do iy=1,dimy
   do iz=1,dimz
-     xh(ix,iy,iz)=x(ix+dimx*(iy-1)+dimx*dimy*(iz-1))
-     psi(ix,iy,iz)=x(ix+dimx*(iy-1)+dimx*dimy*(iz-1)+ntot)   
+     psi(ix,iy,iz)=x(ix+dimx*(iy-1)+dimx*dimy*(iz-1))
   enddo
  enddo
 enddo
@@ -74,7 +71,7 @@ enddo
 do ix = 1, dimx
  do iy = 1, dimy
    psi(ix, iy, dimz+1) = 0.0  ! psibulk = 0.0
-   psi(ix, iy, 0) = psi(ix, iy, 1) ! zero charge
+   psi(ix, iy, 0) = 0.0 ! psi(ix, iy, 1) ! zero charge
 !   psi(ix, iy, 0) = psi(ix, iy, 1)*epsfcn(ix,iy,1)/epsfcn(ix,iy,0) ! zero charge
  enddo
 enddo
@@ -93,10 +90,10 @@ enddo
 do ix=1,dimx
  do iy=1,dimy
   do iz=1,dimz
-    xpos(ix, iy, iz) = expmupos*(xh(ix, iy, iz)**vsalt)*dexp(-psi(ix, iy, iz)*zpos) ! ion plus volume fraction 
-    xneg(ix, iy, iz) = expmuneg*(xh(ix, iy, iz)**vsalt)*dexp(-psi(ix, iy, iz)*zneg) ! ion neg volume fraction
-    xHplus(ix, iy, iz) = expmuHplus*(xh(ix, iy, iz))*dexp(-psi(ix, iy, iz))           ! H+ volume fraction
-    xOHmin(ix, iy,iz) = expmuOHmin*(xh(ix,iy,iz))*dexp(+psi(ix,iy,iz))           ! OH-  volume fraction
+    xpos(ix, iy, iz) = expmupos*dexp(-psi(ix, iy, iz)*zpos) ! ion plus volume fraction 
+    xneg(ix, iy, iz) = expmuneg*dexp(-psi(ix, iy, iz)*zneg) ! ion neg volume fraction
+    xHplus(ix, iy, iz) = expmuHplus*dexp(-psi(ix, iy, iz))           ! H+ volume fraction
+    xOHmin(ix, iy,iz) = expmuOHmin*dexp(+psi(ix,iy,iz))           ! OH-  volume fraction
    enddo
  enddo  
 enddo
@@ -126,25 +123,6 @@ do i = 1, naa ! loop over aminoacids
    endif
 enddo
 
-! Volume fraction
-
-do ix=1,dimx
-   do iy=1,dimy
-      do iz=1,dimz
-      f(ix+dimx*(iy-1)+dimx*dimy*(iz-1))= xh(ix,iy,iz) + &
-      xneg(ix, iy, iz) + xpos(ix, iy, iz) + xHplus(ix, iy, iz) + &
-      xOHmin(ix, iy, iz) -1.000000d0
-      f(ix+dimx*(iy-1)+dimx*dimy*(iz-1))=f(ix+dimx*(iy-1)+dimx*dimy*(iz-1))*fv
-      if(volprotT(ix,iy,iz).eq.1.0)f(ix+dimx*(iy-1)+dimx*dimy*(iz-1))=0.0
-
-!      if(isnan(f(ix+dimx*(iy-1)+dimx*dimy*(iz-1)))) then
-!            print*, volprotT(ix,iy,iz)          
-!            stop
-!      endif 
-     enddo
-   enddo
-enddo
-
 ! Poisson eq.
 
 do ix=1,dimx
@@ -156,15 +134,16 @@ do ix=1,dimx
        psitemp = psitemp + (psi(ix+1,iy,iz)-psi(ix-1,iy,iz))*(epsfcn(ix+1,iy,iz)-epsfcn(ix-1,iy,iz))/4.0
        psitemp = psitemp + (psi(ix,iy+1,iz)-psi(ix,iy-1,iz))*(epsfcn(ix,iy+1,iz)-epsfcn(ix,iy-1,iz))/4.0
        psitemp = psitemp + (psi(ix,iy,iz+1)-psi(ix,iy,iz-1))*(epsfcn(ix,iy,iz+1)-epsfcn(ix,iy,iz-1))/4.0
-      f(ix+dimx*(iy-1)+dimx*dimy*(iz-1)+ntot)=(psitemp + &
+      f(ix+dimx*(iy-1)+dimx*dimy*(iz-1))=(psitemp + &
       qtot(ix, iy, iz)*constq)/(-2.0)
       enddo
    enddo
 enddo
 
+
 norma = 0.0
 
-do i = 1, 2*ntot
+do i = 1, ntot
   norma = norma + (f(i))**2
 enddo
 

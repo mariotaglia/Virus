@@ -82,10 +82,10 @@ endif
 
 xsolbulk=1.0 -xHplusbulk -xOHminbulk -xnegbulk -xposbulk 
 
-expmupos = xposbulk /xsolbulk**vsalt
-expmuneg = xnegbulk /xsolbulk**vsalt
-expmuHplus = xHplusbulk /xsolbulk   ! vsol = vHplus 
-expmuOHmin = xOHminbulk /xsolbulk   ! vsol = vOHmin 
+expmupos = xposbulk 
+expmuneg = xnegbulk 
+expmuHplus = xHplusbulk    ! vsol = vHplus 
+expmuOHmin = xOHminbulk    ! vsol = vOHmin 
 
          print*, 'Bulk composition / volume fracion'
          print*, 'Cations ', xposbulk

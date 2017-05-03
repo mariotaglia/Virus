@@ -42,20 +42,11 @@ integer n
 
 common /psize/ neq
 
-n = neq/2 
+n = neq 
 
-      do i = 1, n
+      do i = 1,n
          pp(i) = 1.0 / (1.0+(1.0-udata(i))*exp(1.0-udata(i)))
       enddo
-
-      do i = n+1,2*n
-         pp(i) = 1.0
-      enddo
-
-      do i = 2*n+1, neq
-         pp(i) = 1.0 / (1.0+(1.0-udata(i))*exp(1.0-udata(i)))
-      enddo
-
 
    ier = 0
 return
@@ -72,9 +63,9 @@ use molecules
 
 integer i
 
-real*8 x1_old(2*dimx*dimy*dimz)
-real*8 x1(2*dimx*dimy*dimz)
-real*8 f(2*dimx*dimy*dimz)
+real*8 x1_old(dimx*dimy*dimz)
+real*8 x1(dimx*dimy*dimz)
+real*8 f(dimx*dimy*dimz)
 
 ! MPI
 
@@ -83,11 +74,9 @@ parameter(tag = 0)
 integer err
 
 x1 = 0.0
-do i = 1,2*dimx*dimy*dimz
+do i = 1,dimx*dimy*dimz
   x1(i) = x1_old(i)
 enddo
-
-CALL MPI_BCAST(x1,2*dimx*dimy*dimz , MPI_DOUBLE_PRECISION,0, MPI_COMM_WORLD,err)
 
 call fkfun(x1,f, ier) ! todavia no hay solucion => fkfun 
 end
@@ -97,14 +86,15 @@ use system
 use molecules
 implicit none
 integer i
-real*8 x1(2*dimx*dimy*dimz), xg1(2*dimx*dimy*dimz)
-real*8 x1_old(2*dimx*dimy*dimz), xg1_old(2*dimx*dimy*dimz)
+real*8 x1(dimx*dimy*dimz), xg1(dimx*dimy*dimz)
+real*8 x1_old(dimx*dimy*dimz), xg1_old(dimx*dimy*dimz)
 integer*8 iout(15) ! Kinsol additional output information
 real*8 rout(2) ! Kinsol additional out information
 integer*8 msbpre
 real*8 fnormtol, scsteptol
-real*8 scale(2*dimx*dimy*dimz)
-real*8 constr(2*dimx*dimy*dimz)
+real*8 uscale(dimx*dimy*dimz)
+real*8 fscale(dimx*dimy*dimz)
+real*8 constr(dimx*dimy*dimz)
 integer*4  globalstrat, maxl, maxlrst
 integer*4 ier ! Kinsol error flag
 integer neq ! Kinsol number of equations
@@ -116,7 +106,7 @@ integer ncells
 ! INICIA KINSOL
 
 ncells = dimx*dimy*dimz
-neq = 2*dimx*dimy*dimz
+neq = dimx*dimy*dimz
 msbpre  = 10 ! maximum number of iterations without prec. setup (?)
 fnormtol = 1.0d-5 ! Function-norm stopping tolerance
 scsteptol = 1.0d-5 ! Function-norm stopping tolerance
@@ -146,15 +136,8 @@ call fkinsetrin('SSTEP_TOL', scsteptol, ier)
 !call fkinsetiin('MAX_NITER', max_niter, ier)
 
 do i = 1, ncells  !constraint vector
-   constr(i) = 2.0
-enddo
-do i = ncells+1, 2*ncells  !constraint vector
    constr(i) = 0.0
 enddo
-do i = 2*ncells+1, neq  !constraint vector
-   constr(i) = 0.0
-enddo
-
 
 call fkinsetvin('CONSTR_VEC', constr, ier) ! constraint vector
 ! CALL FKINSPTFQMR (MAXL, IER)
@@ -170,7 +153,8 @@ endif
 call fkinspilssetprec(1, ier) ! preconditiones
 
 do i = 1, neq ! scaling vector
-  scale(i) = 1.0
+  uscale(i) = 0.001
+  fscale(i) = 1.0
 enddo
 
 do i = 1, neq ! Initial guess
@@ -179,7 +163,7 @@ do i = 1, neq ! Initial guess
 enddo
 
 
-call fkinsol(x1, globalstrat, scale, scale, ier)         ! Llama a kinsol
+call fkinsol(x1, globalstrat, uscale, fscale, ier)         ! Llama a kinsol
 
 if (ier .lt. 0) then
       print*, 'call_kinsol: SUNDIALS_ERROR: FKINSOL returned IER = ', ier

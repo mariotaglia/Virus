@@ -53,7 +53,7 @@ n = dimx*dimy*dimz
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 if(infile.eq.2) then
-  do i = 1, 2*n  
+  do i = 1, n  
       xg1(i) = xflag(i)     
       x1(i) = xflag(i)
   enddo
@@ -61,12 +61,8 @@ endif
 
 if(infile.eq.0) then
   do i=1,n
-    xg1(i)=0.99
-    x1(i)=0.99
-  enddo
-  do i=n+1, 2*n
-    xg1(i)=0.0d0
-    x1(i)=0.0d0
+    xg1(i)=0.0
+    x1(i)=0.0
   enddo
 endif
 
@@ -138,12 +134,11 @@ do jy=-limit, limit
 do jz=-limit, limit
 volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz) =   & 
      protn(jx,jy,jz)+volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz) ! adds size
+enddo
+enddo
+enddo
 
-!print*, jx,jy,jz, volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz)
-
-enddo
-enddo
-enddo
+where(volprotT > 1.0) volprotT = 1.0
 
 ! calc uncharged semgent
 fdisaaT(1) = 0.0
@@ -155,6 +150,9 @@ call Free_Energy_Calc(counter, G1)
 DGpos = G1-G0
 write(9999,*)pHbulk, DGpos
 print*, 'Gpos =', DGpos
+stop
+
+
 
 ! neg
 zpolT(1) = -1
@@ -304,7 +302,8 @@ integer n
 ! Volumen fraction
 real*8 xh(dimx, dimy, dimz)
 real*8 psi(dimx, dimy, dimz) ! potencial
-
+integer counter
+counter = 1
 !--------------------------------------------------------------
 ! Solve               
 !--------------------------------------------------------------
@@ -315,17 +314,15 @@ call dielectfcn(volprotT,epsfcn)
 
 n=dimx*dimy*dimz
 
-
    iter = 0
-   print*, 'solve: Enter solver ', 2*n, ' eqs'
+   print*, 'solve: Enter solver ', n, ' eqs'
    call call_kinsol(x1, xg1, ier)
   
 ! Recupera xh y psi (NO SON COMMON!)
 do ix=1,dimx
    do iy=1,dimy
       do iz=1,dimz
-       xh(ix,iy,iz)=x1(ix+dimx*(iy-1)+dimx*dimy*(iz-1))
-       psi(ix,iy,iz)=x1(ix+dimx*(iy-1)+dimx*dimy*(iz-1)+n)
+       psi(ix,iy,iz)=x1(ix+dimx*(iy-1)+dimx*dimy*(iz-1))
       enddo
    enddo  
 enddo
@@ -341,9 +338,8 @@ if(infile.ne.5) then
 endif    
 
 ! No exploto, guardo xflag
-do i = 1, 2*n
+do i = 1, n
   xflag(i) = x1(i) ! xflag sirve como input para la proxima iteracion
 enddo
 infile = 2 ! no vuelve a leer infile
-
 end subroutine
