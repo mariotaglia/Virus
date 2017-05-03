@@ -6,7 +6,7 @@ use molecules
 use ellipsoid
 use aa
 use results, only : fdisaa, fdisaaT
-
+use sphereV
 
 implicit none
 logical flag
@@ -17,6 +17,10 @@ character*5 title
 integer hh,ax,ay,az,jx,jy,jz
 real*8 avpol2
 integer iii
+real*8 radius
+
+radius = 0.31 ! aa radius
+
 avpol2 = (delta**3)/vsol
 
 flag = .false.
@@ -49,6 +53,9 @@ enddo
 
 ! clear matrixes
 volprot = 0.0
+allocate(protn(-limit:limit, -limit:limit,-limit:limit))
+
+call sphere(radius)
 
 ! add aa to volprot
 
@@ -83,9 +90,18 @@ aagrid(i,1) = ix
 aagrid(i,2) = iy
 aagrid(i,3) = iz
 
-volprot(ix,iy,iz) = volprot(ix,iy,iz)+vpol*vsol/(delta**3)
-
+do jx = -limit, limit
+do jy = -limit, limit
+do jz = -limit, limit 
+if(((ix+jz).gt.dimx).or.((ix+jx).lt.1))stop
+if(((iy+jy).gt.dimy).or.((iy+jy).lt.1))stop
+if(((iz+jz).gt.dimz).or.((iz+jz).lt.1))stop
+volprot(ix,iy,iz) = volprot(ix+jx,iy+jy,iz+jz)+protn(jx,jy,jz)
 enddo
+enddo
+enddo
+enddo
+
 
 ! evite que la fraccion de volumen sea mayor que 1 (ej. dos aminoacidos en una misma celda
 where (volprot > 1.0) volprot = 1.0

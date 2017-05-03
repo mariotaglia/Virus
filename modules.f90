@@ -1,3 +1,8 @@
+module sphereV
+integer, parameter :: limit = 1
+real*8, allocatable :: protn(:,:,:)
+end module
+
 module aa
 real*8, allocatable :: aapos(:,:)
 integer, allocatable :: aat(:)
