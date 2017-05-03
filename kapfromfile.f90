@@ -96,10 +96,14 @@ do jz = -limit, limit
 if(((ix+jz).gt.dimx).or.((ix+jx).lt.1))stop
 if(((iy+jy).gt.dimy).or.((iy+jy).lt.1))stop
 if(((iz+jz).gt.dimz).or.((iz+jz).lt.1))stop
-volprot(ix,iy,iz) = volprot(ix+jx,iy+jy,iz+jz)+protn(jx,jy,jz)
+volprot(ix+jx,iy+jy,iz+jz) = volprot(ix+jx,iy+jy,iz+jz)+protn(jx,jy,jz)
 enddo
 enddo
 enddo
+
+
+
+
 enddo
 
 
