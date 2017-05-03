@@ -101,9 +101,6 @@ do ix=1,dimx
  enddo  
 enddo
 
-! Compute dielectric permitivity
-call dielectfcn(volprotT,epsfcn)
-
 !----------------------------------------------------------------------------------------------
 !   Construye Ecuaciones a resolver 
 !----------------------------------------------------------------------------------------------

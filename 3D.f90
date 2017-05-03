@@ -297,6 +297,10 @@ real*8 psi(dimx, dimy, dimz) ! potencial
 ! Solve               
 !--------------------------------------------------------------
 
+! dielectric
+
+call dielectfcn(volprotT,epsfcn)
+
 n=dimx*dimy*dimz
 
 
