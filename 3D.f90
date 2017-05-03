@@ -131,11 +131,16 @@ aatT(1) = 1 ! aa 1 is type 1 and has +1 charge
 aagridT(1,1) = dimx/2 ! center aa 1 in box
 aagridT(1,2) = dimy/2
 aagridT(1,3) = dimz/2
+volprotT = 0.0
 
 do jx=-limit, limit
 do jy=-limit, limit
 do jz=-limit, limit
-volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz) = protn(jx,jy,jz) ! adds size
+volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz) =   & 
+     protn(jx,jy,jz)+volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz) ! adds size
+
+!print*, jx,jy,jz, volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz)
+
 enddo
 enddo
 enddo

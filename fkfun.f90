@@ -134,7 +134,7 @@ do ix=1,dimx
       f(ix+dimx*(iy-1)+dimx*dimy*(iz-1))= xh(ix,iy,iz) + &
       xneg(ix, iy, iz) + xpos(ix, iy, iz) + xHplus(ix, iy, iz) + &
       xOHmin(ix, iy, iz) -1.000000d0
-
+      f(ix+dimx*(iy-1)+dimx*dimy*(iz-1))=f(ix+dimx*(iy-1)+dimx*dimy*(iz-1))*fv
       if(volprotT(ix,iy,iz).eq.1.0)f(ix+dimx*(iy-1)+dimx*dimy*(iz-1))=0.0
 
 !      if(isnan(f(ix+dimx*(iy-1)+dimx*dimy*(iz-1)))) then
@@ -170,7 +170,7 @@ enddo
 
 iter = iter + 1
 if(verbose.ge.3) then
-!print*, iter, norma
+print*, iter, norma
 endif
 
 3333 continue
