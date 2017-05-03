@@ -124,7 +124,7 @@ scsteptol = 1.0d-5 ! Function-norm stopping tolerance
 maxl = 1000 ! maximum Krylov subspace dimesion (?!?!?!) ! Esto se usa para el preconditioner
 maxlrst = 20 ! maximum number of restarts
 max_niter = 2000
-globalstrat = 1
+globalstrat = 0
 
 call fnvinits(3, neq, ier) ! fnvinits inits NVECTOR module
 if (ier .ne. 0) then       ! 3 for Kinsol, neq ecuantion number, ier error flag (0 is OK)
@@ -158,8 +158,8 @@ enddo
 
 call fkinsetvin('CONSTR_VEC', constr, ier) ! constraint vector
 ! CALL FKINSPTFQMR (MAXL, IER)
-!call fkinspgmr(maxl, maxlrst, ier) !  Scale Preconditioned GMRES solution of linear system (???)
-call fkinspbcg(maxl, ier) !  Scale Preconditioned BCG
+call fkinspgmr(maxl, maxlrst, ier) !  Scale Preconditioned GMRES solution of linear system (???)
+!call fkinspbcg(maxl, ier) !  Scale Preconditioned BCG
 
 if (ier .ne. 0) then
   print*, 'call_kinsol: SUNDIALS_ERROR: FKINSPGMR returned IER = ', ier

@@ -130,7 +130,7 @@ aatT(1) = 1 ! aa 1 is type 1 and has +1 charge
 aagridT(1,1) = dimx/2 ! center aa 1 in box
 aagridT(1,2) = dimy/2
 aagridT(1,3) = dimz/2
-volprot(aagridT(1,1),aagridT(1,2),aagridT(1,3)) = vpol*vsol/(delta**3) ! adds size
+volprotT(aagridT(1,1),aagridT(1,2),aagridT(1,3)) = vpol*vsol/(delta**3) ! adds size
 
 
 ! calc uncharged semgent
@@ -143,6 +143,7 @@ call Free_Energy_Calc(counter, G1)
 DGpos = G1-G0
 write(9999,*)pHbulk, DGpos
 print*, 'Gpos =', DGpos
+
 ! neg
 zpolT(1) = -1
 ! calc uncharged semgent

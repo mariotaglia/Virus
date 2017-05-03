@@ -89,7 +89,7 @@ enddo
 
 ! evite que la fraccion de volumen sea mayor que 1 (ej. dos aminoacidos en una misma celda
 where (volprot > 1.0) volprot = 1.0
-volprot = volprot*0.999
+!volprot = volprot*0.999
 
 title = 'avpro'
 counter = 1
