@@ -11,9 +11,10 @@ use ellipsoid
 use ematrix
 use aa
 use inputtemp, only : cHplus, cOHmin, pHbulk
+use sphereV
 
 implicit none
-integer ii,i, ix, iy, iz, im
+integer ii,i, ix, iy, iz, im, jx,jy,jz
 integer counter
 !-----  varables de la resolucion -----------
 
@@ -130,8 +131,14 @@ aatT(1) = 1 ! aa 1 is type 1 and has +1 charge
 aagridT(1,1) = dimx/2 ! center aa 1 in box
 aagridT(1,2) = dimy/2
 aagridT(1,3) = dimz/2
-volprotT(aagridT(1,1),aagridT(1,2),aagridT(1,3)) = vpol*vsol/(delta**3) ! adds size
 
+do jx=-limit, limit
+do jy=-limit, limit
+do jz=-limit, limit
+volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz) = protn(jx,jy,jz) ! adds size
+enddo
+enddo
+enddo
 
 ! calc uncharged semgent
 fdisaaT(1) = 0.0

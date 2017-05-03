@@ -43,7 +43,7 @@ enddo !ix
 enddo !iy
 enddo !iz
 
-protn(:,:,:) = protn(:,:,:)/(float(MCsteps)**3)*(2.0*radius)**3 ! protn in  number of monomers
+protn(:,:,:) = protn(:,:,:)/(float(MCsteps)**3)*(2.0*radius)**3/(delta**3) ! protn in volume fraction
 
 end
 
