@@ -45,7 +45,7 @@ common /psize/ neq
 n = neq 
 
       do i = 1,n
-         pp(i) = 1.0 / (1.0+(1.0-udata(i))*exp(1.0-udata(i)))
+         pp(i) = 1.0 ! / (1.0+(1.0-udata(i))*exp(1.0-udata(i)))
       enddo
 
    ier = 0

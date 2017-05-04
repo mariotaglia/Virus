@@ -108,7 +108,10 @@ do ix=1,dimx
    do iy=1,dimy
         do iz=1,dimz
          fv = (1.0-volprotT(ix,iy,iz))
-         qtot(ix, iy, iz) =  ((zpos*xpos(ix, iy, iz)+zneg*xneg(ix, iy, iz))/vsalt + xHplus(ix, iy, iz) - xOHmin(ix, iy, iz))*fv
+         qtot(ix,iy,iz) = 0.0
+         qtot(ix, iy, iz) = fv* &
+      ((zpos*xpos(ix, iy, iz)+zneg*xneg(ix, iy, iz))/vsalt + xHplus(ix, iy, iz) - xOHmin(ix, iy, iz))
+         
         enddo
    enddo
 enddo
@@ -149,7 +152,7 @@ enddo
 
 iter = iter + 1
 if(verbose.ge.3) then
-print*, iter, norma
+!print*, iter, norma
 endif
 
 3333 continue

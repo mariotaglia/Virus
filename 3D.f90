@@ -150,8 +150,6 @@ call Free_Energy_Calc(counter, G1)
 DGpos = G1-G0
 write(9999,*)pHbulk, DGpos
 print*, 'Gpos =', DGpos
-stop
-
 
 
 ! neg
