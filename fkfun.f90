@@ -54,16 +54,16 @@ enddo
  
 do iy = 1, dimy
  do iz = 1, dimz
-   psi(0, iy, iz) = psi(dimx, iy, iz)
-   psi(dimx+1, iy, iz) = psi(1, iy, iz)
+   psi(0, iy, iz) = 0.0 ! psi(dimx, iy, iz)
+   psi(dimx+1, iy, iz) = 0.0 !psi(1, iy, iz)
  enddo
 enddo
 
 ! en y
 do ix = 1, dimx
  do iz = 1, dimz
-   psi(ix, 0, iz) = psi(ix, dimy, iz)
-   psi(ix, dimy+1, iz) = psi(ix, 1, iz)
+   psi(ix, 0, iz) = 0.0 ! psi(ix, dimy, iz)
+   psi(ix, dimy+1, iz) = 0.0 ! psi(ix, 1, iz)
  enddo
 enddo
 
