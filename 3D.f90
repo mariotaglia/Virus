@@ -16,6 +16,7 @@ use sphereV
 implicit none
 integer ii,i, ix, iy, iz, im, jx,jy,jz
 integer counter
+integer counter2
 !-----  varables de la resolucion -----------
 
 real*8 x1(2*dimx*dimy*dimz)
@@ -25,7 +26,6 @@ integer n
 
 ! Volumen fraction
 real*8 xh(dimx, dimy, dimz)
-real*8 psi(dimx, dimy, dimz) ! potencial
 
 real*8 DGpos, DGneg
 real*8, allocatable :: DG(:), Kaapp(:), Kaapp_last(:)
@@ -34,6 +34,7 @@ real*8 maxerror
 real*8, parameter :: errorpKa = 0.01
 
 character*20 filename
+character*5 title
 
 
 
@@ -104,6 +105,7 @@ enddo
 
 ! counter
 counter = 1
+counter2 = 1
 
 ! loop over pH starts here
 do counter = 1, npH
@@ -116,6 +118,9 @@ call initall
 
 ! 1. Calculate DG for pos and neg in bulk
 ! 
+
+! turns off the wall
+flagwall = 0
 
 ! pos
 zpolT = 0
@@ -139,6 +144,8 @@ enddo
 enddo
 
 where(volprotT > 1.0) volprotT = 1.0
+
+
 
 ! calc uncharged semgent
 fdisaaT(1) = 0.0
@@ -185,6 +192,11 @@ enddo ! i
 !
 ! 2. Calculate DG for all aminocids with charge
 !
+
+! turns on the wall
+flagwall = wall
+
+
 zpolT = zpol
 aagridT = aagrid
 aatT = aat
@@ -207,6 +219,7 @@ print*, 'AA #', i
 fdisaaT(i) = 0.0
 call solve_one(x1, xg1)
 call Free_Energy_Calc(counter, G0)
+
 ! protein, one
 fdisaaT(i) = 1.0
 call solve_one(x1, xg1)
@@ -301,6 +314,8 @@ integer n
 real*8 xh(dimx, dimy, dimz)
 real*8 psi(dimx, dimy, dimz) ! potencial
 integer counter
+character*5 title
+
 counter = 1
 !--------------------------------------------------------------
 ! Solve               
@@ -324,6 +339,11 @@ do ix=1,dimx
       enddo
    enddo  
 enddo
+
+!title = 'poten'
+!call savetodisk(psi, title, counter)
+!title = 'qtot-'
+!call savetodisk(qtot, title, counter)
 
 ! Chequea si exploto... => Sistema anti-crash
 

@@ -21,7 +21,10 @@ real*8 delta
 integer  dimx 
 integer  dimy 
 integer  dimz 
-real*8 gama 
+real*8 gama
+integer  wall
+integer  flagwall
+real*8 sigmaq 
 endmodule
 
 module mkinsol

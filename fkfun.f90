@@ -38,6 +38,7 @@ integer im, at
 integer zmin, zmax
 
 
+
 ! Recupera xh y psi desde x()
 
 ntot = dimx*dimy*dimz ! numero de celdas
@@ -54,7 +55,8 @@ enddo
  
 do iy = 1, dimy
  do iz = 1, dimz
-   psi(0, iy, iz) = 0.0 ! psi(dimx, iy, iz)
+if (flagwall.eq.0) psi(0, iy, iz) = 0.0 !psi(dimx, iy, iz)
+if (flagwall.eq.1) psi(0, iy, iz) = psi(1, iy, iz) + sigmaq*(4.0*pi*lb*delta)
    psi(dimx+1, iy, iz) = 0.0 !psi(1, iy, iz)
  enddo
 enddo
@@ -62,17 +64,16 @@ enddo
 ! en y
 do ix = 1, dimx
  do iz = 1, dimz
-   psi(ix, 0, iz) = 0.0 ! psi(ix, dimy, iz)
-   psi(ix, dimy+1, iz) = 0.0 ! psi(ix, 1, iz)
+   psi(ix, 0, iz) = psi(ix, dimy, iz)
+   psi(ix, dimy+1, iz) = psi(ix, 1, iz)
  enddo
 enddo
 
 ! en z
 do ix = 1, dimx
  do iy = 1, dimy
-   psi(ix, iy, dimz+1) = 0.0  ! psibulk = 0.0
-   psi(ix, iy, 0) = 0.0 ! psi(ix, iy, 1) ! zero charge
-!   psi(ix, iy, 0) = psi(ix, iy, 1)*epsfcn(ix,iy,1)/epsfcn(ix,iy,0) ! zero charge
+   psi(ix, iy, dimz+1) = psi(ix,iy,1)  ! psibulk = 0.0
+   psi(ix, iy, 0) = psi(ix,iy,dimz)  ! psi(ix,iy,1) ! zero charge
  enddo
 enddo
 

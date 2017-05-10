@@ -40,12 +40,14 @@ dimx = ndi
 dimy = ndi
 dimz = ndi
 infile = ndi
+wall = ndi
 
 dielS = ndr
 pHbulk = ndr
 dielP = ndr
 delta = ndr
 csalt = ndr
+sigmaq= ndr
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -98,6 +100,14 @@ do while (ios == 0)
  case ('dimz')
    read(buffer, *, iostat=ios) dimz
    print*,'Set ',trim(label),' = ',trim(buffer)
+
+ case ('wall')
+   read(buffer, *, iostat=ios) wall
+   print*,'Set ',trim(label), ' = ',trim(buffer)
+
+ case ('sigmaq')
+   read(buffer, *, iostat=ios) sigmaq
+   print*,'Set ',trim(label), ' = ',trim(buffer)
 
  case ('dielP')
    read(buffer, *, iostat=ios) dielP
@@ -200,6 +210,7 @@ if(vtkflag.eq.ndi)call stopundef('vtkflag')
 if(dimx.eq.ndi)call stopundef('dimx')
 if(dimy.eq.ndi)call stopundef('dimy')
 if(dimz.eq.ndi)call stopundef('dimz')
+if(wall.eq.ndi)call stopundef('wall')
 if(infile.eq.ndi)call stopundef('infile')
 if(kaptype.eq.ndi)call stopundef('kaptype')
 
