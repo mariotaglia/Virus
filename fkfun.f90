@@ -55,9 +55,17 @@ enddo
  
 do iy = 1, dimy
  do iz = 1, dimz
-if (flagwall.eq.0) psi(0, iy, iz) = 0.0 !psi(dimx, iy, iz)
-if (flagwall.eq.1) psi(0, iy, iz) = psi(1, iy, iz) + sigmaq*(4.0*pi*lb*delta)
-   psi(dimx+1, iy, iz) = 0.0 !psi(1, iy, iz)
+
+if (flagwall.eq.0) then
+    psi(0, iy, iz) = psi(dimx, iy, iz)
+    psi(dimx+1, iy, iz) = psi(1, iy, iz)
+endif
+   
+if (flagwall.eq.1) then
+    psi(0, iy, iz) = psi(1, iy, iz) + sigmaq*(4.0*pi*lb*delta)
+    psi(dimx+1, iy, iz) = 0.0 !psi(1, iy, iz)
+endif
+
  enddo
 enddo
 

@@ -123,6 +123,7 @@ use system
 integer kaptype
 integer naa
 real*8, allocatable :: volprot(:,:,:)
+real*8, allocatable :: aaID(:,:,:)
 real*8, allocatable :: volprotT(:,:,:)
 real*8, allocatable :: volprot1(:,:,:)
 real*8, allocatable :: volq(:,:,:,:)

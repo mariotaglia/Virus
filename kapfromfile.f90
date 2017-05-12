@@ -19,6 +19,9 @@ real*8 avpol2
 integer iii
 real*8 radius
 
+
+aaID = 0.0
+
 radius = 0.31 ! aa radius
 
 avpol2 = (delta**3)/vsol
@@ -42,8 +45,7 @@ do i = 1, naa
 read(3333,*)aapos(i,1),aapos(i,2),aapos(i,3),aat(i)
 enddo
 
-! translate to initial postion and rotate
-
+! translate and rotate 
 do i = 1, naa
 call rotvo(aapos(i,:), rotmatrix(:,:,1)) ! rotate 
 aapos(i,1) = aapos(i,1) + Rell(1,1) ! translate
@@ -59,7 +61,7 @@ call sphere(radius)
 
 ! add aa to volprot
 
-do i = 1, naa
+do i = 1, naa ! PBC in x and y
 
 do while (aapos(i,1).lt.0.0)
 aapos(i,1)=aapos(i,1) + float(dimx)*delta
@@ -77,6 +79,7 @@ do while (aapos(i,2).gt.(float(dimy)*delta))
 aapos(i,2)=aapos(i,2) - float(dimy)*delta
 enddo
 
+! PROJECTS TO THE LATTICE
 ix=int(aapos(i,1)/delta)+1
 iy=int(aapos(i,2)/delta)+1
 iz=int(aapos(i,3)/delta)+1
@@ -89,6 +92,8 @@ endif
 aagrid(i,1) = ix
 aagrid(i,2) = iy
 aagrid(i,3) = iz
+
+aaID(ix,iy,iz) = i
 
 do jx = -limit, limit
 do jy = -limit, limit
@@ -104,7 +109,7 @@ enddo
 
 
 
-enddo
+enddo ! loop over number of aa, i
 
 
 ! evite que la fraccion de volumen sea mayor que 1 (ej. dos aminoacidos en una misma celda
@@ -114,6 +119,11 @@ where (volprot > 1.0) volprot = 1.0
 title = 'avpro'
 counter = 1
 call savetodisk(volprot, title, counter)
+
+title = 'aaID_'
+counter = 1
+call savetodisk(aaID, title, counter)
+
 
 close(3333)
 

@@ -28,6 +28,7 @@ ALLOCATE (epsfcn(0:dimx+1,0:dimy+1,0:dimz+1))
 
 ! ematrix
 ALLOCATE (volprot(dimx,dimy,dimz))
+ALLOCATE (aaID(dimx,dimy,dimz))
 ALLOCATE (volprotT(dimx,dimy,dimz))
 ALLOCATE (volprot1(dimx,dimy,dimz))
 ALLOCATE (volq(N_monomer,dimx,dimy,dimz))
