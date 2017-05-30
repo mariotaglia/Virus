@@ -1,6 +1,6 @@
 TARGET = 3D
 
-SRC = sphere.f90 modules.f90 SPmain.f90 parser.f90 init.f90 allocation.f90 allocateell.f90 3D.f90 fe.f90  fkfun.f90 kinsol.f90  savetodisk.f90 rands.f90 ellipsoid.f90 dielectric.f90 monomers.definitions.f90  kapfromfile.f90
+SRC = sphere.f90 modules.f90 SPmain.f90 parser.f90 init.f90 allocation.f90 allocateell.f90 3D.f90 fe.f90  fkfun.f90 kinsol.f90  savetodisk.f90 rands.f90 ellipsoid.f90 dielectric.f90 monomers.definitions.f90  kapfromfile.f90 matrix.f90
 
 HOST=$(shell hostname)
 $(info HOST is ${HOST})

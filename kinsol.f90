@@ -111,7 +111,7 @@ msbpre  = 10 ! maximum number of iterations without prec. setup (?)
 fnormtol = 1.0d-5 ! Function-norm stopping tolerance
 scsteptol = 1.0d-5 ! Function-norm stopping tolerance
 
-maxl = 1000 ! maximum Krylov subspace dimesion (?!?!?!) ! Esto se usa para el preconditioner
+maxl = 100 ! maximum Krylov subspace dimesion (?!?!?!) ! Esto se usa para el preconditioner
 maxlrst = 20 ! maximum number of restarts
 max_niter = 2000
 globalstrat = 0

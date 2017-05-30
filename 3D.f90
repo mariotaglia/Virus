@@ -137,8 +137,8 @@ volprotT = 0.0
 do jx=-limit, limit
 do jy=-limit, limit
 do jz=-limit, limit
-volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz) =   & 
-     protn(jx,jy,jz)+volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz) ! adds size
+!volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz) =   & 
+!     protn(jx,jy,jz)+volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz) ! adds size
 enddo
 enddo
 enddo

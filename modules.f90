@@ -1,6 +1,5 @@
 module sphereV
-integer, parameter :: limit = 1
-real*8, allocatable :: protn(:,:,:)
+integer, parameter :: limit = 3
 end module
 
 module aa
@@ -15,6 +14,12 @@ module saves
 integer vtkflag
 endmodule
 
+module mlist
+integer, allocatable :: maxelement_list(:)
+integer, parameter :: maxel = 1000
+integer, allocatable :: coords_list(:,:,:)  
+real*8, allocatable :: vol_list(:,:)
+endmodule
 
 module system 
 real*8 delta 
