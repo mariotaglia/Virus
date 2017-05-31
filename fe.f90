@@ -44,6 +44,8 @@ Free_Energy2 = 0.0
       do iz = 1, dimz
       
       fv=(1.0-volprotT(ix,iy,iz))
+      if(fv.ne.1.0)fv=0.0
+
 
       F_Mix_pos = F_Mix_pos + xpos(ix, iy,iz) &
       *(dlog(xpos(ix, iy, iz)/vsalt)-1.0-dlog(expmupos) + dlog(vsalt))*fv
@@ -66,6 +68,7 @@ Free_Energy2 = 0.0
       do iz = 1, dimz
 
       fv=(1.0-volprotT(ix,iy,iz))
+      if(fv.ne.1.0)fv=0.0
 
       F_Mix_neg = F_Mix_neg + xneg(ix, iy,iz) &
       *(dlog(xneg(ix, iy, iz)/vsalt)-1.0- dlog(expmuneg) + dlog(vsalt))*fv
@@ -88,6 +91,7 @@ Free_Energy2 = 0.0
       do iz = 1, dimz
 
       fv=(1.0-volprotT(ix,iy,iz))
+      if(fv.ne.1.0)fv=0.0
 
       F_Mix_Hplus = F_Mix_Hplus &
      +xHplus(ix, iy, iz)*(dlog(xHplus(ix,iy,iz))-1.0 -dlog(expmuHplus))*fv
@@ -110,6 +114,7 @@ Free_Energy2 = 0.0
       do iz = 1, dimz
 
       fv=(1.0-volprotT(ix,iy,iz))
+      if(fv.ne.1.0)fv=0.0
 
       F_Mix_OHmin = F_Mix_OHmin + xOHmin(ix, iy,iz)*(dlog(xOHmin(ix, iy, iz))-1.0-dlog(expmuOHmin))*fv
 
@@ -154,6 +159,7 @@ Free_Energy2 = 0.0
         do iz=1,dimz
 
       fv=(1.0-volprotT(ix,iy,iz))
+      if(fv.ne.1.0)fv=0.0
 
            sumrho = sumrho + ( -xHplus(ix, iy, iz)  &
         - xOHmin(ix, iy, iz) - (xpos(ix, iy, iz)+xneg(ix, iy, iz))/vsalt)*fv! sum over  rho_i i=+,-,s
@@ -171,15 +177,13 @@ Free_Energy2 = 0.0
          enddo
         
 
-         do i = 1, naa
-         im = aatT(i)
-         if(zpolT(im).ne.0) then ! charged aa
-          ix = aagridT(i,1)
-          iy = aagridT(i,2)
-          iz = aagridT(i,3)
-          sumel = sumel + psi(ix,iy,iz)*zpolT(im)*fdisaaT(i)*(vsol/delta**3)
-         endif
-         enddo
+          do ix = 1, dimx
+          do iy = 1, dimy
+          do iz = 1, dimz
+          sumel = sumel + psi(ix,iy,iz)*qprotT(ix,iy,iz) !zpolT(im)*fdisaaT(i)*(vsol/delta**3)
+          enddo
+          enddo
+          enddo
  
 
          sumpi = (delta**3/vsol)*sumpi

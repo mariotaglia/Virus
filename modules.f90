@@ -5,9 +5,7 @@ end module
 module aa
 real*8, allocatable :: aapos(:,:)
 integer, allocatable :: aat(:)
-integer, allocatable :: aatT(:)
 integer, allocatable :: aagrid(:,:)
-integer, allocatable :: aagridT(:,:)
 endmodule
 
 module saves
@@ -47,7 +45,6 @@ real*8 vpol
 real*8 vsalt
 real*8 zpos,zneg
 integer, ALLOCATABLE :: zpol(:)
-integer, ALLOCATABLE :: zpolT(:)
 real*8 pHstep
 integer npH
 real*8, ALLOCATABLE :: pKa(:), Ka(:)
@@ -130,6 +127,7 @@ integer naa
 real*8, allocatable :: volprot(:,:,:)
 real*8, allocatable :: aaID(:,:,:)
 real*8, allocatable :: volprotT(:,:,:)
+real*8, allocatable :: qprotT(:,:,:)
 real*8, allocatable :: volprot1(:,:,:)
 real*8, allocatable :: volq(:,:,:,:)
 real*8, allocatable :: volq1(:,:,:,:)

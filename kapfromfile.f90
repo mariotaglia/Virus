@@ -5,7 +5,7 @@ use const
 use molecules
 use ellipsoid
 use aa
-use results, only : fdisaa, fdisaaT
+use results, only : fdisaa
 use sphereV
 use mlist
 
@@ -38,11 +38,8 @@ read(3333,*)naa
 ! allocate amino acid properties
 allocate(aapos(naa,3))
 allocate(aat(naa))
-allocate(aatT(naa))
 allocate(aagrid(naa,3)) ! keeps info of position of original aminoacids index 1=x,2=y,3=z,4=aat
-allocate(aagridT(naa,3)) ! keeps info of position of original aminoacids index 1=x,2=y,3=z,4=aat
 allocate(fdisaa(naa))
-allocate(fdisaaT(naa))
 
 ! allocate discretization list
 allocate(maxelement_list(naa))
@@ -70,6 +67,8 @@ enddo
 
 ! generate amino-acid discretization and generate lists
 volprot = 0.0
+
+print*, 'Generating aa discretization'
 
 do i = 1, naa
 center(:) = aapos(i,:)
@@ -99,8 +98,6 @@ call savetodisk(volprot, title, counter)
 title = 'aaID_'
 counter = 1
 call savetodisk(aaID, title, counter)
-
-stop
 
 close(3333)
 

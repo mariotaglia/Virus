@@ -14,7 +14,7 @@ use inputtemp, only : cHplus, cOHmin, pHbulk
 use sphereV
 
 implicit none
-integer ii,i, ix, iy, iz, im, jx,jy,jz
+integer ii,i, ix, iy, iz, im, jx,jy,jz, j
 integer counter
 integer counter2
 !-----  varables de la resolucion -----------
@@ -27,11 +27,11 @@ integer n
 ! Volumen fraction
 real*8 xh(dimx, dimy, dimz)
 
-real*8 DGpos, DGneg
-real*8, allocatable :: DG(:), Kaapp(:), Kaapp_last(:)
+real*8, allocatable :: DG(:), DGref(:), Kaapp(:), Kaapp_last(:)
 real*8 G0, G1
 real*8 maxerror
 real*8, parameter :: errorpKa = 0.01
+real*8 protn(dimx,dimy,dimz)
 
 character*20 filename
 character*5 title
@@ -41,6 +41,7 @@ character*5 title
 ! alocate
 
 allocate(DG(naa))
+allocate(DGref(naa))
 allocate(Kaapp(naa))
 allocate(Kaapp_last(naa))
 
@@ -72,12 +73,12 @@ endif
 ! open files
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-  open(unit=9999,file='DGpos.dat')
-  open(unit=10000,file='DGneg.dat')
 do i = 1, naa
 if(zpol(aat(i)).ne.0) then
   write(filename,'(A3, I3.3, A4)')'DG.', i, '.dat'
   open(unit=10000+i,file=filename)
+  write(filename,'(A6, I3.3, A4)')'DGref.', i, '.dat'
+  open(unit=15000+i,file=filename)
   write(filename,'(A7, I3.3, A4)')'pKaapp.', i, '.dat'
   open(unit=20000+i,file=filename)
   write(filename,'(A8, I3.3, A4)')'fdissaa.', i, '.dat'
@@ -111,76 +112,61 @@ counter2 = 1
 do counter = 1, npH
 maxerror = errorpKa+1.0
 
-do while (maxerror.gt.errorpKa)
-
-Kaapp_last = Kaapp 
 call initall
 
-! 1. Calculate DG for pos and neg in bulk
-! 
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! 1. Calculate DG for all aminocids with charge (reference)
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ! turns off the wall
 flagwall = 0
 
-! pos
-zpolT = 0
-aagridT = 1
-aatT = 2 ! all segments are type 2
+do i = 1, naa
+im = aat(i)
+if(zpol(im).ne.0) then
 
-zpolT(1) = 1 ! only segment type 1 is charged
-aatT(1) = 1 ! aa 1 is type 1 and has +1 charge
-aagridT(1,1) = dimx/2 ! center aa 1 in box
-aagridT(1,2) = dimy/2
-aagridT(1,3) = dimz/2
-volprotT = 0.0
+print*, 'AA #', i
 
-do jx=-limit, limit
-do jy=-limit, limit
-do jz=-limit, limit
-!volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz) =   & 
-!     protn(jx,jy,jz)+volprotT(aagridT(1,1)+jx,aagridT(1,2)+jy,aagridT(1,3)+jz) ! adds size
-enddo
-enddo
-enddo
+call listtomatrix(protn,i) 
+volprotT(:,:,:) = protn(:,:,:)/delta**3
+qprotT = 0.0
 
-where(volprotT > 1.0) volprotT = 1.0
-
-
-
-! calc uncharged semgent
-fdisaaT(1) = 0.0
+! protein, zero
 call solve_one(x1, xg1)
 call Free_Energy_Calc(counter, G0)
-fdisaaT(1) = 1.0
+
+
+! protein, one
+call listtomatrix(protn,i)
+im = aat(i)
+
+qprotT(:,:,:) = qprotT(:,:,:) + zpol(im)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
+
+!title = 'qproT'
+!call savetodisk(qprotT, title, counter)
+
 call solve_one(x1, xg1)
 call Free_Energy_Calc(counter, G1)
-DGpos = G1-G0
-write(9999,*)pHbulk, DGpos
-print*, 'Gpos =', DGpos
+DGref(i) = G1-G0
+print*, 'Gref(',i,') =', DGref(i), 'zpol =', zpol(aat(i))
+endif ! zpol =! 0
+enddo
 
 
-! neg
-zpolT(1) = -1
-! calc uncharged semgent
-fdisaaT(1) = 0.0
-call solve_one(x1, xg1)
-call Free_Energy_Calc(counter, G0)
-fdisaaT(1) = 1.0
-call solve_one(x1, xg1)
-call Free_Energy_Calc(counter, G1)
-DGneg = G1-G0
-write(10000,*)pHbulk, DGneg
-print*, 'Gneg =', DGpos
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! Loop for pKa convergence
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-!
-! 1. Calculate f from pKaapps
-! 
+do while (maxerror.gt.errorpKa)
+
+Kaapp_last = Kaapp 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! 0. Calculate f from pKaapps
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 do i = 1, naa
 im = aat(i)
-ix = aagrid(i,1)
-iy = aagrid(i,2)
-iz = aagrid(i,3)
 
   if(zpol(im).eq.1) then ! BASE
      fdisaa(i) = 1.0 /(1.0 + cOHmin/(Kw/Kaapp(i)))
@@ -189,61 +175,67 @@ iz = aagrid(i,3)
   endif
 enddo ! i
 
-!
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 2. Calculate DG for all aminocids with charge
-!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ! turns on the wall
 flagwall = wall
 
-
-zpolT = zpol
-aagridT = aagrid
-aatT = aat
 volprotT = volprot
+
+
 
 do i = 1, naa
 
-fdisaaT = fdisaa
+qprotT = 0.0
+do j = 1, naa
+   im = aat(j)
+   if(zpol(im).ne.0) then ! charged aminoacid
+       call listtomatrix(protn,j)
+       if(i.ne.j)qprotT(:,:,:) = qprotT(:,:,:) + zpol(im)*fdisaa(j)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
+   endif
+enddo
 
 im = aat(i)
-ix = aagrid(i,1)
-iy = aagrid(i,2)
-iz = aagrid(i,3)
-
 if(zpol(im).ne.0) then
 
 print*, 'AA #', i
 
 ! protein, zero
-fdisaaT(i) = 0.0
 call solve_one(x1, xg1)
 call Free_Energy_Calc(counter, G0)
 
+
 ! protein, one
-fdisaaT(i) = 1.0
+call listtomatrix(protn,i)
+im = aat(i)
+qprotT(:,:,:) = qprotT(:,:,:) + zpol(im)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
+
 call solve_one(x1, xg1)
 call Free_Energy_Calc(counter, G1)
 DG(i) = G1-G0
 print*, 'G(',i,') =', DG(i), 'zpol =', zpol(aat(i))
-endif
+endif ! zpol =! 0
 
 enddo
 
-!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 3. Calculate new values for Kaaap
-!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
 do i = 1, naa
 im = aat(i)
-if(zpol(im).eq.1)Kaapp(i) = Ka(im)*exp(DG(i)-DGpos)
-if(zpol(im).eq.-1)Kaapp(i) = Ka(im)*exp(-(DG(i)-DGneg))
+if(zpol(im).eq.1)Kaapp(i) = Ka(im)*exp(DG(i)-DGref(i))
+if(zpol(im).eq.-1)Kaapp(i) = Ka(im)*exp(-(DG(i)-DGref(i)))
 enddo
 
-!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 4. Calculate maxerror
-!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 maxerror = 0.0
 do i = 1, naa
 im = aat(i)
@@ -264,6 +256,7 @@ enddo ! maxerror > errorpKa
 do i = 1, naa
 if(zpol(aat(i)).ne.0) then
  write(10000+i,*)pHbulk, DG(i)
+ write(15000+i,*)pHbulk, DGref(i)
  write(30000+i,*)pHbulk, fdisaa(i) 
  write(20000+i,*)pHbulk, -log10(Kaapp(i))
 

@@ -117,23 +117,17 @@ do ix=1,dimx
    do iy=1,dimy
         do iz=1,dimz
          fv = (1.0-volprotT(ix,iy,iz))
-         qtot(ix,iy,iz) = 0.0
          qtot(ix, iy, iz) = fv* &
       ((zpos*xpos(ix, iy, iz)+zneg*xneg(ix, iy, iz))/vsalt + xHplus(ix, iy, iz) - xOHmin(ix, iy, iz))
+        
+        if(fv.ne.1.0)qtot(ix,iy,iz)=0.0
          
+ 
+        qtot(ix,iy,iz)=qtot(ix,iy,iz)+qprotT(ix,iy,iz)
         enddo
    enddo
 enddo
 
-do i = 1, naa ! loop over aminoacids
-   im = aatT(i)
-   if(zpolT(im).ne.0) then ! charged aminoacid
-       ix = aagridT(i,1)
-       iy = aagridT(i,2)
-       iz = aagridT(i,3)
-       qtot(ix,iy,iz)=qtot(ix,iy,iz)+zpolT(im)*fdisaaT(i)*(vsol/delta**3)
-   endif
-enddo
 
 ! Poisson eq.
 

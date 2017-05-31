@@ -17,7 +17,6 @@ integer iix,iiy,iiz
 real*8 center(3)
 real*8 protn(dimx,dimy,dimz)
 
-print*,'Protein matrix calculation'
 suma = 0.0
 protn = 0.0
 

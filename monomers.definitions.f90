@@ -17,7 +17,6 @@
       N_monomer = 10
 
       ALLOCATE (zpol(N_monomer))    ! charge of monomer segment: 1: base, -1: acid, 0:neutral
-      ALLOCATE (zpolT(N_monomer))    ! charge of monomer segment: 1: base, -1: acid, 0:neutral
       ALLOCATE (pKa(N_monomer), Ka(N_monomer), K0(N_monomer))
 
 ! see excel file with type definitions

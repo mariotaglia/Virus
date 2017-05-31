@@ -111,7 +111,7 @@ msbpre  = 10 ! maximum number of iterations without prec. setup (?)
 fnormtol = 1.0d-5 ! Function-norm stopping tolerance
 scsteptol = 1.0d-5 ! Function-norm stopping tolerance
 
-maxl = 100 ! maximum Krylov subspace dimesion (?!?!?!) ! Esto se usa para el preconditioner
+maxl = 1000 ! maximum Krylov subspace dimesion (?!?!?!) ! Esto se usa para el preconditioner
 maxlrst = 20 ! maximum number of restarts
 max_niter = 2000
 globalstrat = 0
@@ -153,7 +153,7 @@ endif
 call fkinspilssetprec(1, ier) ! preconditiones
 
 do i = 1, neq ! scaling vector
-  uscale(i) = 0.001
+  uscale(i) = 0.001 
   fscale(i) = 1.0
 enddo
 
