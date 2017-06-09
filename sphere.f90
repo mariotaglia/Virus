@@ -17,6 +17,8 @@ integer iix,iiy,iiz
 real*8 center(3)
 real*8 protn(dimx,dimy,dimz)
 
+print*, radii
+
 suma = 0.0
 protn = 0.0
 
@@ -40,7 +42,7 @@ if (radio.gt.radii) cycle ! outside sphere
  iz = int(anint((z+center(3))/delta))
 
  if((ix.gt.dimx).or.(ix.lt.1).or.(iy.gt.dimy).or.(iy.lt.1).or.(iz.gt.dimz).or.(iz.lt.1)) then
-    print*, 'Error is spherei, aminoacid out of system, increase dimx,dimy or dimz', ix,iy,iz
+    print*, 'Error in sphere, aminoacid out of system, increase dimx,dimy or dimz', ix,iy,iz
     stop
  endif 
   

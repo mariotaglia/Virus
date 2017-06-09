@@ -84,8 +84,6 @@ flag =.false.
 
 if (NNN.ne.0) then
 select case (kaptype)
- case (1)
- call update_matrix_ellipsoid(flag)
  case (2)
  call update_matrix_file(flag)
 end select

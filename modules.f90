@@ -40,13 +40,12 @@ real*8 free_energy
 endmodule
 
 module molecules
-integer N_monomer
 real*8 vsol
 real*8 vpol
 real*8 vsalt
 real*8 zpos,zneg
 integer, ALLOCATABLE :: zpol(:)
-integer, ALLOCATABLE :: radius(:)
+real*8, ALLOCATABLE :: radius(:)
 real*8 pHstep
 integer npH
 real*8, ALLOCATABLE :: pKa(:), Ka(:)
@@ -131,8 +130,6 @@ real*8, allocatable :: aaID(:,:,:)
 real*8, allocatable :: volprotT(:,:,:)
 real*8, allocatable :: qprotT(:,:,:)
 real*8, allocatable :: volprot1(:,:,:)
-real*8, allocatable :: volq(:,:,:,:)
-real*8, allocatable :: volq1(:,:,:,:)
 end module
 
 module inputtemp

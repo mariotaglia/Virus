@@ -32,8 +32,6 @@ ALLOCATE (qprotT(dimx,dimy,dimz))
 ALLOCATE (aaID(dimx,dimy,dimz))
 ALLOCATE (volprotT(dimx,dimy,dimz))
 ALLOCATE (volprot1(dimx,dimy,dimz))
-ALLOCATE (volq(N_monomer,dimx,dimy,dimz))
-ALLOCATE (volq1(N_monomer,dimx,dimy,dimz))
 
 ! mkinsol
 ALLOCATE (pp(2*dimx*dimy*dimz))

@@ -45,10 +45,10 @@ use MPI
 use ellipsoid
 use inputtemp
 use system
-
+use ematrix, only : naa
 
 implicit none
-integer im
+integer i
 real*8 temp
 integer ii
 
@@ -61,8 +61,8 @@ dielW = 78.54
 dielPr = dielP/dielW
 dielSr = dielS/dielW
 
-do im = 1, N_monomer
-Ka(im)=10**(-pKa(im))
+do i = 1, naa
+Ka(i)=10**(-pKa(i))
 enddo
 
 cHplus = 10**(-pHbulk)    ! concentration H+ in bulk

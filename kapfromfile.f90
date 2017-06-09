@@ -37,7 +37,6 @@ read(3333,*)naa
 allocate(aapos(naa,3))
 allocate(aal(naa))
 allocate(aan(naa))
-allocate(radius(naa))
 allocate(aagrid(naa,3)) ! keeps info of position of original aminoacids index 1=x,2=y,3=z,4=aat
 allocate(fdisaa(naa))
 
@@ -74,7 +73,8 @@ print*, 'Generating aa discretization'
 
 do i = 1, naa
 center(:) = aapos(i,:)
-call sphere(radius(naa), center, protn)
+print*, i
+call sphere(radius(i), center, protn)
 call matrixtolist(protn,i)
 volprot(:,:,:) = volprot(:,:,:) + protn(:,:,:)/(delta**3)
 
