@@ -56,7 +56,7 @@ do i = 1, naa
 read(3333,*)aapos(i,1),aapos(i,2),aapos(i,3),aal(i),aan(i)
 enddo
 
-call asign_aa
+call assign_aa
 
 ! translate and rotate 
 do i = 1, naa

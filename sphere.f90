@@ -1,4 +1,4 @@
-subroutine sphere(radio, center, protn)
+subroutine sphere(radii, center, protn)
 use system
 use const
 use molecules
@@ -11,7 +11,7 @@ real*8 x,y,z, radio
 integer i
 real*8 rands
 real*8 suma
-real*8 radio
+real*8 radii
 integer im
 integer iix,iiy,iiz
 real*8 center(3)
@@ -26,13 +26,13 @@ do iix = 1, MCsteps
 do iiy = 1, MCsteps
 do iiz = 1, MCsteps
 
-x = 2.0*radio*((dfloat(iix-1)/dfloat(MCsteps))-0.5)
-y = 2.0*radio*((dfloat(iiy-1)/dfloat(MCsteps))-0.5)
-z = 2.0*radio*((dfloat(iiz-1)/dfloat(MCsteps))-0.5)
+x = 2.0*radii*((dfloat(iix-1)/dfloat(MCsteps))-0.5)
+y = 2.0*radii*((dfloat(iiy-1)/dfloat(MCsteps))-0.5)
+z = 2.0*radii*((dfloat(iiz-1)/dfloat(MCsteps))-0.5)
 
 radio = sqrt(x**2 + y**2 + z**2) ! espacio real
 
-if (radio.gt.radio) cycle ! outside sphere
+if (radio.gt.radii) cycle ! outside sphere
 
  ! celda 
  ix = int(anint((x+center(1))/delta))   ! espacio de la grilla
@@ -50,7 +50,7 @@ enddo !ix
 enddo !iy
 enddo !iz
 
-protn(:,:,:) = protn(:,:,:)/(float(MCsteps)**3)*(2.0*radio)**3 ! protn in volume 
+protn(:,:,:) = protn(:,:,:)/(float(MCsteps)**3)*(2.0*radii)**3 ! protn in volume 
 
 end
 

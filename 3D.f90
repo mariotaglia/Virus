@@ -17,6 +17,7 @@ implicit none
 integer ii,i, ix, iy, iz, jx,jy,jz, j
 integer counter
 integer counter2
+integer temp
 !-----  varables de la resolucion -----------
 
 real*8 x1(2*dimx*dimy*dimz)
@@ -75,13 +76,19 @@ endif
 
 do i = 1, naa
 if(zpol(i).ne.0) then
-  write(filename,'(A3, I3.3, A4)')'DG.', i, '.dat'
+  temp = aan(i)
+  if((aal(i).eq.'B').or.(aal(i).eq.'G')) then
+    if(aan(i).eq.1)temp = 0 ! N terminal 
+    if(aan(i).eq.aan(naa))temp = naa+1    
+  endif
+ 
+  write(filename,'(A3, I3.3, A4)')'DG.', temp, '.dat'
   open(unit=10000+i,file=filename)
-  write(filename,'(A6, I3.3, A4)')'DGref.', i, '.dat'
+  write(filename,'(A6, I3.3, A4)')'DGref.', temp, '.dat'
   open(unit=15000+i,file=filename)
-  write(filename,'(A7, I3.3, A4)')'pKaapp.', i, '.dat'
+  write(filename,'(A7, I3.3, A4)')'pKaapp.', temp, '.dat'
   open(unit=20000+i,file=filename)
-  write(filename,'(A8, I3.3, A4)')'fdissaa.', i, '.dat'
+  write(filename,'(A8, I3.3, A4)')'fdissaa.', temp, '.dat'
   open(unit=30000+i,file=filename)
 endif
 enddo  
