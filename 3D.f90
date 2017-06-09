@@ -14,7 +14,7 @@ use inputtemp, only : cHplus, cOHmin, pHbulk
 use sphereV
 
 implicit none
-integer ii,i, ix, iy, iz, im, jx,jy,jz, j
+integer ii,i, ix, iy, iz, jx,jy,jz, j
 integer counter
 integer counter2
 !-----  varables de la resolucion -----------
@@ -74,7 +74,7 @@ endif
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 do i = 1, naa
-if(zpol(aat(i)).ne.0) then
+if(zpol(i).ne.0) then
   write(filename,'(A3, I3.3, A4)')'DG.', i, '.dat'
   open(unit=10000+i,file=filename)
   write(filename,'(A6, I3.3, A4)')'DGref.', i, '.dat'
@@ -99,8 +99,8 @@ call initall
 
 
 do i = 1, naa
- if(zpol(aat(i)).ne.0) then
-   Kaapp(i) = Ka(aat(i))
+ if(zpol(i).ne.0) then
+   Kaapp(i) = Ka(i)
  endif
 enddo
 
@@ -123,8 +123,7 @@ call initall
 flagwall = 0
 
 do i = 1, naa
-im = aat(i)
-if(zpol(im).ne.0) then
+if(zpol(i).ne.0) then
 
 print*, 'AA #', i
 
@@ -139,9 +138,7 @@ call Free_Energy_Calc(counter, G0)
 
 ! protein, one
 call listtomatrix(protn,i)
-im = aat(i)
-
-qprotT(:,:,:) = qprotT(:,:,:) + zpol(im)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
+qprotT(:,:,:) = qprotT(:,:,:) + zpol(i)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
 
 !title = 'qproT'
 !call savetodisk(qprotT, title, counter)
@@ -149,7 +146,7 @@ qprotT(:,:,:) = qprotT(:,:,:) + zpol(im)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
 call solve_one(x1, xg1)
 call Free_Energy_Calc(counter, G1)
 DGref(i) = G1-G0
-print*, 'Gref(',i,') =', DGref(i), 'zpol =', zpol(aat(i))
+print*, 'Gref(',i,') =', DGref(i), 'zpol =', zpol(i)
 endif ! zpol =! 0
 enddo
 
@@ -166,11 +163,10 @@ Kaapp_last = Kaapp
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 do i = 1, naa
-im = aat(i)
 
-  if(zpol(im).eq.1) then ! BASE
+  if(zpol(i).eq.1) then ! BASE
      fdisaa(i) = 1.0 /(1.0 + cOHmin/(Kw/Kaapp(i)))
-  else if (zpol(im).eq.-1.0) then ! ACID
+  else if (zpol(i).eq.-1.0) then ! ACID
      fdisaa(i)=1.0 /(1.0 + cHplus/Kaapp(i))
   endif
 enddo ! i
@@ -182,24 +178,19 @@ enddo ! i
 
 ! turns on the wall
 flagwall = wall
-
 volprotT = volprot
-
-
 
 do i = 1, naa
 
 qprotT = 0.0
 do j = 1, naa
-   im = aat(j)
-   if(zpol(im).ne.0) then ! charged aminoacid
+   if(zpol(j).ne.0) then ! charged aminoacid
        call listtomatrix(protn,j)
-       if(i.ne.j)qprotT(:,:,:) = qprotT(:,:,:) + zpol(im)*fdisaa(j)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
+       if(i.ne.j)qprotT(:,:,:) = qprotT(:,:,:) + zpol(j)*fdisaa(j)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
    endif
 enddo
 
-im = aat(i)
-if(zpol(im).ne.0) then
+if(zpol(i).ne.0) then
 
 print*, 'AA #', i
 
@@ -210,13 +201,12 @@ call Free_Energy_Calc(counter, G0)
 
 ! protein, one
 call listtomatrix(protn,i)
-im = aat(i)
-qprotT(:,:,:) = qprotT(:,:,:) + zpol(im)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
+qprotT(:,:,:) = qprotT(:,:,:) + zpol(i)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
 
 call solve_one(x1, xg1)
 call Free_Energy_Calc(counter, G1)
 DG(i) = G1-G0
-print*, 'G(',i,') =', DG(i), 'zpol =', zpol(aat(i))
+print*, 'G(',i,') =', DG(i), 'zpol =', zpol(i)
 endif ! zpol =! 0
 
 enddo
@@ -227,9 +217,8 @@ enddo
 
 
 do i = 1, naa
-im = aat(i)
-if(zpol(im).eq.1)Kaapp(i) = Ka(im)*exp(DG(i)-DGref(i))
-if(zpol(im).eq.-1)Kaapp(i) = Ka(im)*exp(-(DG(i)-DGref(i)))
+if(zpol(i).eq.1)Kaapp(i) = Ka(i)*exp(DG(i)-DGref(i))
+if(zpol(i).eq.-1)Kaapp(i) = Ka(i)*exp(-(DG(i)-DGref(i)))
 enddo
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -238,8 +227,7 @@ enddo
 
 maxerror = 0.0
 do i = 1, naa
-im = aat(i)
-if(zpol(im).ne.0) then
+if(zpol(i).ne.0) then
  print*, i, Kaapp(i), Kaapp_last(i)
  if(abs(-log10(Kaapp(i)) + log10(Kaapp_last(i))).gt.maxerror)maxerror=abs(-log10(Kaapp(i)) + log10(Kaapp_last(i)))
 endif
@@ -254,7 +242,7 @@ enddo ! maxerror > errorpKa
 !
 
 do i = 1, naa
-if(zpol(aat(i)).ne.0) then
+if(zpol(i).ne.0) then
  write(10000+i,*)pHbulk, DG(i)
  write(15000+i,*)pHbulk, DGref(i)
  write(30000+i,*)pHbulk, fdisaa(i) 
@@ -272,7 +260,7 @@ pHbulk = pHbulk + pHstep
 enddo ! counter
 
 do i = 1, naa
-if(zpol(aat(i)).ne.0) then
+if(zpol(i).ne.0) then
 close(10000+i)
 close(10000+i)
 close(10000+i)

@@ -26,7 +26,6 @@ integer j
 counter = 0
 counterr = 1
 
-call monomer_definitions
 call readinput
 
 call initconst

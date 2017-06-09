@@ -1,55 +1,140 @@
 ! Chain definition following Biophys Journal 107 1393-1402
 ! kai integration routine also changed
 
-      subroutine monomer_definitions
+      subroutine assign_aa
 
       use molecules
-      use mprotein
-      use bulk
+      use const
       use ematrix
+      use aa
 
       implicit none
 
-      real*8 eij(4)
-      real*8 alfa, ehp, erep   
-      integer i, j, k
- 
-      N_monomer = 10
+      integer i
 
-      ALLOCATE (zpol(N_monomer))    ! charge of monomer segment: 1: base, -1: acid, 0:neutral
-      ALLOCATE (pKa(N_monomer), Ka(N_monomer), K0(N_monomer))
+      ALLOCATE (zpol(naa))    ! charge of monomer segment: 1: base, -1: acid, 0:neutral
+      ALLOCATE (pKa(naa), Ka(naa), K0(naa), radius(naa))
 
-! see excel file with type definitions
-! Segment type 1 ! Cys
-      zpol(1) = 0
-      pKa(1) = 8.3 ! set any number if zpol = 0....
-! Segment type 2
-      zpol(2) = 0
-      pKa(2) = 1 ! set any number if zpol = 0...
-! Segment type 3
-      zpol(3) = 0
-      pKa(3) = 1 ! set any number if zpol = 0...
-! Segment type 4
-      zpol(4) = 0
-      pKa(4) = 1 ! set any number if zpol = 0....
-! Segment type 5
-      zpol(5) = 1
-      pKa(5) = 10.40
-! Segment type 6
-      zpol(6) = -1
-      pKa(6) = 4.4
-! Segment type 7
-      zpol(7) = -1
-      pKa(7) = 4.0
-! Segment type 8 ! his
-      zpol(8) = 1
-      pKa(8) = 6.6 ! set any number if zpol = 0....
-! Segment type 9 ! arg
-      zpol(9) = 1
-      pKa(9) = 12.0 ! set any number if zpol = 0....
-! Segment type 10 ! tyr
-      zpol(10) = -1
-      pKa(10) = 9.600 ! set any number if zpol = 0...
+      do i = 1, naa
+      select case (aal(i))
+      
+      case('A')
+      zpol(i) = 0
+      pKa(i) = 0.0
+      radius(i) = 28.6
+
+      case('I')
+      zpol(i) = 0
+      pKa(i) = 0.0
+      radius(i) = 75.8
+
+      case('L')
+      zpol(i) = 0
+      pKa(i) = 0.0
+      radius(i) = 75.8
+
+      case('F')
+      zpol(i) = 0
+      pKa(i) = 0.0
+      radius(i) = 89.8
+
+      case('W')
+      zpol(i) = 0
+      pKa(i) = 0.0
+      radius(i) = 112.2
+
+      case('Y')
+      zpol(i) = -1
+      pKa(i) = 10.0
+      radius(i) = 91.9
+
+      case('K')
+      zpol(i) = 0
+      pKa(i) = 0.0
+      radius(i) = 77.3
+
+      case('R')
+      zpol(i) = 1
+      pKa(i) = 12.0 
+      radius(i) = 94.6
+
+      case('N')
+      zpol(i) = 0
+      pKa(i) = 0.0
+      radius(i) = 45.9
+
+      case('Q')
+      zpol(i) =  0
+      pKa(i) = 0.0
+      radius(i) = 62.2
+
+      case('M')
+      zpol(i) = 0
+      pKa(i) = 0.0
+      radius(i) = 73.4
+
+      case('P')
+      zpol(i) = 0
+      pKa(i) = 0.0
+      radius(i) = 51.13
+
+      case('S')
+      zpol(i) = 0
+      pKa(i) = 0.0
+      radius(i) = 28.5
+
+      case('T')
+      zpol(i) = 0
+      pKa(i) = 0.0
+      radius(i) = 45.1
+
+      case('V')
+      zpol(i) = 0
+      pKa(i) = 0.0
+      radius(i) = 59.6
+
+      case('D')
+      zpol(i) = -1
+      pKa(i) = 4.0 
+      radius(i) = 42.0
+
+      case('E')
+      zpol(i) = -1 
+      pKa(i) = 4.4
+      radius(i) = 56.42
+
+      case('C')
+      zpol(i) = -1
+      pKa(i) = 8.37
+      radius(i) = 41.7
+
+      case('H')
+      zpol(i) = 1
+      pKa(i) = 6.6
+      radius(i) = 67.1
+
+      case('B', 'G')
+      radius(i) = 31.7
+      zpol(i) = 0
+      pKa(i) = 0.0
+        if(aan(i).eq.1) then ! N terminal
+          zpol(i) = 1
+          pKa(i) = 9.5
+        endif
+        if(aan(i).eq.aan(naa)) then ! N terminal
+          zpol(i) = -1
+          pKa(i) = 4.5  
+        endif
+
+      case default
+        print*, 'aminoacid not recognized. stop'
+        stop
+
+      endselect
+
+      radius(i) = (radius(i)*(1.0d21/6.02d23)/(4.0/3.0*pi))**(1.0/3.0)
+
+      enddo ! loop sobre naa
 
       end
 

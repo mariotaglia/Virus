@@ -18,13 +18,11 @@ character*5 title
 integer hh,ax,ay,az,jx,jy,jz
 real*8 avpol2
 integer iii
-real*8 radius
 real*8 center(3)
 real*8 protn(dimx,dimy,dimz)
+integer basura
 
 aaID = 0.0
-
-radius = 0.31 ! aa radius
 
 avpol2 = (delta**3)/vsol
 
@@ -37,9 +35,12 @@ read(3333,*)naa
 
 ! allocate amino acid properties
 allocate(aapos(naa,3))
-allocate(aat(naa))
+allocate(aal(naa))
+allocate(aan(naa))
+allocate(radius(naa))
 allocate(aagrid(naa,3)) ! keeps info of position of original aminoacids index 1=x,2=y,3=z,4=aat
 allocate(fdisaa(naa))
+
 
 ! allocate discretization list
 allocate(maxelement_list(naa))
@@ -52,9 +53,10 @@ vol_list = 0.0
 
 ! read aa pos from file
 do i = 1, naa
-read(3333,*)aapos(i,1),aapos(i,2),aapos(i,3),aat(i)
+read(3333,*)aapos(i,1),aapos(i,2),aapos(i,3),aal(i),aan(i)
 enddo
 
+call asign_aa
 
 ! translate and rotate 
 do i = 1, naa
@@ -72,7 +74,7 @@ print*, 'Generating aa discretization'
 
 do i = 1, naa
 center(:) = aapos(i,:)
-call sphere(radius, center, protn)
+call sphere(radius(naa), center, protn)
 call matrixtolist(protn,i)
 volprot(:,:,:) = volprot(:,:,:) + protn(:,:,:)/(delta**3)
 
@@ -85,7 +87,7 @@ aagrid(i,1) = ix
 aagrid(i,2) = iy
 aagrid(i,3) = iz
 
-aaID(ix,iy,iz) = i
+aaID(ix,iy,iz) = aan(i)
 enddo ! loop over number of aa, i
 
 ! evite que la fraccion de volumen sea mayor que 1 (ej. dos aminoacidos en una misma celda
