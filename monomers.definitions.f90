@@ -49,8 +49,8 @@
       radius(i) = 91.9
 
       case('K')
-      zpol(i) = 0
-      pKa(i) = 0.0
+      zpol(i) = 1
+      pKa(i) = 10.5
       radius(i) = 77.3
 
       case('R')
