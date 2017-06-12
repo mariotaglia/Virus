@@ -29,7 +29,7 @@ integer n
 real*8 xh(dimx, dimy, dimz)
 
 real*8, allocatable :: DG(:), DGref(:), Kaapp(:), Kaapp_last(:)
-real*8 G0, G1
+real*8 G0, G1, Gmean
 real*8 maxerror
 real*8, parameter :: errorpKa = 0.01
 real*8 protn(dimx,dimy,dimz)
@@ -74,6 +74,7 @@ endif
 ! open files
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+open(unit=9999,file='Gmean.dat')
 do i = 1, naa
 if(zpol(i).ne.0) then
   temp = aan(i)
@@ -244,10 +245,32 @@ print*, 'Maximum error in iteration: ', maxerror, ' pH units'
 
 enddo ! maxerror > errorpKa
 
-!
-! 5. Save to disk
-!
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! 5. Calculate free energy for all mean charge
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+! turns on the wall
+flagwall = wall
+volprotT = volprot
+
+qprotT = 0.0
+do j = 1, naa
+   if(zpol(j).ne.0) then ! charged aminoacid
+       call listtomatrix(protn,j)
+       qprotT(:,:,:) = qprotT(:,:,:) + zpol(j)*fdisaa(j)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
+   endif
+enddo
+
+call solve_one(x1, xg1)
+call Free_Energy_Calc(counter, Gmean)
+
+print*, 'Gmean', Gmean
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! 6. Save to disk
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+ write(9999,*)pHbulk, Gmean
 do i = 1, naa
 if(zpol(i).ne.0) then
  write(10000+i,*)pHbulk, DG(i)
@@ -258,7 +281,6 @@ if(zpol(i).ne.0) then
  flush(10000+i)
  flush(20000+i)
  flush(30000+i)
-
 endif
 enddo
 
