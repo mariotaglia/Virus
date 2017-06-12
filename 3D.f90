@@ -28,8 +28,8 @@ integer n
 ! Volumen fraction
 real*8 xh(dimx, dimy, dimz)
 
-real*8, allocatable :: DG(:), DGref(:), Kaapp(:), Kaapp_last(:)
-real*8 G0, G1, Gmean
+real*8, allocatable :: DG(:), DGref(:), Gave(:), Gaveref(:), Kaapp(:), Kaapp_last(:), fdisbulk(:)
+real*8 G0, G1, Gmean, Gmeanref
 real*8 maxerror
 real*8, parameter :: errorpKa = 0.01
 real*8 protn(dimx,dimy,dimz)
@@ -42,6 +42,9 @@ character*5 title
 ! alocate
 
 allocate(DG(naa))
+allocate(fdisbulk(naa))
+allocate(Gave(naa))
+allocate(Gaveref(naa))
 allocate(DGref(naa))
 allocate(Kaapp(naa))
 allocate(Kaapp_last(naa))
@@ -91,6 +94,16 @@ if(zpol(i).ne.0) then
   open(unit=20000+i,file=filename)
   write(filename,'(A8, I3.3, A4)')'fdissaa.', temp, '.dat'
   open(unit=30000+i,file=filename)
+
+  write(filename,'(A5, I3.3, A4)')'Gave.', temp, '.dat'
+  open(unit=40000+i,file=filename)
+   write(filename,'(A8, I3.3, A4)')'Gaveref.', temp, '.dat'
+  open(unit=50000+i,file=filename)
+   write(filename,'(A9, I3.3, A4)')'fdisbulk.', temp, '.dat'
+  open(unit=60000+i,file=filename)
+
+
+
 endif
 enddo  
 
@@ -122,6 +135,17 @@ maxerror = errorpKa+1.0
 
 call initall
 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! 0. Calculate fdisbulk from pKaapps
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+do i = 1, naa
+  if(zpol(i).eq.1) then ! BASE
+     fdisbulk(i) = 1.0 /(1.0 + cOHmin/(Kw/Ka(i)))
+  else if (zpol(i).eq.-1.0) then ! ACID
+     fdisbulk(i)=1.0 /(1.0 + cHplus/Ka(i))
+  endif
+enddo ! i
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 1. Calculate DG for all aminocids with charge (reference)
@@ -154,9 +178,11 @@ qprotT(:,:,:) = qprotT(:,:,:) + zpol(i)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
 call solve_one(x1, xg1)
 call Free_Energy_Calc(counter, G1)
 DGref(i) = G1-G0
+Gaveref(i) = G1*fdisbulk(i) + G0*(1.0-fdisbulk(i))
 print*, 'Gref(',i,') =', DGref(i), 'zpol =', zpol(i)
 endif ! zpol =! 0
-enddo
+
+enddo ! i
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -171,7 +197,6 @@ Kaapp_last = Kaapp
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 do i = 1, naa
-
   if(zpol(i).eq.1) then ! BASE
      fdisaa(i) = 1.0 /(1.0 + cOHmin/(Kw/Kaapp(i)))
   else if (zpol(i).eq.-1.0) then ! ACID
@@ -214,6 +239,7 @@ qprotT(:,:,:) = qprotT(:,:,:) + zpol(i)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
 call solve_one(x1, xg1)
 call Free_Energy_Calc(counter, G1)
 DG(i) = G1-G0
+Gave(i) = G1*fdisaa(i) + G0*(1.0-fdisaa(i))
 print*, 'G(',i,') =', DG(i), 'zpol =', zpol(i)
 endif ! zpol =! 0
 
@@ -277,6 +303,9 @@ if(zpol(i).ne.0) then
  write(15000+i,*)pHbulk, DGref(i)
  write(30000+i,*)pHbulk, fdisaa(i) 
  write(20000+i,*)pHbulk, -log10(Kaapp(i))
+ write(40000+i,*)pHbulk, Gave(i)
+ write(50000+i,*)pHbulk, Gaveref(i)
+ write(60000+i,*)pHbulk, fdisbulk(i)
 
  flush(10000+i)
  flush(20000+i)
