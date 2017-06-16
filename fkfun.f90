@@ -155,7 +155,7 @@ enddo
 
 iter = iter + 1
 if(verbose.ge.3) then
-!print*, iter, norma
+print*, iter, norma
 endif
 
 3333 continue

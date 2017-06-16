@@ -12,6 +12,7 @@ use ematrix
 use aa
 use inputtemp, only : cHplus, cOHmin, pHbulk
 use sphereV
+use convergepKa
 
 implicit none
 integer ii,i, ix, iy, iz, jx,jy,jz, j
@@ -31,7 +32,6 @@ real*8 xh(dimx, dimy, dimz)
 real*8, allocatable :: DG(:), DGref(:), Gave(:), Gaveref(:), Kaapp(:), Kaapp_last(:), fdisbulk(:)
 real*8 G0, G1, Gmean, Gmeanref
 real*8 maxerror
-real*8, parameter :: errorpKa = 0.01
 real*8 protn(dimx,dimy,dimz)
 
 character*20 filename
@@ -131,9 +131,12 @@ counter2 = 1
 
 ! loop over pH starts here
 do counter = 1, npH
+
 maxerror = errorpKa+1.0
 
 call initall
+
+print*, 'pH: ', pHbulk
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 0. Calculate fdisbulk from pKaapps
@@ -251,8 +254,8 @@ enddo
 
 
 do i = 1, naa
-if(zpol(i).eq.1)Kaapp(i) = Ka(i)*exp(DG(i)-DGref(i))
-if(zpol(i).eq.-1)Kaapp(i) = Ka(i)*exp(-(DG(i)-DGref(i)))
+if(zpol(i).eq.1)Kaapp(i) = 10**(log10(Ka(i)*exp(DG(i)-DGref(i)))*(1.0-damping) + log10(Kaapp_last(i))*damping)
+if(zpol(i).eq.-1)Kaapp(i) = 10**(log10(Ka(i)*exp(-(DG(i)-DGref(i))))*(1.0-damping) + log10(Kaapp_last(i)))*damping
 enddo
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
