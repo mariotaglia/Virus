@@ -21,6 +21,7 @@ integer iii
 real*8 center(3)
 real*8 protn(dimx,dimy,dimz)
 integer basura
+real*8 minxpos
 
 aaID = 0.0
 
@@ -57,10 +58,20 @@ enddo
 
 call assign_aa
 
-! translate and rotate 
+! rotate 
 do i = 1, naa
 call rotvo(aapos(i,:), rotmatrix(:,:,1)) ! rotate 
-aapos(i,1) = aapos(i,1) + Rell(1,1) ! translate
+enddo
+
+! find minimum x position
+minxpos = 1.d100
+do i = 1,naa
+if(aapos(i,1).lt.minxpos)minxpos = aapos(i,1)
+enddo
+
+! translate  
+do i = 1, naa
+aapos(i,1) = aapos(i,1) - minxpos + Rell(1,1) ! translate
 aapos(i,2) = aapos(i,2) + Rell(2,1)
 aapos(i,3) = aapos(i,3) + Rell(3,1)
 enddo
