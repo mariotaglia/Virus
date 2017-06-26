@@ -1,3 +1,8 @@
+module convergepKa
+real*8 errorpKa
+real*8 damping
+endmodule
+
 module sphereV
 integer, parameter :: limit = 3
 end module
