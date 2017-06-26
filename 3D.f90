@@ -255,7 +255,7 @@ enddo
 
 do i = 1, naa
 if(zpol(i).eq.1)Kaapp(i) = 10**(log10(Ka(i)*exp(DG(i)-DGref(i)))*(1.0-damping) + log10(Kaapp_last(i))*damping)
-if(zpol(i).eq.-1)Kaapp(i) = 10**(log10(Ka(i)*exp(-(DG(i)-DGref(i))))*(1.0-damping) + log10(Kaapp_last(i)))*damping
+if(zpol(i).eq.-1)Kaapp(i) = 10**(log10(Ka(i)*exp(-(DG(i)-DGref(i))))*(1.0-damping) + log10(Kaapp_last(i))*damping)
 enddo
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
