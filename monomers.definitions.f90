@@ -45,17 +45,17 @@
 
       case('Y')
       zpol(i) = -1
-      pKa(i) = 10.0
+      pKa(i) = 10.5
       radius(i) = 91.9
 
       case('K')
       zpol(i) = 1
-      pKa(i) = 10.5
+      pKa(i) = 10.54
       radius(i) = 77.3
 
       case('R')
       zpol(i) = 1
-      pKa(i) = 12.0 
+      pKa(i) = 12.48 
       radius(i) = 94.6
 
       case('N')
@@ -95,22 +95,22 @@
 
       case('D')
       zpol(i) = -1
-      pKa(i) = 4.0 
+      pKa(i) = 3.9
       radius(i) = 42.0
 
       case('E')
       zpol(i) = -1 
-      pKa(i) = 4.4
+      pKa(i) = 4.07
       radius(i) = 56.42
 
       case('C')
-      zpol(i) = -1
-      pKa(i) = 8.37
+      zpol(i) = 0
+      pKa(i) = 0.0
       radius(i) = 41.7
 
       case('H')
       zpol(i) = 1
-      pKa(i) = 6.6
+      pKa(i) = 6.04
       radius(i) = 67.1
 
       case('B', 'G')
