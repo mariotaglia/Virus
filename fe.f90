@@ -130,17 +130,24 @@ Free_Energy2 = 0.0
 
       F_electro = 0.0    
 
-      do ix  = 1, dimx
       do iy  = 1, dimy
       do iz  = 1, dimz
 
+      do ix  = 1, dimx
+      gradpsi2 = (psi(ix+1,iy,iz)-psi(ix-1,iy,iz))*(psi(ix+1,iy,iz)-psi(ix-1,iy,iz))
+      gradpsi2 = gradpsi2 + (psi(ix,iy+1,iz)-psi(ix,iy-1,iz))*(psi(ix,iy+1,iz)-psi(ix,iy-1,iz))
+      gradpsi2 = gradpsi2 + (psi(ix,iy,iz+1)-psi(ix,iy,iz-1))*(psi(ix,iy,iz+1)-psi(ix,iy,iz-1))
+      gradpsi2 = gradpsi2/4.0
+
       F_electro = F_electro &
-       + delta**3*psi(ix, iy, iz)*qtot(ix, iy, iz)/2.0/vsol
+     + (delta**3)/vsol*(psi(ix, iy, iz)*qtot(ix, iy, iz) - 0.5/constq*gradpsi2*epsfcn(ix,iy,iz))
+
+      enddo ! ix
+
+      if(flagwall.eq.1)F_electro = F_electro + sigmaq*psi(0, iy, iz)/2.0
 
       enddo
       enddo
-      enddo
-
 
       Free_Energy = Free_Energy + F_electro
 
@@ -168,30 +175,42 @@ Free_Energy2 = 0.0
            sumrho = sumrho - ( -xHplusbulk &
        -xOHminbulk - (xposbulk+xnegbulk)/vsalt )*fv ! sum over  rho_i i=+,-,s
 
-         sumel = sumel - qtot(ix, iy, iz)*psi(ix, iy, iz)/2.0 
+!         sumel = sumel - qtot(ix, iy, iz)*psi(ix, iy, iz)/2.0 
 
-         gradpsi2 = (psi(ix+1,iy,iz)-psi(ix,iy,iz))**2+(psi(ix,iy+1,iz)-psi(ix,iy,iz))**2+(psi(ix,iy,iz+1)-psi(ix,iy,iz))**2
 
          enddo
          enddo
          enddo
-        
 
-          do ix = 1, dimx
-          do iy = 1, dimy
-          do iz = 1, dimz
-          sumel = sumel + psi(ix,iy,iz)*qprotT(ix,iy,iz) !zpolT(im)*fdisaaT(i)*(vsol/delta**3)
-          enddo
-          enddo
-          enddo
- 
+! 9. Electrostatic 
+
+      sumel = 0.0    
+
+      do ix  = 1, dimx
+      do iy  = 1, dimy
+      do iz  = 1, dimz
+
+      sumel = sumel + psi(ix,iy,iz)*qprotT(ix,iy,iz)*(delta**3/vsol)
+
+      gradpsi2 = (psi(ix+1,iy,iz)-psi(ix-1,iy,iz))*(psi(ix+1,iy,iz)-psi(ix-1,iy,iz))
+      gradpsi2 = gradpsi2 + (psi(ix,iy+1,iz)-psi(ix,iy-1,iz))*(psi(ix,iy+1,iz)-psi(ix,iy-1,iz))
+      gradpsi2 = gradpsi2 + (psi(ix,iy,iz+1)-psi(ix,iy,iz-1))*(psi(ix,iy,iz+1)-psi(ix,iy,iz-1))
+      gradpsi2 = gradpsi2/4.0
+
+      sumel = sumel &
+     + ( - 0.5/constq*gradpsi2*epsfcn(ix,iy,iz))
+
+      enddo ! ix
+
+      if(flagwall.eq.1)F_electro = F_electro + sigmaq*psi(0, iy, iz)/2.0
+
+      enddo
+      enddo
 
          sumpi = (delta**3/vsol)*sumpi
          sumrho = (delta**3/vsol)*sumrho
-         sumel = (delta**3/vsol)*sumel
          sumelp = (delta**3/vsol)*sumelp
          sumdiel = (delta**3/vsol)*sumdiel
-
 
          suma = sumpi + sumrho + sumelp + sumel + sumdiel
 
