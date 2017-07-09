@@ -144,7 +144,7 @@ Free_Energy2 = 0.0
 
       enddo ! ix
 
-      if(flagwall.eq.1)F_electro = F_electro + sigmaq*psi(0, iy, iz)/2.0
+      if(flagwall.eq.1)F_electro = F_electro + sigmaq*psi(0, iy, iz)
 
       enddo
       enddo
@@ -186,9 +186,9 @@ Free_Energy2 = 0.0
 
       sumel = 0.0    
 
-      do ix  = 1, dimx
       do iy  = 1, dimy
       do iz  = 1, dimz
+      do ix  = 1, dimx
 
       sumel = sumel + psi(ix,iy,iz)*qprotT(ix,iy,iz)*(delta**3/vsol)
 
@@ -198,11 +198,11 @@ Free_Energy2 = 0.0
       gradpsi2 = gradpsi2/4.0
 
       sumel = sumel &
-     + ( - 0.5/constq*gradpsi2*epsfcn(ix,iy,iz))
+     + ( - 0.5/constq*gradpsi2*epsfcn(ix,iy,iz))*(delta**3/vsol)
 
       enddo ! ix
 
-      if(flagwall.eq.1)F_electro = F_electro + sigmaq*psi(0, iy, iz)/2.0
+      if(flagwall.eq.1)sumel = sumel + sigmaq*psi(0, iy, iz)
 
       enddo
       enddo
