@@ -49,6 +49,10 @@ dielP = ndr
 delta = ndr
 csalt = ndr
 sigmaq= ndr
+
+fdisfromfile = 0
+
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -80,6 +84,11 @@ do while (ios == 0)
 
 
  select case (label)
+
+ case ('fdisfromfile')
+   read(buffer, *, iostat=ios) fdisfromfile
+   print*,'Set ',trim(label),' = ',trim(buffer)
+
 
  case ('vtkflag')
    read(buffer, *, iostat=ios) vtkflag

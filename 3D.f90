@@ -23,6 +23,7 @@ integer temp
 
 real*8 x1(2*dimx*dimy*dimz)
 real*8 xg1(2*dimx*dimy*dimz)
+real*8 nada
        
 integer n
 
@@ -92,6 +93,7 @@ if(zpol(i).ne.0) then
   open(unit=15000+i,file=filename)
   write(filename,'(A7, I3.3, A4)')'pKaapp.', temp, '.dat'
   open(unit=20000+i,file=filename)
+
   write(filename,'(A8, I3.3, A4)')'fdissaa.', temp, '.dat'
   open(unit=30000+i,file=filename)
 
@@ -101,6 +103,10 @@ if(zpol(i).ne.0) then
   open(unit=50000+i,file=filename)
    write(filename,'(A9, I3.3, A4)')'fdisbulk.', temp, '.dat'
   open(unit=60000+i,file=filename)
+
+
+  write(filename,'(A11, I3.3, A4)')'in-fdissaa.', temp, '.dat'
+  open(unit=70000+i,file=filename)
 
 
 
@@ -138,6 +144,9 @@ call initall
 
 print*, 'pH: ', pHbulk
 
+
+if(fdisfromfile.ne.1) then ! solve for fdis, instead of reading from file...
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 0. Calculate fdisbulk from pKaapps
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -174,9 +183,6 @@ call Free_Energy_Calc(counter, G0)
 ! protein, one
 call listtomatrix(protn,i)
 qprotT(:,:,:) = qprotT(:,:,:) + zpol(i)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
-
-!title = 'qproT'
-!call savetodisk(qprotT, title, counter)
 
 call solve_one(x1, xg1)
 call Free_Energy_Calc(counter, G1)
@@ -274,6 +280,17 @@ print*, 'Maximum error in iteration: ', maxerror, ' pH units'
 
 enddo ! maxerror > errorpKa
 
+
+! finished calculation of fdisaa
+
+else if(fdisfromfile.eq.1) then ! read fdis from file in-***
+  do i = 1, naa
+    if(zpol(i).ne.0) then
+       read(70000+i,*)nada, fdisaa(i) 
+    endif
+  enddo
+endif
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 5. Calculate free energy for all mean charge
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -295,11 +312,11 @@ call Free_Energy_Calc(counter, Gmean)
 
 print*, 'Gmean', Gmean
 
-!title = 'qproT'
-!call savetodisk(qprotT, title, counter)
+title = 'qproT'
+call savetodisk(qprotT, title, counter)
 
-!title = 'poten'
-!call savetodisk(psi2, title, counter)
+title = 'poten'
+call savetodisk(psi2, title, counter)
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

@@ -33,6 +33,7 @@ integer  dimz
 real*8 gama
 integer  wall
 integer  flagwall
+integer fdisfromfile
 real*8 sigmaq 
 endmodule
 
