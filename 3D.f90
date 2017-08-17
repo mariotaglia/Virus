@@ -295,6 +295,13 @@ call Free_Energy_Calc(counter, Gmean)
 
 print*, 'Gmean', Gmean
 
+!title = 'qproT'
+!call savetodisk(qprotT, title, counter)
+
+!title = 'poten'
+!call savetodisk(psi2, title, counter)
+
+
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 6. Save to disk
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -354,7 +361,6 @@ integer n
 
 ! Volumen fraction
 real*8 xh(dimx, dimy, dimz)
-real*8 psi(dimx, dimy, dimz) ! potencial
 integer counter
 character*5 title
 
@@ -377,7 +383,7 @@ n=dimx*dimy*dimz
 do ix=1,dimx
    do iy=1,dimy
       do iz=1,dimz
-       psi(ix,iy,iz)=x1(ix+dimx*(iy-1)+dimx*dimy*(iz-1))
+       psi2(ix,iy,iz)=x1(ix+dimx*(iy-1)+dimx*dimy*(iz-1))
       enddo
    enddo  
 enddo

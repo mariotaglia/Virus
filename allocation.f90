@@ -22,6 +22,7 @@ ALLOCATE (xflag(2*dimx*dimy*dimz))
 ALLOCATE (xpos(dimx, dimy, dimz)) ! pos ion
 ALLOCATE (xneg(dimx, dimy, dimz)) ! neg ioni
 ALLOCATE (qtot(dimx, dimy, dimz)) ! Carga total
+ALLOCATE (psi2(dimx, dimy, dimz)) ! Carga total
 ALLOCATE (xHplus(dimx, dimy, dimz)) ! H+
 ALLOCATE (xOHmin(dimx, dimy, dimz)) ! OH-
 ALLOCATE (epsfcn(0:dimx+1,0:dimy+1,0:dimz+1))

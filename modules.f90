@@ -99,6 +99,7 @@ real*8, allocatable :: Depsfcn(:,:,:)
 real*8, allocatable :: xpos(:,:,:) ! pos ion
 real*8, allocatable :: xneg(:,:,:) ! neg ioni
 real*8, allocatable :: qtot(:,:,:) ! Carga total
+real*8, allocatable :: psi2(:,:,:) ! electrostatic poten
 real*8, allocatable :: xHplus(:,:,:) ! H+
 real*8, allocatable :: xOHmin(:,:,:) ! OH-
 real*8, allocatable :: fdisaa(:)
