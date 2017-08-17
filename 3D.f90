@@ -31,7 +31,7 @@ integer n
 real*8 xh(dimx, dimy, dimz)
 
 real*8, allocatable :: DG(:), DGref(:), Gave(:), Gaveref(:), Kaapp(:), Kaapp_last(:), fdisbulk(:)
-real*8 G0, G1, Gmean, Gmeanref
+real*8 G0, G1, Gmean, Gmeanref, F_Chemical
 real*8 maxerror
 real*8 protn(dimx,dimy,dimz)
 
@@ -79,6 +79,8 @@ endif
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 open(unit=9999,file='Gmean.dat')
+open(unit=9998,file='F_Chemical.dat')
+open(unit=9997,file='G_tot.dat')
 do i = 1, naa
 if(zpol(i).ne.0) then
   temp = aan(i)
@@ -308,9 +310,24 @@ do j = 1, naa
 enddo
 
 call solve_one(x1, xg1)
-call Free_Energy_Calc(counter, Gmean)
 
+call Free_Energy_Calc(counter, Gmean)
 print*, 'Gmean', Gmean
+ 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! 5.5 Calculate F_Chemical
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+      F_Chemical = 0.0
+      do j = 1, naa  
+        if(zpol(j).ne.0) then
+        F_Chemical = F_Chemical + fdisaa(j)*2.303*(pHbulk-(pKa(j))) 
+        if ((fdisaa(j) .lt. 1.0) .and. (fdisaa(j) .gt. 0.0)) then
+        F_Chemical = F_Chemical + fdisaa(j)*log(fdisaa(j)) + (1-fdisaa(j))*log(1-fdisaa(j))
+        endif
+      endif
+      enddo
+
+
 
 title = 'qproT'
 call savetodisk(qprotT, title, counter)
@@ -324,6 +341,8 @@ call savetodisk(psi2, title, counter)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
  write(9999,*)pHbulk, Gmean
+ write(9998,*)pHbulk, F_Chemical
+ write(9997,*)pHbulk, Gmean+F_Chemical
 do i = 1, naa
 if(zpol(i).ne.0) then
  write(10000+i,*)pHbulk, DG(i)
