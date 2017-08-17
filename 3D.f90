@@ -96,6 +96,9 @@ if(zpol(i).ne.0) then
   write(filename,'(A7, I3.3, A4)')'pKaapp.', temp, '.dat'
   open(unit=20000+i,file=filename)
 
+  write(filename,'(A10, I3.3, A4)')'in-pKaapp.', temp, '.dat'
+  open(unit=70000+i,file=filename)
+
   write(filename,'(A8, I3.3, A4)')'fdissaa.', temp, '.dat'
   open(unit=30000+i,file=filename)
 
@@ -105,12 +108,6 @@ if(zpol(i).ne.0) then
   open(unit=50000+i,file=filename)
    write(filename,'(A9, I3.3, A4)')'fdisbulk.', temp, '.dat'
   open(unit=60000+i,file=filename)
-
-
-  write(filename,'(A11, I3.3, A4)')'in-fdissaa.', temp, '.dat'
-  open(unit=70000+i,file=filename)
-
-
 
 endif
 enddo  
@@ -147,7 +144,7 @@ call initall
 print*, 'pH: ', pHbulk
 
 
-if(fdisfromfile.ne.1) then ! solve for fdis, instead of reading from file...
+if(pKafromfile.ne.1) then ! solve for fdis, instead of reading from file...
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 0. Calculate fdisbulk from pKaapps
@@ -195,6 +192,13 @@ endif ! zpol =! 0
 
 enddo ! i
 
+if(pKafromfile.eq.2) then ! use pKaapp as input
+  do i = 1, naa
+    if(zpol(i).ne.0) then
+       read(70000+i,*)nada, Kaapp(i) 
+    endif
+  enddo
+endif
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! Loop for pKa convergence
@@ -285,12 +289,19 @@ enddo ! maxerror > errorpKa
 
 ! finished calculation of fdisaa
 
-else if(fdisfromfile.eq.1) then ! read fdis from file in-***
+else if(pKafromfile.eq.1) then ! read fdis from file in-***
   do i = 1, naa
     if(zpol(i).ne.0) then
-       read(70000+i,*)nada, fdisaa(i) 
+       read(70000+i,*)nada, Kaapp(i) 
     endif
   enddo
+  do i = 1, naa
+  if(zpol(i).eq.1) then ! BASE
+     fdisaa(i) = 1.0 /(1.0 + cOHmin/(Kw/Kaapp(i)))
+  else if (zpol(i).eq.-1.0) then ! ACID
+     fdisaa(i)=1.0 /(1.0 + cHplus/Kaapp(i))
+  endif
+  enddo ! i
 endif
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

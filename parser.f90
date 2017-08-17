@@ -50,7 +50,7 @@ delta = ndr
 csalt = ndr
 sigmaq= ndr
 
-fdisfromfile = 0
+pKafromfile = 0
 
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -85,8 +85,8 @@ do while (ios == 0)
 
  select case (label)
 
- case ('fdisfromfile')
-   read(buffer, *, iostat=ios) fdisfromfile
+ case ('pKafromfile')
+   read(buffer, *, iostat=ios) pKafromfile
    print*,'Set ',trim(label),' = ',trim(buffer)
 
 
