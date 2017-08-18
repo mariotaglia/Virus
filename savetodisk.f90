@@ -11,10 +11,10 @@ integer dimzview
 integer ix, iy, iz, jx, jy, jz
 real*8 array(dimx, dimy, dimz)
 real*8 arraytemp(dimx, dimy, dimz)
-real*8 arrayz(dimz)
+real*8 arrayx(dimx)
 integer counter
 character*5 title
-character*6 titlez
+character*6 titlex
 character*21 filename, tempc
 real*4 singlepres
 real*8 x, y
@@ -55,20 +55,20 @@ enddo
 
 ! Integra y graba promedios en z
 
-do iz=1,dimz
-         arrayz(iz) = 0.0
-      do ix=1,dimx
+do ix=1,dimx
+         arrayx(ix) = 0.0
+      do iz=1,dimz
          do iy=1, dimy
-           arrayz(iz)=arrayz(iz)+array(ix,iy,iz)
+           arrayx(ix)=arrayx(ix)+array(ix,iy,iz)
          enddo
       enddo
 enddo
 
-titlez = title // 'z'
-write(filename,'(A6,A1, I3.3, A4)') titlez,'.', counter, '.dat' 
+titlex = title // 'x'
+write(filename,'(A6,A1, I3.3, A4)') titlex,'.', counter, '.dat' 
 open(unit=45, file=filename)
-do iz=1,dimz
-         write(45,*)(iz-0.5)*delta,arrayz(iz)/dimx/dimy
+do ix=1,dimx
+         write(45,*)(ix-0.5)*delta,arrayx(ix)/dimz/dimy
 enddo
 close(45)
 
