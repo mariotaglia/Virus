@@ -107,6 +107,32 @@ do ix=1,dimx
  enddo  
 enddo
 
+
+!---------------------------------------------------------------------------------------------
+! Acid-base equilibrium
+!---------------------------------------------------------------------------------------------
+
+if (flagK0.eq.0) then ! calculate fdis from K0
+
+  do i = 1, naa
+   if(zpol(i).eq.1) then ! BASE
+        fdis(i)=1.0 /(1.0 + xOHmin(xx(i),yy(i),zz(i))/K0(i))
+    else if (zpol(i).eq.-1.0) then ! ACID
+        fdis(i)=1.0 /(1.0 + xHplus(xx(i),yy(i),zz(i))/K0(i))
+    endif
+  enddo
+
+else if (flagK0.eq.1) then
+
+  if(zpol(i).eq.1) then ! BASE
+        K0(iK0) = 1.0/((1.0/fdisK0) - 1.0)/(xOHmin(xx(i),yy(i),zz(i))
+  else if (zpol(i).eq.-1.0) then ! ACID
+        K0(iK0) = 1.0/((1.0/fdisK0) - 1.0)/(xHplus(xx(i),yy(i),zz(i))
+  endif
+    
+endif
+
+
 !----------------------------------------------------------------------------------------------
 !   Construye Ecuaciones a resolver 
 !----------------------------------------------------------------------------------------------
@@ -119,15 +145,23 @@ do ix=1,dimx
          fv = (1.0-volprotT(ix,iy,iz))
          qtot(ix, iy, iz) = fv* &
       ((zpos*xpos(ix, iy, iz)+zneg*xneg(ix, iy, iz))/vsalt + xHplus(ix, iy, iz) - xOHmin(ix, iy, iz))
-        
         if(fv.ne.1.0)qtot(ix,iy,iz)=0.0
-         
- 
-        qtot(ix,iy,iz)=qtot(ix,iy,iz)+qprotT(ix,iy,iz)
         enddo
    enddo
 enddo
 
+qprotT = 0.0
+if (flagK0.eq.0) then ! calculate fdis from K0
+  do i = 1, naa
+   if(zpol(i).ne.0) then
+   qprotT(xx(i),yy(i),zz(i)) =  qprotT(xx(i),yy(i),zz(i)) + zpol(i)*fdis(i)*(vsol/delta**3)
+   endif
+  enddo
+else if (flagK0.eq.1) then
+   qprotT(xx(iK0),yy(iK0),zz(iK0)) =  qprotT(xx(iK0),yy(iK0),zz(iK0)) + zpol(iK0)*fdisK0*(vsol/delta**3)
+endif
+
+qtot(:,:,:) = qtot(:,:,:) + qprotT(:,:,:)
 
 ! Poisson eq.
 

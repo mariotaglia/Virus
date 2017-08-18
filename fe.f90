@@ -150,6 +150,14 @@ Free_Energy2 = 0.0
 
       Free_Energy = Free_Energy + F_electro
 
+! 10. Chemical
+
+
+
+
+
+
+
 ! minimal F
 
       Free_Energy2 = 0.0

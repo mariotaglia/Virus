@@ -30,26 +30,10 @@ integer n
 ! Volumen fraction
 real*8 xh(dimx, dimy, dimz)
 
-real*8, allocatable :: DG(:), DGref(:), Gave(:), Gaveref(:), Kaapp(:), Kaapp_last(:), fdisbulk(:)
-real*8 G0, G1, Gmean, Gmeanref, F_Chemical
-real*8 maxerror
 real*8 protn(dimx,dimy,dimz)
 
 character*20 filename
 character*5 title
-
-
-
-! alocate
-
-allocate(DG(naa))
-allocate(fdisbulk(naa))
-allocate(Gave(naa))
-allocate(Gaveref(naa))
-allocate(DGref(naa))
-allocate(Kaapp(naa))
-allocate(Kaapp_last(naa))
-
 
 ! number of equations
 
@@ -78,9 +62,8 @@ endif
 ! open files
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-open(unit=9999,file='Gmean.dat')
-open(unit=9998,file='F_Chemical.dat')
 open(unit=9997,file='G_tot.dat')
+
 do i = 1, naa
 if(zpol(i).ne.0) then
   temp = aan(i)
@@ -89,26 +72,14 @@ if(zpol(i).ne.0) then
     if(aan(i).eq.aan(naa))temp = naa+1    
   endif
  
-  write(filename,'(A3, I3.3, A4)')'DG.', temp, '.dat'
-  open(unit=10000+i,file=filename)
-  write(filename,'(A6, I3.3, A4)')'DGref.', temp, '.dat'
-  open(unit=15000+i,file=filename)
-  write(filename,'(A7, I3.3, A4)')'pKaapp.', temp, '.dat'
+  write(filename,'(A7, I3.3, A4)')'K0.', temp, '.dat'
   open(unit=20000+i,file=filename)
-
-  write(filename,'(A10, I3.3, A4)')'in-pKaapp.', temp, '.dat'
-  open(unit=70000+i,file=filename)
 
   write(filename,'(A8, I3.3, A4)')'fdissaa.', temp, '.dat'
   open(unit=30000+i,file=filename)
 
-  write(filename,'(A5, I3.3, A4)')'Gave.', temp, '.dat'
-  open(unit=40000+i,file=filename)
-   write(filename,'(A8, I3.3, A4)')'Gaveref.', temp, '.dat'
-  open(unit=50000+i,file=filename)
-   write(filename,'(A9, I3.3, A4)')'fdisbulk.', temp, '.dat'
+  write(filename,'(A9, I3.3, A4)')'fdisbulk.', temp, '.dat'
   open(unit=60000+i,file=filename)
-
 endif
 enddo  
 
@@ -117,18 +88,8 @@ enddo
 ! Start calculation
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-! initial DG and pKaapp
-DG = 0.0
-
 ! Initial pKaapp = pKa
 call initall
-
-
-do i = 1, naa
- if(zpol(i).ne.0) then
-   Kaapp(i) = Ka(i)
- endif
-enddo
 
 ! counter
 counter = 1
@@ -144,10 +105,8 @@ call initall
 print*, 'pH: ', pHbulk
 
 
-if(pKafromfile.ne.1) then ! solve for fdis, instead of reading from file...
-
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! 0. Calculate fdisbulk from pKaapps
+! 1. Calculate fdisbulk from pKa
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 do i = 1, naa
@@ -159,216 +118,65 @@ do i = 1, naa
 enddo ! i
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! 1. Calculate DG for all aminocids with charge (reference)
+! 2. Calculate K0 for all aminocids with charge (reference)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ! turns off the wall
 flagwall = 0
 
-do i = 1, naa
-if(zpol(i).ne.0) then
+do i = 1, naa ! loop over aminoacid
+if(zpol(i).ne.0) then ! only those with charge
 
 print*, 'AA #', i
 
 call listtomatrix(protn,i) 
-volprotT(:,:,:) = protn(:,:,:)/delta**3
-qprotT = 0.0
+volprotT(:,:,:) = protn(:,:,:)/delta**3 ! distribution of aminoacid volume
 
-! protein, zero
-call solve_one(x1, xg1)
-call Free_Energy_Calc(counter, G0)
+iK0 = i ! aminoacid to solve
+fdisK0 = fdisbulk(i) ! target dissociation 
+flagK0 = 1 ! solve for K0
 
+call solve_one(x1, xg1) ! so
 
-! protein, one
-call listtomatrix(protn,i)
-qprotT(:,:,:) = qprotT(:,:,:) + zpol(i)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
-
-call solve_one(x1, xg1)
-call Free_Energy_Calc(counter, G1)
-DGref(i) = G1-G0
-Gaveref(i) = G1*fdisbulk(i) + G0*(1.0-fdisbulk(i))
-print*, 'Gref(',i,') =', DGref(i), 'zpol =', zpol(i)
-endif ! zpol =! 0
-
-enddo ! i
-
-if(pKafromfile.eq.2) then ! use pKaapp as input
-  do i = 1, naa
-    if(zpol(i).ne.0) then
-       read(70000+i,*)nada, Kaapp(i) 
-    endif
-  enddo
-endif
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! Loop for pKa convergence
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-do while (maxerror.gt.errorpKa)
-
-Kaapp_last = Kaapp 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! 0. Calculate f from pKaapps
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-do i = 1, naa
-  if(zpol(i).eq.1) then ! BASE
-     fdisaa(i) = 1.0 /(1.0 + cOHmin/(Kw/Kaapp(i)))
-  else if (zpol(i).eq.-1.0) then ! ACID
-     fdisaa(i)=1.0 /(1.0 + cHplus/Kaapp(i))
-  endif
-enddo ! i
-
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! 2. Calculate DG for all aminocids with charge
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-! turns on the wall
-flagwall = wall
-volprotT = volprot
-
-do i = 1, naa
-
-qprotT = 0.0
-do j = 1, naa
-   if(zpol(j).ne.0) then ! charged aminoacid
-       call listtomatrix(protn,j)
-       if(i.ne.j)qprotT(:,:,:) = qprotT(:,:,:) + zpol(j)*fdisaa(j)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
-   endif
-enddo
-
-if(zpol(i).ne.0) then
-
-print*, 'AA #', i
-
-! protein, zero
-call solve_one(x1, xg1)
-call Free_Energy_Calc(counter, G0)
-
-
-! protein, one
-call listtomatrix(protn,i)
-qprotT(:,:,:) = qprotT(:,:,:) + zpol(i)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
-
-call solve_one(x1, xg1)
-call Free_Energy_Calc(counter, G1)
-DG(i) = G1-G0
-Gave(i) = G1*fdisaa(i) + G0*(1.0-fdisaa(i))
-print*, 'G(',i,') =', DG(i), 'zpol =', zpol(i)
-endif ! zpol =! 0
-
-enddo
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! 3. Calculate new values for Kaaap
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-
-do i = 1, naa
-if(zpol(i).eq.1)Kaapp(i) = 10**(log10(Ka(i)*exp(DG(i)-DGref(i)))*(1.0-damping) + log10(Kaapp_last(i))*damping)
-if(zpol(i).eq.-1)Kaapp(i) = 10**(log10(Ka(i)*exp(-(DG(i)-DGref(i))))*(1.0-damping) + log10(Kaapp_last(i))*damping)
-enddo
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! 4. Calculate maxerror
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-maxerror = 0.0
-do i = 1, naa
-if(zpol(i).ne.0) then
- print*, i, Kaapp(i), Kaapp_last(i)
- if(abs(-log10(Kaapp(i)) + log10(Kaapp_last(i))).gt.maxerror)maxerror=abs(-log10(Kaapp(i)) + log10(Kaapp_last(i)))
-endif
-enddo
-
-print*, 'Maximum error in iteration: ', maxerror, ' pH units'
-
-enddo ! maxerror > errorpKa
-
-
-! finished calculation of fdisaa
-
-else if(pKafromfile.eq.1) then ! read fdis from file in-***
-  do i = 1, naa
-    if(zpol(i).ne.0) then
-       read(70000+i,*)nada, Kaapp(i) 
-    endif
-  enddo
-  do i = 1, naa
-  if(zpol(i).eq.1) then ! BASE
-     fdisaa(i) = 1.0 /(1.0 + cOHmin/(Kw/Kaapp(i)))
-  else if (zpol(i).eq.-1.0) then ! ACID
-     fdisaa(i)=1.0 /(1.0 + cHplus/Kaapp(i))
-  endif
-  enddo ! i
-endif
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! 5. Calculate free energy for all mean charge
+! 3. Solve for protein
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 ! turns on the wall
-flagwall = wall
-volprotT = volprot
+flagwall = wall ! recover original wall flag
+volprotT = volprot  ! recover original volume distribution
 
-qprotT = 0.0
-do j = 1, naa
-   if(zpol(j).ne.0) then ! charged aminoacid
-       call listtomatrix(protn,j)
-       qprotT(:,:,:) = qprotT(:,:,:) + zpol(j)*fdisaa(j)*(vsol/delta**3)*protn(:,:,:)/sum(protn)
-   endif
-enddo
-
+flagK0 = 0 ! do not solve for individual aminoacids
 call solve_one(x1, xg1)
 
-call Free_Energy_Calc(counter, Gmean)
+call Free_Energy_Calc(counter, Gmean) ! free energy calculation
 print*, 'Gmean', Gmean
+
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+! 4. Save to disk
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
  
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! 5.5 Calculate F_Chemical
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-      F_Chemical = 0.0
-      do j = 1, naa  
-        if(zpol(j).ne.0) then
-        F_Chemical = F_Chemical + fdisaa(j)*2.303*(pHbulk-(pKa(j))) 
-        if ((fdisaa(j) .lt. 1.0) .and. (fdisaa(j) .gt. 0.0)) then
-        F_Chemical = F_Chemical + fdisaa(j)*log(fdisaa(j)) + (1-fdisaa(j))*log(1-fdisaa(j))
-        endif
-      endif
-      enddo
-
-
-
 title = 'qproT'
 call savetodisk(qprotT, title, counter)
 
 title = 'poten'
 call savetodisk(psi2, title, counter)
 
-
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-! 6. Save to disk
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
  write(9999,*)pHbulk, Gmean
- write(9998,*)pHbulk, F_Chemical
- write(9997,*)pHbulk, Gmean+F_Chemical
-do i = 1, naa
-if(zpol(i).ne.0) then
- write(10000+i,*)pHbulk, DG(i)
- write(15000+i,*)pHbulk, DGref(i)
- write(30000+i,*)pHbulk, fdisaa(i) 
- write(20000+i,*)pHbulk, -log10(Kaapp(i))
- write(40000+i,*)pHbulk, Gave(i)
- write(50000+i,*)pHbulk, Gaveref(i)
- write(60000+i,*)pHbulk, fdisbulk(i)
 
- flush(10000+i)
- flush(20000+i)
- flush(30000+i)
-endif
-enddo
+ do i = 1, naa
+  if(zpol(i).ne.0) then
+    write(30000+i,*)pHbulk, fdisaa(i) 
+    write(20000+i,*)pHbulk, K0(i)
+    write(60000+i,*)pHbulk, fdisbulk(i)
+
+    flush(30000+i)
+    flush(20000+i)
+    flush(60000+i)
+   endif
+  enddo
 
 pHbulk = pHbulk + pHstep
 
@@ -376,9 +184,9 @@ enddo ! counter
 
 do i = 1, naa
 if(zpol(i).ne.0) then
-close(10000+i)
-close(10000+i)
-close(10000+i)
+close(30000+i)
+close(20000+i)
+close(60000+i)
 endif
 enddo
 end subroutine
