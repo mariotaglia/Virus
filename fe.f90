@@ -225,13 +225,12 @@ Free_Energy2 = 0.0
          write(304,*)looped, F_Mix_neg
          write(305,*)looped, F_Mix_Hplus
          write(306,*)looped, F_Mix_OHmin
+         write(311,*)looped, F_electro
+         write(302,*)looped, F_mix_s
          write(312,*)looped, Free_energy2
 
          FE = free_energy
          return
 
          end
-
-
-
 
