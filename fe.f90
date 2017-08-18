@@ -35,7 +35,7 @@ real*8 t1, t2
 Free_Energy = 0.0
 Free_Energy2 = 0.0
 
-! 2. Mezcla ion positivo
+! 1. Mezcla ion positivo
 
       F_Mix_pos = 0.0 
 
@@ -59,7 +59,7 @@ Free_Energy2 = 0.0
       F_Mix_pos = F_Mix_pos * delta**3/vsol/vsalt
       Free_Energy = Free_Energy + F_Mix_pos
 
-! 3. Mezcla ion negativo
+! 2. Mezcla ion negativo
 
       F_Mix_neg = 0.0
 
@@ -82,7 +82,7 @@ Free_Energy2 = 0.0
       F_Mix_neg = F_Mix_neg * delta**3/vsol/vsalt
       Free_Energy = Free_Energy + F_Mix_neg
 
-! 4. Mezcla protones
+! 3. Mezcla protones
 
       F_Mix_Hplus = 0.0
 
@@ -105,7 +105,7 @@ Free_Energy2 = 0.0
       F_Mix_Hplus = F_Mix_Hplus * delta**3/vsol
       Free_Energy = Free_Energy + F_Mix_Hplus
 
-! 5. Mezcla hidroxilos
+! 4. Mezcla hidroxilos
 
       F_Mix_OHmin = 0.0
 
@@ -126,7 +126,7 @@ Free_Energy2 = 0.0
       F_Mix_OHmin = F_Mix_OHmin * delta**3/vsol
       Free_Energy = Free_Energy + F_Mix_OHmin
 
-! 9. Electrostatic 
+! 5. Electrostatic 
 
       F_electro = 0.0    
 
@@ -150,13 +150,24 @@ Free_Energy2 = 0.0
 
       Free_Energy = Free_Energy + F_electro
 
-! 10. Chemical
+! 6. Chemical
 
+      F_eq = 0.0
+      do i = 1, N_monomer
+      if(zpol(i).ne.0) then ! only charged
+      F_eq = F_Eq + fdis(i)*dlog(fdis(i))
+      F_eq = F_Eq + (1.0-fdis(i))*dlog(1.0-fdis(i))
+      F_eq = F_Eq + (1.0-fdis(i))*dlog(K0(i))
+      select case (zpol(i))
+      case (1) ! base 
+      F_eq = F_Eq + (1.0-fdis(i))*(-dlog(expmuOHmin))
+      case (-1) ! acid
+      F_eq = F_Eq + (1.0-fdis(i))*(-dlog(expmuHplus))
+      endselect
+      endif ! zpol
+      enddo ! im
 
-
-
-
-
+      F_eq = F_eq*delta**3/vsol
 
 ! minimal F
 
