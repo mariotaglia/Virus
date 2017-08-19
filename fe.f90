@@ -15,6 +15,7 @@ use ematrix
 use montecarlo
 use ellipsoid
 use aa
+use mlist
 implicit none
 
 real*8 FE
@@ -26,7 +27,7 @@ real*8 F_Mix_OHmin, F_electro
  
 ! Dummies
 integer ix, iy, iz, i, ii, ax, ay, az, jj
-integer jx, jy, iii, im
+integer jx, jy, iii, im, j
 
 real*8 gradpsi2
 real*8 fv, fv2
@@ -225,7 +226,15 @@ Free_Energy2 = 0.0
       do im = 1, naa
       if(zpol(im).ne.0) then
       sumelp = sumelp + dlog(fdis(im))
-      sumel = sumel + psi(xx(im),yy(im),zz(im))*zpol(im)
+
+      do j = 1,maxelement_list(im)
+        ix = coords_list(im,1,j)
+        iy = coords_list(im,2,j)
+        iz = coords_list(im,3,j)
+
+        sumelp = sumelp + vol_list(im,j)/sum(vol_list(im,:))*zpol(im)*psi(ix,iy,iz)  
+      enddo !j
+
       endif ! zpol
       enddo ! im
 

@@ -11,6 +11,7 @@ use ematrix
 use ellipsoid
 use aa
 use mK0
+use mlist
 implicit none
 
 integer*4 ier2
@@ -37,7 +38,6 @@ real*8 fv
 integer im, at
 
 integer zmin, zmax
-real*8 protn(dimx,dimy,dimz)
 
 real*8 xOHmineff, xHpluseff
 
@@ -120,15 +120,14 @@ if (flagK0.eq.0) then ! calculate fdis from K0
    if(zpol(i).eq.1) then ! BASE
 
 ! calculate average xOHmin over segment ... see notes
-        call listtomatrix(protn,i)
         xOHmineff = 0.0
-        do ix = 1, dimx  
-        do iy = 1, dimy 
-        do iz = 1, dimz  
-        xOHmineff = xOHmineff + log(xOHmin(ix,iy,iz))*protn(ix,iy,iz)/sum(protn)
-        enddo 
-        enddo
-        enddo
+        do j = 1,maxelement_list(i)
+        ix = coords_list(i,1,j)
+        iy = coords_list(i,2,j)
+        iz = coords_list(i,3,j)  
+        xOHmineff = xOHmineff + log(xOHmin(ix,iy,iz))*vol_list(i,j)
+        enddo ! j
+        xOHmineff = xOHmineff/sum(vol_list(i,:)) 
         xOHmineff = exp(xOHmineff)
 
         fdis(i)=1.0 /(1.0 + xOHmineff/K0(i))
@@ -136,15 +135,14 @@ if (flagK0.eq.0) then ! calculate fdis from K0
     else if (zpol(i).eq.-1) then ! ACID
 
 ! calculate average xHplus over segment ... see notes
-        call listtomatrix(protn,i)
         xHpluseff = 0.0
-        do ix = 1, dimx  
-        do iy = 1, dimy 
-        do iz = 1, dimz  
-        xHpluseff = xHpluseff + log(xHplus(ix,iy,iz))*protn(ix,iy,iz)/sum(protn)
-        enddo 
-        enddo
-        enddo
+        do j = 1,maxelement_list(i)
+        ix = coords_list(i,1,j)
+        iy = coords_list(i,2,j)
+        iz = coords_list(i,3,j)  
+        xHpluseff = xHpluseff + log(xHplus(ix,iy,iz))*vol_list(i,j)
+        enddo ! j
+        xHpluseff = xHpluseff/sum(vol_list(i,:)) 
         xHpluseff = exp(xHpluseff)
 
         fdis(i)=1.0 /(1.0 + xHpluseff/K0(i))
@@ -156,15 +154,14 @@ else if (flagK0.eq.1) then
   if(zpol(iK0).eq.1) then ! BASE
 
 ! calculate average xOHmin over segment ... see notes
-        call listtomatrix(protn,iK0)
         xOHmineff = 0.0
-        do ix = 1, dimx  
-        do iy = 1, dimy 
-        do iz = 1, dimz  
-        xOHmineff = xOHmineff + log(xOHmin(ix,iy,iz))*protn(ix,iy,iz)/sum(protn)
-        enddo 
-        enddo
-        enddo
+        do j = 1,maxelement_list(iK0)
+        ix = coords_list(iK0,1,j)
+        iy = coords_list(iK0,2,j)
+        iz = coords_list(iK0,3,j)  
+        xOHmineff = xOHmineff + log(xOHmin(ix,iy,iz))*vol_list(iK0,j)
+        enddo ! j
+        xOHmineff = xOHmineff/sum(vol_list(iK0,:)) 
         xOHmineff = exp(xOHmineff)
 
         K0(iK0) = 1.0/((1.0/fdisK0)-1.0)*xOHmineff
@@ -172,18 +169,17 @@ else if (flagK0.eq.1) then
   else if (zpol(iK0).eq.-1) then ! ACID
 
 ! calculate average xHplus over segment ... see notes
-        call listtomatrix(protn,iK0)
- 
-        xHpluseff = 0.0
-        do ix = 1, dimx  
-        do iy = 1, dimy 
-        do iz = 1, dimz  
-        xHpluseff = xHpluseff + log(xHplus(ix,iy,iz))*protn(ix,iy,iz)/sum(protn)
-        enddo 
-        enddo
-        enddo
-        xHpluseff = exp(xHpluseff)
 
+        xHpluseff = 0.0
+        do j = 1,maxelement_list(iK0)
+        ix = coords_list(iK0,1,j)
+        iy = coords_list(iK0,2,j)
+        iz = coords_list(iK0,3,j)  
+        xHpluseff = xHpluseff + log(xHplus(ix,iy,iz))*vol_list(iK0,j)
+        enddo ! j
+        xHpluseff = xHpluseff/sum(vol_list(iK0,:)) 
+        xHpluseff = exp(xHpluseff)
+ 
         K0(iK0) = 1.0/((1.0/fdisK0)-1.0)*xHpluseff
   endif
 endif
@@ -210,16 +206,22 @@ if (flagK0.eq.0) then ! calculate fdis from K0
   do i = 1, naa
    if(zpol(i).ne.0) then
 
-   call listtomatrix(protn,i)
+   do j = 1,maxelement_list(i)
+   ix = coords_list(i,1,j)
+   iy = coords_list(i,2,j)
+   iz = coords_list(i,3,j)
+   qprotT(ix,iy,iz) = qprotT(ix,iy,iz) + float(zpol(i))*fdis(i)*vol_list(i,j)/sum(vol_list(i,:))
+   enddo ! j
 
-   qprotT(:,:,:) = qprotT(:,:,:) + float(zpol(i))*protn(:,:,:)/sum(protn)*fdis(i)
-!   qprotT(xx(i),yy(i),zz(i)) =  qprotT(xx(i),yy(i),zz(i)) + float(zpol(i))*fdis(i)
    endif
   enddo
 else if (flagK0.eq.1) then
-   call listtomatrix(protn,iK0)
-   qprotT(:,:,:) = qprotT(:,:,:) + float(zpol(iK0))*protn(:,:,:)/sum(protn)*fdisK0
-!   qprotT(xx(iK0),yy(iK0),zz(iK0)) =  qprotT(xx(iK0),yy(iK0),zz(iK0)) + float(zpol(iK0))*fdisK0
+   do j = 1,maxelement_list(iK0)
+   ix = coords_list(iK0,1,j)
+   iy = coords_list(iK0,2,j)
+   iz = coords_list(iK0,3,j)
+   qprotT(ix,iy,iz) = qprotT(ix,iy,iz) + float(zpol(iK0))*fdisK0*vol_list(iK0,j)/sum(vol_list(iK0,:))
+   enddo ! j
 endif
 
 qtot(:,:,:) = qtot(:,:,:) + qprotT(:,:,:)*(vsol/delta**3)
