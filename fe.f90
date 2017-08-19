@@ -167,6 +167,7 @@ Free_Energy2 = 0.0
       endif ! zpol
       enddo ! im
 
+
       Free_Energy = Free_Energy + F_eq
 
 ! minimal F
@@ -177,7 +178,6 @@ Free_Energy2 = 0.0
         sumrho=0.0
         sumel=0.0
         sumelp=0.0
-        sumdiel = 0.0
 
         do ix=1,dimx
         do iy=1,dimy
@@ -193,8 +193,6 @@ Free_Energy2 = 0.0
            sumrho = sumrho - ( -xHplusbulk &
        -xOHminbulk - (xposbulk+xnegbulk)/vsalt )*fv ! sum over  rho_i i=+,-,s
 
-!         sumel = sumel - qtot(ix, iy, iz)*psi(ix, iy, iz)/2.0 
-
          enddo
          enddo
          enddo
@@ -207,7 +205,7 @@ Free_Energy2 = 0.0
       do iz  = 1, dimz
       do ix  = 1, dimx
 
-      sumel = sumel + psi(ix,iy,iz)*qprotT(ix,iy,iz)*(delta**3/vsol)
+      sumel = sumel + psi(ix,iy,iz)*qprotT(ix,iy,iz) !*(delta**3/vsol)
 
       gradpsi2 = (psi(ix+1,iy,iz)-psi(ix-1,iy,iz))*(psi(ix+1,iy,iz)-psi(ix-1,iy,iz))
       gradpsi2 = gradpsi2 + (psi(ix,iy+1,iz)-psi(ix,iy-1,iz))*(psi(ix,iy+1,iz)-psi(ix,iy-1,iz))
@@ -226,18 +224,14 @@ Free_Energy2 = 0.0
 
       do im = 1, naa
       if(zpol(im).ne.0) then
-       if(fdis(im).ne.0.0)sumelp = sumelp + dlog(fdis(im))
-      endif
-      enddo
+      if(fdis(im).ne.0.0)sumelp = sumelp + dlog(fdis(im))
+      endif ! zpol
+      enddo ! im
 
          sumpi = (delta**3/vsol)*sumpi
          sumrho = (delta**3/vsol)*sumrho
-!         sumelp = (delta**3/vsol)*sumelp
-         sumdiel = (delta**3/vsol)*sumdiel
 
-         suma = sumpi + sumrho + sumelp + sumel + sumdiel
-
-         print*,'!', sumpi, sumrho, sumelp, sumel, sumdiel
+         suma = sumpi + sumrho + sumelp + sumel
 
          Free_Energy2 = suma 
 

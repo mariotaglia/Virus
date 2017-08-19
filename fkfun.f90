@@ -126,12 +126,11 @@ if (flagK0.eq.0) then ! calculate fdis from K0
 else if (flagK0.eq.1) then
 
   if(zpol(iK0).eq.1) then ! BASE
-        K0(iK0) = 1.0/((1.0/fdisK0) - 1.0)/xOHmin(xx(iK0),yy(iK0),zz(iK0))
+        K0(iK0) = 1.0/((1.0/fdisK0)-1.0)*xOHmin(xx(iK0),yy(iK0),zz(iK0))
   else if (zpol(iK0).eq.-1.0) then ! ACID
-        K0(iK0) = 1.0/((1.0/fdisK0) - 1.0)/xHplus(xx(iK0),yy(iK0),zz(iK0))
+        K0(iK0) = 1.0/((1.0/fdisK0)-1.0)*xHplus(xx(iK0),yy(iK0),zz(iK0))
   endif
 endif
-
 
 !----------------------------------------------------------------------------------------------
 !   Construye Ecuaciones a resolver 
