@@ -39,7 +39,7 @@ integer im, at
 integer zmin, zmax
 real*8 protn(dimx,dimy,dimz)
 
-
+real*8 xOHmineff, xHpluseff
 
 ! Recupera xh y psi desde x()
 
@@ -118,18 +118,73 @@ if (flagK0.eq.0) then ! calculate fdis from K0
 
   do i = 1, naa
    if(zpol(i).eq.1) then ! BASE
-        fdis(i)=1.0 /(1.0 + xOHmin(xx(i),yy(i),zz(i))/K0(i))
+
+! calculate average xOHmin over segment ... see notes
+        call listtomatrix(protn,i)
+        xOHmineff = 0.0
+        do ix = 1, dimx  
+        do iy = 1, dimy 
+        do iz = 1, dimz  
+        xOHmineff = xOHmineff + log(xOHmin(ix,iy,iz))*protn(ix,iy,iz)/sum(protn)
+        enddo 
+        enddo
+        enddo
+        xOHmineff = exp(xOHmineff)
+
+        fdis(i)=1.0 /(1.0 + xOHmineff/K0(i))
+
     else if (zpol(i).eq.-1) then ! ACID
-        fdis(i)=1.0 /(1.0 + xHplus(xx(i),yy(i),zz(i))/K0(i))
+
+! calculate average xHplus over segment ... see notes
+        call listtomatrix(protn,i)
+        xHpluseff = 0.0
+        do ix = 1, dimx  
+        do iy = 1, dimy 
+        do iz = 1, dimz  
+        xHpluseff = xHpluseff + log(xHplus(ix,iy,iz))*protn(ix,iy,iz)/sum(protn)
+        enddo 
+        enddo
+        enddo
+        xHpluseff = exp(xHpluseff)
+
+        fdis(i)=1.0 /(1.0 + xHpluseff/K0(i))
     endif
-  enddo
+  enddo ! naa
 
 else if (flagK0.eq.1) then
 
   if(zpol(iK0).eq.1) then ! BASE
-        K0(iK0) = 1.0/((1.0/fdisK0)-1.0)*xOHmin(xx(iK0),yy(iK0),zz(iK0))
+
+! calculate average xOHmin over segment ... see notes
+        call listtomatrix(protn,iK0)
+        xOHmineff = 0.0
+        do ix = 1, dimx  
+        do iy = 1, dimy 
+        do iz = 1, dimz  
+        xOHmineff = xOHmineff + log(xOHmin(ix,iy,iz))*protn(ix,iy,iz)/sum(protn)
+        enddo 
+        enddo
+        enddo
+        xOHmineff = exp(xOHmineff)
+
+        K0(iK0) = 1.0/((1.0/fdisK0)-1.0)*xOHmineff
+
   else if (zpol(iK0).eq.-1) then ! ACID
-        K0(iK0) = 1.0/((1.0/fdisK0)-1.0)*xHplus(xx(iK0),yy(iK0),zz(iK0))
+
+! calculate average xHplus over segment ... see notes
+        call listtomatrix(protn,iK0)
+ 
+        xHpluseff = 0.0
+        do ix = 1, dimx  
+        do iy = 1, dimy 
+        do iz = 1, dimz  
+        xHpluseff = xHpluseff + log(xHplus(ix,iy,iz))*protn(ix,iy,iz)/sum(protn)
+        enddo 
+        enddo
+        enddo
+        xHpluseff = exp(xHpluseff)
+
+        K0(iK0) = 1.0/((1.0/fdisK0)-1.0)*xHpluseff
   endif
 endif
 
@@ -156,6 +211,7 @@ if (flagK0.eq.0) then ! calculate fdis from K0
    if(zpol(i).ne.0) then
 
    call listtomatrix(protn,i)
+
    qprotT(:,:,:) = qprotT(:,:,:) + float(zpol(i))*protn(:,:,:)/sum(protn)*fdis(i)
 !   qprotT(xx(i),yy(i),zz(i)) =  qprotT(xx(i),yy(i),zz(i)) + float(zpol(i))*fdis(i)
    endif
