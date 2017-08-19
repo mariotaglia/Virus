@@ -167,7 +167,7 @@ Free_Energy2 = 0.0
       endif ! zpol
       enddo ! im
 
-      F_eq = F_eq
+      Free_Energy = Free_Energy + F_eq
 
 ! minimal F
 
