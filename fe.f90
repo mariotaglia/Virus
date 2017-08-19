@@ -199,7 +199,6 @@ Free_Energy2 = 0.0
 
 ! 9. Electrostatic 
 
-      sumel = 0.0    
 
       do iy  = 1, dimy
       do iz  = 1, dimz
@@ -224,7 +223,7 @@ Free_Energy2 = 0.0
 
       do im = 1, naa
       if(zpol(im).ne.0) then
-      if(fdis(im).ne.0.0)sumelp = sumelp + dlog(fdis(im))
+      sumelp = sumelp + dlog(fdis(im))
       endif ! zpol
       enddo ! im
 

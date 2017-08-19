@@ -62,7 +62,8 @@ endif
 ! open files
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-open(unit=9997,file='G_tot.dat')
+open(unit=9999,file='Gmean.dat')
+open(unit=9998,file='sumq.dat')
 
 do i = 1, naa
 if(zpol(i).ne.0) then
@@ -167,6 +168,7 @@ title = 'poten'
 call savetodisk(psi2, title, counter)
 
  write(9999,*)pHbulk, Gmean
+ write(9998,*)pHbulk, sum(qprotT)
 
  do i = 1, naa
   if(zpol(i).ne.0) then
