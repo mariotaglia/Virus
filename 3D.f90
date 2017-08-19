@@ -12,7 +12,7 @@ use ematrix
 use aa
 use inputtemp, only : cHplus, cOHmin, pHbulk
 use sphereV
-use convergepKa
+use mK0
 
 implicit none
 integer ii,i, ix, iy, iz, jx,jy,jz, j
@@ -24,7 +24,7 @@ integer temp
 real*8 x1(2*dimx*dimy*dimz)
 real*8 xg1(2*dimx*dimy*dimz)
 real*8 nada
-       
+real*8 Gmean
 integer n
 
 ! Volumen fraction
@@ -72,7 +72,7 @@ if(zpol(i).ne.0) then
     if(aan(i).eq.aan(naa))temp = naa+1    
   endif
  
-  write(filename,'(A7, I3.3, A4)')'K0.', temp, '.dat'
+  write(filename,'(A3, I3.3, A4)')'K0.', temp, '.dat'
   open(unit=20000+i,file=filename)
 
   write(filename,'(A8, I3.3, A4)')'fdissaa.', temp, '.dat'
@@ -97,8 +97,6 @@ counter2 = 1
 
 ! loop over pH starts here
 do counter = 1, npH
-
-maxerror = errorpKa+1.0
 
 call initall
 
@@ -126,7 +124,6 @@ flagwall = 0
 
 do i = 1, naa ! loop over aminoacid
 if(zpol(i).ne.0) then ! only those with charge
-
 print*, 'AA #', i
 
 call listtomatrix(protn,i) 
@@ -136,8 +133,13 @@ iK0 = i ! aminoacid to solve
 fdisK0 = fdisbulk(i) ! target dissociation 
 flagK0 = 1 ! solve for K0
 
-call solve_one(x1, xg1) ! so
+call solve_one(x1, xg1) 
 
+print*, 'K0:', K0(i)
+print*, 'fdisbulk:', fdisbulk(i)
+
+endif
+enddo
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 3. Solve for protein
@@ -168,7 +170,7 @@ call savetodisk(psi2, title, counter)
 
  do i = 1, naa
   if(zpol(i).ne.0) then
-    write(30000+i,*)pHbulk, fdisaa(i) 
+    write(30000+i,*)pHbulk, fdis(i) 
     write(20000+i,*)pHbulk, K0(i)
     write(60000+i,*)pHbulk, fdisbulk(i)
 
@@ -262,5 +264,6 @@ endif
 do i = 1, n
   xflag(i) = x1(i) ! xflag sirve como input para la proxima iteracion
 enddo
+
 infile = 2 ! no vuelve a leer infile
 end subroutine

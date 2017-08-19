@@ -10,7 +10,6 @@ use inputtemp
 use saves
 use ematrix
 use aa
-use convergepKa
 implicit none
 
 ! Input related variables
@@ -92,14 +91,6 @@ do while (ios == 0)
 
  case ('vtkflag')
    read(buffer, *, iostat=ios) vtkflag
-   print*,'Set ',trim(label),' = ',trim(buffer)
-
- case ('errorpKa')
-   read(buffer, *, iostat=ios) errorpKa
-   print*,'Set ',trim(label),' = ',trim(buffer)
-
- case ('damping')
-   read(buffer, *, iostat=ios) damping
    print*,'Set ',trim(label),' = ',trim(buffer)
 
  case ('dimx')

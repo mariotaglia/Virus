@@ -25,7 +25,7 @@ itmax=200
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! 
 
        open(unit=301, file='F_tot.dat')
-       open(unit=302, file='F_mixs.dat')
+       open(unit=302, file='F_eq.dat')
        open(unit=303, file='F_mixpos.dat')
        open(unit=304, file='F_mixneg.dat')
        open(unit=305, file='F_mixH.dat')

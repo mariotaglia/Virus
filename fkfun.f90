@@ -10,6 +10,7 @@ use kinsol
 use ematrix
 use ellipsoid
 use aa
+use mK0
 implicit none
 
 integer*4 ier2
@@ -124,12 +125,11 @@ if (flagK0.eq.0) then ! calculate fdis from K0
 
 else if (flagK0.eq.1) then
 
-  if(zpol(i).eq.1) then ! BASE
-        K0(iK0) = 1.0/((1.0/fdisK0) - 1.0)/(xOHmin(xx(i),yy(i),zz(i))
-  else if (zpol(i).eq.-1.0) then ! ACID
-        K0(iK0) = 1.0/((1.0/fdisK0) - 1.0)/(xHplus(xx(i),yy(i),zz(i))
+  if(zpol(iK0).eq.1) then ! BASE
+        K0(iK0) = 1.0/((1.0/fdisK0) - 1.0)/xOHmin(xx(iK0),yy(iK0),zz(iK0))
+  else if (zpol(iK0).eq.-1.0) then ! ACID
+        K0(iK0) = 1.0/((1.0/fdisK0) - 1.0)/xHplus(xx(iK0),yy(iK0),zz(iK0))
   endif
-    
 endif
 
 
@@ -154,14 +154,14 @@ qprotT = 0.0
 if (flagK0.eq.0) then ! calculate fdis from K0
   do i = 1, naa
    if(zpol(i).ne.0) then
-   qprotT(xx(i),yy(i),zz(i)) =  qprotT(xx(i),yy(i),zz(i)) + zpol(i)*fdis(i)*(vsol/delta**3)
+   qprotT(xx(i),yy(i),zz(i)) =  qprotT(xx(i),yy(i),zz(i)) + zpol(i)*fdis(i)
    endif
   enddo
 else if (flagK0.eq.1) then
-   qprotT(xx(iK0),yy(iK0),zz(iK0)) =  qprotT(xx(iK0),yy(iK0),zz(iK0)) + zpol(iK0)*fdisK0*(vsol/delta**3)
+   qprotT(xx(iK0),yy(iK0),zz(iK0)) =  qprotT(xx(iK0),yy(iK0),zz(iK0)) + zpol(iK0)*fdisK0
 endif
 
-qtot(:,:,:) = qtot(:,:,:) + qprotT(:,:,:)
+qtot(:,:,:) = qtot(:,:,:) + qprotT(:,:,:)*(vsol/delta**3)
 
 ! Poisson eq.
 
@@ -189,7 +189,7 @@ enddo
 
 iter = iter + 1
 if(verbose.ge.3) then
-print*, iter, norma
+!print*, iter, norma
 endif
 
 3333 continue

@@ -19,7 +19,7 @@ implicit none
 
 real*8 FE
 integer looped
-real*8 F_Mix_s, F_Mix_pos
+real*8 F_Mix_s, F_Mix_pos, F_eq
 real*8 F_Mix_neg, F_Mix_Hplus
 real*8 Free_energy2, sumpi, sumrho, sumel, sumelp, sumdiel, suma, mupol
 real*8 F_Mix_OHmin, F_electro
@@ -153,7 +153,7 @@ Free_Energy2 = 0.0
 ! 6. Chemical
 
       F_eq = 0.0
-      do i = 1, N_monomer
+      do i = 1, naa
       if(zpol(i).ne.0) then ! only charged
       F_eq = F_Eq + fdis(i)*dlog(fdis(i))
       F_eq = F_Eq + (1.0-fdis(i))*dlog(1.0-fdis(i))
@@ -167,7 +167,7 @@ Free_Energy2 = 0.0
       endif ! zpol
       enddo ! im
 
-      F_eq = F_eq*delta**3/vsol
+      F_eq = F_eq
 
 ! minimal F
 
@@ -224,12 +224,20 @@ Free_Energy2 = 0.0
       enddo
       enddo
 
+      do im = 1, naa
+      if(zpol(im).ne.0) then
+       sumelp = sumelp + dlog(fdis(im))
+      endif
+      enddo
+
          sumpi = (delta**3/vsol)*sumpi
          sumrho = (delta**3/vsol)*sumrho
-         sumelp = (delta**3/vsol)*sumelp
+!         sumelp = (delta**3/vsol)*sumelp
          sumdiel = (delta**3/vsol)*sumdiel
 
          suma = sumpi + sumrho + sumelp + sumel + sumdiel
+
+         print*,'!', sumpi, sumrho, sumelp, sumel, sumdiel
 
          Free_Energy2 = suma 
 
@@ -245,7 +253,7 @@ Free_Energy2 = 0.0
          write(305,*)looped, F_Mix_Hplus
          write(306,*)looped, F_Mix_OHmin
          write(311,*)looped, F_electro
-         write(302,*)looped, F_mix_s
+         write(302,*)looped, F_eq
          write(312,*)looped, Free_energy2
 
          FE = free_energy

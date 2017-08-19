@@ -5,7 +5,7 @@ use const
 use molecules
 use ellipsoid
 use aa
-use results, only : fdisaa
+use results, only : fdis, fdisbulk
 use sphereV
 use mlist
 
@@ -38,8 +38,11 @@ read(3333,*)naa
 allocate(aapos(naa,3))
 allocate(aal(naa))
 allocate(aan(naa))
-allocate(aagrid(naa,3)) ! keeps info of position of original aminoacids index 1=x,2=y,3=z,4=aat
-allocate(fdisaa(naa))
+allocate(xx(naa)) ! keeps info of position of original aminoacids
+allocate(yy(naa)) ! keeps info of position of original aminoacids
+allocate(zz(naa)) ! keeps info of position of original aminoacids
+allocate(fdis(naa))
+allocate(fdisbulk(naa))
 
 
 ! allocate discretization list
@@ -94,9 +97,9 @@ ix=int(aapos(i,1)/delta)+1
 iy=int(aapos(i,2)/delta)+1
 iz=int(aapos(i,3)/delta)+1
 
-aagrid(i,1) = ix
-aagrid(i,2) = iy
-aagrid(i,3) = iz
+xx(i) = ix
+yy(i) = iy
+zz(i) = iz
 
 aaID(ix,iy,iz) = aan(i)
 enddo ! loop over number of aa, i

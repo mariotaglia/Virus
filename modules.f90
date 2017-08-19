@@ -1,16 +1,19 @@
-module convergepKa
-real*8 errorpKa
-real*8 damping
-endmodule
-
 module sphereV
 integer, parameter :: limit = 3
 end module
 
+module mK0
+integer flagK0
+integer iK0
+real*8 fdisK0
+endmodule
+
 module aa
 real*8, allocatable :: aapos(:,:)
 character*1, allocatable :: aal(:)
-integer, allocatable :: aagrid(:,:)
+integer, allocatable :: xx(:)
+integer, allocatable :: yy(:)
+integer, allocatable :: zz(:)
 integer, allocatable :: aan(:)
 endmodule
 
@@ -103,8 +106,8 @@ real*8, allocatable :: qtot(:,:,:) ! Carga total
 real*8, allocatable :: psi2(:,:,:) ! electrostatic poten
 real*8, allocatable :: xHplus(:,:,:) ! H+
 real*8, allocatable :: xOHmin(:,:,:) ! OH-
-real*8, allocatable :: fdisaa(:)
-real*8, allocatable :: fdisaaT(:)
+real*8, allocatable :: fdis(:)
+real*8, allocatable :: fdisbulk(:)
 endmodule
 
 module bulk
