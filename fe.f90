@@ -203,12 +203,9 @@ Free_Energy2 = 0.0
 
 ! 9. Electrostatic 
 
-
       do iy  = 1, dimy
       do iz  = 1, dimz
       do ix  = 1, dimx
-
-      sumel = sumel + psi(ix,iy,iz)*qprotT(ix,iy,iz) !*(delta**3/vsol)
 
       gradpsi2 = (psi(ix+1,iy,iz)-psi(ix-1,iy,iz))*(psi(ix+1,iy,iz)-psi(ix-1,iy,iz))
       gradpsi2 = gradpsi2 + (psi(ix,iy+1,iz)-psi(ix,iy-1,iz))*(psi(ix,iy+1,iz)-psi(ix,iy-1,iz))
@@ -228,13 +225,14 @@ Free_Energy2 = 0.0
       do im = 1, naa
       if(zpol(im).ne.0) then
       sumelp = sumelp + dlog(fdis(im))
+      sumel = sumel + psi(xx(im),yy(im),zz(im))*zpol(im)
       endif ! zpol
       enddo ! im
 
          sumpi = (delta**3/vsol)*sumpi
          sumrho = (delta**3/vsol)*sumrho
 
-         suma = sumpi + sumrho + sumelp + sumel
+         suma = sumpi + sumrho + sumelp + sumel + sumdiel
 
          Free_Energy2 = suma 
 

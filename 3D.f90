@@ -139,6 +139,7 @@ call solve_one(x1, xg1)
 print*, 'K0:', K0(i)
 print*, 'fdisbulk:', fdisbulk(i)
 
+
 endif
 enddo
 

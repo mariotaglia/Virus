@@ -135,6 +135,6 @@
       radius(i) = (radius(i)*(1.0d21/6.02d23)/(4.0/3.0*pi))**(1.0/3.0)
 
       enddo ! loop sobre naa
-
+     
       end
 
