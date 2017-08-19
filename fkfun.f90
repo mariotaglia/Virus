@@ -37,6 +37,7 @@ real*8 fv
 integer im, at
 
 integer zmin, zmax
+real*8 protn(dimx,dimy,dimz)
 
 
 
@@ -153,7 +154,10 @@ qprotT = 0.0
 if (flagK0.eq.0) then ! calculate fdis from K0
   do i = 1, naa
    if(zpol(i).ne.0) then
-   qprotT(xx(i),yy(i),zz(i)) =  qprotT(xx(i),yy(i),zz(i)) + float(zpol(i))*fdis(i)
+
+   call listtomatrix(protn,i)
+   qprotT(:,:,:) = qprotT(:,:,:) + float(zpol(i))*protn(:,:,:)/sum(protn)
+!   qprotT(xx(i),yy(i),zz(i)) =  qprotT(xx(i),yy(i),zz(i)) + float(zpol(i))*fdis(i)
    endif
   enddo
 else if (flagK0.eq.1) then
