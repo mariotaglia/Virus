@@ -155,8 +155,8 @@ Free_Energy2 = 0.0
       F_eq = 0.0
       do i = 1, naa
       if(zpol(i).ne.0) then ! only charged
-      F_eq = F_Eq + fdis(i)*dlog(fdis(i))
-      F_eq = F_Eq + (1.0-fdis(i))*dlog(1.0-fdis(i))
+      if(fdis(i).ne.0.0)F_eq = F_Eq + fdis(i)*dlog(fdis(i))
+      if(fdis(i).ne.1.0)F_eq = F_Eq + (1.0-fdis(i))*dlog(1.0-fdis(i))
       F_eq = F_Eq + (1.0-fdis(i))*dlog(K0(i))
       select case (zpol(i))
       case (1) ! base 
@@ -226,7 +226,7 @@ Free_Energy2 = 0.0
 
       do im = 1, naa
       if(zpol(im).ne.0) then
-       sumelp = sumelp + dlog(fdis(im))
+       if(fdis(im).ne.0.0)sumelp = sumelp + dlog(fdis(im))
       endif
       enddo
 
