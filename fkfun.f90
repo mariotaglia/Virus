@@ -156,12 +156,14 @@ if (flagK0.eq.0) then ! calculate fdis from K0
    if(zpol(i).ne.0) then
 
    call listtomatrix(protn,i)
-   qprotT(:,:,:) = qprotT(:,:,:) + float(zpol(i))*protn(:,:,:)/sum(protn)
+   qprotT(:,:,:) = qprotT(:,:,:) + float(zpol(i))*protn(:,:,:)/sum(protn)*fdis(i)
 !   qprotT(xx(i),yy(i),zz(i)) =  qprotT(xx(i),yy(i),zz(i)) + float(zpol(i))*fdis(i)
    endif
   enddo
 else if (flagK0.eq.1) then
-   qprotT(xx(iK0),yy(iK0),zz(iK0)) =  qprotT(xx(iK0),yy(iK0),zz(iK0)) + float(zpol(iK0))*fdisK0
+   call listtomatrix(protn,iK0)
+   qprotT(:,:,:) = qprotT(:,:,:) + float(zpol(iK0))*protn(:,:,:)/sum(protn)*fdisK0
+!   qprotT(xx(iK0),yy(iK0),zz(iK0)) =  qprotT(xx(iK0),yy(iK0),zz(iK0)) + float(zpol(iK0))*fdisK0
 endif
 
 qtot(:,:,:) = qtot(:,:,:) + qprotT(:,:,:)*(vsol/delta**3)
