@@ -118,7 +118,7 @@ if (flagK0.eq.0) then ! calculate fdis from K0
   do i = 1, naa
    if(zpol(i).eq.1) then ! BASE
         fdis(i)=1.0 /(1.0 + xOHmin(xx(i),yy(i),zz(i))/K0(i))
-    else if (zpol(i).eq.-1.0) then ! ACID
+    else if (zpol(i).eq.-1) then ! ACID
         fdis(i)=1.0 /(1.0 + xHplus(xx(i),yy(i),zz(i))/K0(i))
     endif
   enddo
@@ -127,7 +127,7 @@ else if (flagK0.eq.1) then
 
   if(zpol(iK0).eq.1) then ! BASE
         K0(iK0) = 1.0/((1.0/fdisK0)-1.0)*xOHmin(xx(iK0),yy(iK0),zz(iK0))
-  else if (zpol(iK0).eq.-1.0) then ! ACID
+  else if (zpol(iK0).eq.-1) then ! ACID
         K0(iK0) = 1.0/((1.0/fdisK0)-1.0)*xHplus(xx(iK0),yy(iK0),zz(iK0))
   endif
 endif
@@ -153,11 +153,11 @@ qprotT = 0.0
 if (flagK0.eq.0) then ! calculate fdis from K0
   do i = 1, naa
    if(zpol(i).ne.0) then
-   qprotT(xx(i),yy(i),zz(i)) =  qprotT(xx(i),yy(i),zz(i)) + zpol(i)*fdis(i)
+   qprotT(xx(i),yy(i),zz(i)) =  qprotT(xx(i),yy(i),zz(i)) + float(zpol(i))*fdis(i)
    endif
   enddo
 else if (flagK0.eq.1) then
-   qprotT(xx(iK0),yy(iK0),zz(iK0)) =  qprotT(xx(iK0),yy(iK0),zz(iK0)) + zpol(iK0)*fdisK0
+   qprotT(xx(iK0),yy(iK0),zz(iK0)) =  qprotT(xx(iK0),yy(iK0),zz(iK0)) + float(zpol(iK0))*fdisK0
 endif
 
 qtot(:,:,:) = qtot(:,:,:) + qprotT(:,:,:)*(vsol/delta**3)
