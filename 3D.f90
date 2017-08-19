@@ -171,6 +171,9 @@ call savetodisk(psi2, title, counter)
  write(9999,*)pHbulk, Gmean
  write(9998,*)pHbulk, sum(qprotT)
 
+flush(9999)
+flush(9998)
+
  do i = 1, naa
   if(zpol(i).ne.0) then
     write(30000+i,*)pHbulk, fdis(i) 
