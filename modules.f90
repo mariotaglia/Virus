@@ -36,7 +36,7 @@ integer  dimz
 real*8 gama
 integer  wall
 integer  flagwall
-integer pKafromfile
+integer fdisfromfile
 real*8 sigmaq 
 endmodule
 
@@ -107,6 +107,7 @@ real*8, allocatable :: psi2(:,:,:) ! electrostatic poten
 real*8, allocatable :: xHplus(:,:,:) ! H+
 real*8, allocatable :: xOHmin(:,:,:) ! OH-
 real*8, allocatable :: fdis(:)
+real*8, allocatable :: xfdis(:)
 real*8, allocatable :: fdisbulk(:)
 endmodule
 

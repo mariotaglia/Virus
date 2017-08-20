@@ -115,7 +115,7 @@ enddo
 !---------------------------------------------------------------------------------------------
 
 if (flagK0.eq.0) then ! calculate fdis from K0
-
+ if (fdisfromfile.ne.1) then ! do not read from file
   do i = 1, naa
    if(zpol(i).eq.1) then ! BASE
 
@@ -148,6 +148,10 @@ if (flagK0.eq.0) then ! calculate fdis from K0
         fdis(i)=1.0 /(1.0 + xHpluseff/K0(i))
     endif
   enddo ! naa
+ endif ! fdis from file
+ if (fdisfromfile.eq.1) then ! use value from file
+         fdis = xfdis
+ endif
 
 else if (flagK0.eq.1) then
 

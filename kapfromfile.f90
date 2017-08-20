@@ -5,7 +5,7 @@ use const
 use molecules
 use ellipsoid
 use aa
-use results, only : fdis, fdisbulk
+use results, only : fdis, xfdis,  fdisbulk
 use sphereV
 use mlist
 
@@ -42,6 +42,7 @@ allocate(xx(naa)) ! keeps info of position of original aminoacids
 allocate(yy(naa)) ! keeps info of position of original aminoacids
 allocate(zz(naa)) ! keeps info of position of original aminoacids
 allocate(fdis(naa))
+allocate(xfdis(naa))
 allocate(fdisbulk(naa))
 
 

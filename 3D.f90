@@ -67,7 +67,9 @@ open(unit=9998,file='sumq.dat')
 
 do i = 1, naa
 if(zpol(i).ne.0) then
+
   temp = aan(i)
+
   if((aal(i).eq.'B').or.(aal(i).eq.'G')) then
     if(aan(i).eq.1)temp = 0 ! N terminal 
     if(aan(i).eq.aan(naa))temp = naa+1    
@@ -81,9 +83,16 @@ if(zpol(i).ne.0) then
 
   write(filename,'(A9, I3.3, A4)')'fdisbulk.', temp, '.dat'
   open(unit=60000+i,file=filename)
+
+  if(fdisfromfile.eq.1) then ! read fdis from file
+  write(filename,'(A11, I3.3, A4)')'in-fdissaa.', temp, '.dat'
+  open(unit=10000+i,file=filename)
+  read(10000+i,*)nada, xfdis(i)
+  close(10000+i)
+  endif
+
 endif
 enddo  
-
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! Start calculation
