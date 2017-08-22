@@ -31,6 +31,11 @@ call readinput
 call initconst
 call allocation
 
+print*, 'GIT Version: ', _VERSION
+
+open(unit=310, file='version')
+write(310,*)'GIT Version: ', _VERSION
+close(310)
 
 !!! General files
 

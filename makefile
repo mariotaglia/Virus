@@ -10,7 +10,8 @@ $(info HOST is ${HOST})
 SHELL = /bin/bash
 FFLAGS= -O3# -fbacktrace -fbounds-check #  -O3
 
-
+GIT_VERSION := $(shell git describe --abbrev=6 --dirty --always --tags)
+GFLAGS=-cpp -D_VERSION=\"$(GIT_VERSION)\"
 
 ifeq ($(HOST),skay)
 LFLAGS = -lm /usr/lib/x86_64-linux-gnu/librt.so  -L/usr/local/lib  -lsundials_fkinsol -lsundials_kinsol -lsundials_fnvecserial -lsundials_nvecserial ${LIBS} -Wl,-rpath,/usr/local/lib
@@ -37,10 +38,10 @@ VER = ~/bin
 all:	$(TARGET)
 
 $(TARGET): $(SRC:.f90=.o)
-	$(FF) -o $(TARGET) $(SRC:.f90=.o) $(LFLAGS) $(LDFLAGS)
+	$(FF) -o $(TARGET) $(SRC:.f90=.o) $(LFLAGS) $(LDFLAGS) $(GFLAGS)
 
 $(SRC:.f90=.o): $(SRC)
-	${FF} -c ${FFLAGS}  $(SRC) $(LFLAGS) $(LDFLAGS)
+	${FF} -c ${FFLAGS}  $(SRC) $(LFLAGS) $(LDFLAGS) $(GFLAGS)
 
 install: all
 	cp $(TARGET) $(VER)
