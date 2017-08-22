@@ -37,9 +37,14 @@ radio = sqrt(x**2 + y**2 + z**2) ! espacio real
 if (radio.gt.radii) cycle ! outside sphere
 
  ! celda 
- ix = int(anint((x+center(1))/delta))   ! espacio de la grilla
- iy = int(anint((y+center(2))/delta))
- iz = int(anint((z+center(3))/delta))
+! ix = int(anint((x+center(1))/delta))   ! espacio de la grilla
+! iy = int(anint((y+center(2))/delta))
+! iz = int(anint((z+center(3))/delta))
+
+ ix = int((x+center(1))/delta)+1   ! espacio de la grilla
+ iy = int((y+center(2))/delta)+1
+ iz = int((z+center(3))/delta)+1
+
 
  if((ix.gt.dimx).or.(ix.lt.1).or.(iy.gt.dimy).or.(iy.lt.1).or.(iz.gt.dimz).or.(iz.lt.1)) then
     print*, 'Error in sphere, aminoacid out of system, increase dimx,dimy or dimz', ix,iy,iz
