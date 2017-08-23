@@ -91,6 +91,14 @@ if(zpol(i).ne.0) then
   close(10000+i)
   endif
 
+  if(K0fromfile.eq.1) then ! read K0 from file
+  write(filename,'(A6, I3.3, A4)')'in-K0.', temp, '.dat'
+  open(unit=10000+i,file=filename)
+  read(10000+i,*)nada, K0(i)
+  close(10000+i)
+  endif
+
+
 endif
 enddo  
 
@@ -129,6 +137,10 @@ enddo ! i
 ! 2. Calculate K0 for all aminocids with charge (reference)
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+! only if K0 not read from file
+
+if (K0fromfile.ne.1) then
+
 ! turns off the wall
 flagwall = 0
 
@@ -150,7 +162,10 @@ print*, 'fdisbulk:', fdisbulk(i)
 
 
 endif
-enddo
+enddo ! AA
+
+endif ! K0fromfile
+
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 ! 3. Solve for protein

@@ -50,7 +50,7 @@ csalt = ndr
 sigmaq= ndr
 
 fdisfromfile = 0
-
+K0fromfile = 0
 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
@@ -88,6 +88,9 @@ do while (ios == 0)
    read(buffer, *, iostat=ios) fdisfromfile
    print*,'Set ',trim(label),' = ',trim(buffer)
 
+ case ('K0fromfile')
+   read(buffer, *, iostat=ios) K0fromfile
+   print*,'Set ',trim(label),' = ',trim(buffer)
 
  case ('vtkflag')
    read(buffer, *, iostat=ios) vtkflag
