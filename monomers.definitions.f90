@@ -103,7 +103,12 @@
       pKa(i) = 4.07
       radius(i) = 56.42
 
-      case('C')
+      case('C')    ! Reduced Cysteine !
+      zpol(i) = -1
+      pKa(i) = 8.37
+      radius(i) = 41.7
+ 
+      case('X')    ! Oxidized Cysteine !
       zpol(i) = 0
       pKa(i) = 0.0
       radius(i) = 41.7
@@ -128,6 +133,8 @@
 
       case default
         print*, 'aminoacid not recognized. stop'
+        write(*,*) aan(i) 
+        
         stop
 
       endselect
