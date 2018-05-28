@@ -49,6 +49,8 @@ delta = ndr
 csalt = ndr
 sigmaq= ndr
 
+constantFI = 0
+
 fdisfromfile = 0
 K0fromfile = 0
 
@@ -94,6 +96,10 @@ do while (ios == 0)
 
  case ('vtkflag')
    read(buffer, *, iostat=ios) vtkflag
+   print*,'Set ',trim(label),' = ',trim(buffer)
+
+ case ('constantFI')
+   read(buffer, *, iostat=ios) constantFI
    print*,'Set ',trim(label),' = ',trim(buffer)
 
  case ('dimx')

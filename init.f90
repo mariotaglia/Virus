@@ -72,12 +72,30 @@ cOHmin = 10**(-pOHbulk)   ! concentration OH- in bulk
 xOHminbulk = (cOHmin*Na/(1.0d24))*(vsol)  ! volume fraction H+ in bulk vH+=vsol  
 xsalt=(csalt*Na/(1.0d24))*(vsalt*vsol)   ! volume fraction salt,csalt in mol/l 
 
-if(pHbulk.le.7) then  ! pH<= 7
-  xposbulk=xsalt/zpos
-  xnegbulk=-xsalt/zneg+(xHplusbulk -xOHminbulk) *vsalt ! NaCl+ HCl  
-else                  ! pH >7 
-  xposbulk=xsalt/zpos +(xOHminbulk -xHplusbulk) *vsalt ! NaCl+ NaOH   
-  xnegbulk= -xsalt/zneg 
+if (constantFI.eq.0) then
+  print*, 'Constant Added Salt Calculation'
+  if(pHbulk.le.7) then  ! pH<= 7
+    xposbulk=xsalt/zpos
+    xnegbulk=-xsalt/zneg+(xHplusbulk -xOHminbulk) *vsalt ! NaCl+ HCl  
+  else                  ! pH >7 
+    xposbulk=xsalt/zpos +(xOHminbulk -xHplusbulk) *vsalt ! NaCl+ NaOH   
+    xnegbulk= -xsalt/zneg 
+  endif
+endif
+
+if (constantFI.eq.1) then
+  print*, 'Constant Ionic Strength Calculation'
+  if(pHbulk.le.7) then  ! pH<= 7
+    xposbulk=xsalt/zpos - (xHplusbulk -xOHminbulk) *vsalt
+    xnegbulk=-xsalt/zneg
+  else                  ! pH >7 
+    xposbulk=xsalt/zpos    
+    xnegbulk= -xsalt/zneg - (xOHminbulk -xHplusbulk) *vsalt 
+  endif
+  if((xposbulk.le.0.0).or.(xnegbulk.le.0.0)) then
+     print*, 'Negative ionic strength!'
+     stop
+  endif
 endif
 
 xsolbulk=1.0 -xHplusbulk -xOHminbulk -xnegbulk -xposbulk 

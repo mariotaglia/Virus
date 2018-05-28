@@ -150,6 +150,7 @@ real*8 pHbulk
 real*8 pOHbulk
 real*8 csalt
 real*8 cHplus, cOHmin
+integer constantFI
 end module
 
 
