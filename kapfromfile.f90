@@ -83,7 +83,7 @@ enddo
 ! print real coordinates to file
 open(file='real_coords.txt',unit=1111)
 do i = 1, naa
-write(1111,*)i, aapos(i,1), aapos(i,2), aapos(i,3)
+write(1111,*)i, aan(i), aal(i), aapos(i,1), aapos(i,2), aapos(i,3)
 enddo
 close(1111) 
 
