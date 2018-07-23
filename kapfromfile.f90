@@ -80,6 +80,12 @@ aapos(i,2) = aapos(i,2) + Rell(2,1)
 aapos(i,3) = aapos(i,3) + Rell(3,1)
 enddo
 
+! print real coordinates to file
+open(file='real_coords.txt',unit=1111)
+do i = 1, naa
+write(1111,*)i, aapos(i,1), aapos(i,2), aapos(i,3)
+enddo
+close(1111) 
 
 ! generate amino-acid discretization and generate lists
 volprot = 0.0
