@@ -6,7 +6,6 @@ use kinsol
 use const
 use montecarlo
 use ematrix
-use old
 use molecules
 implicit none
 integer counter, counterr

@@ -27,7 +27,7 @@ phia=phi
 
 !#######################################################
 
-call pore_gen(rad-delta/4)
+call pore_gen(rad-0.25)
 
 phib=phi
 
@@ -35,21 +35,9 @@ delta_phi=phib-phia
 
 !print*, delta_phi
 
-d_sum=0.0
+d_sum = sum(delta_phi)
 
-tx=dimx
-ty=dimy
-tz=dimz
-
-do i=1,tx
-   do j=1,ty
-      do k=1,tz
-         d_sum=d_sum+delta_phi(i,j,k)
-      enddo
-   enddo
-enddo
-
-temp2=4*3.1415*(rad-delta/4)**2
+temp2=4*3.1415*(rad*delta-delta/8)**2
 
 area=temp2*delta_phi/d_sum
 

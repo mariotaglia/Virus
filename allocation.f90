@@ -2,7 +2,6 @@ subroutine allocation
 
 use system
 use fields_fkfun
-use conformations
 use kinsol
 use results
 use ematrix

@@ -2,7 +2,6 @@ subroutine solve
 
 use system
 use const
-use kai
 use molecules
 use results
 use kinsol
@@ -235,7 +234,6 @@ subroutine solve_one(x1, xg1)
 
 use system
 use const
-use kai
 use molecules
 use results
 use kinsol
