@@ -32,7 +32,7 @@ call initconst
 
 call allocation
 
-if (pore .eq. 1) then
+if (pore.eq.1) then
 call pore_surf
 endif
 

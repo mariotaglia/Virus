@@ -17,7 +17,7 @@ do ix = 1, dimx
 do iy = 1, dimy
 do iz = 1, dimz
 if(flagpore.eq.1)epsfcn(ix,iy,iz) = prot(ix,iy,iz)*dielSr + phipore(ix,iy,iz)*dielPr + (1.0-prot(ix,iy,iz)-phipore(ix,iy,iz))
-if(flagpore.eq.0)epsfcn(ix,iy,iz) = prot(ix,iy,iz)*dielSr + (1.0-prot(ix,iy,iz))
+if((flagpore.eq.0).or.(flagpore.eq.2))epsfcn(ix,iy,iz) = prot(ix,iy,iz)*dielSr + (1.0-prot(ix,iy,iz))
 enddo
 enddo
 enddo

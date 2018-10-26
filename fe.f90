@@ -220,7 +220,7 @@ Free_Energy2 = 0.0
       sumel = sumel &
      + ( - 0.5/constq*gradpsi2*epsfcn(ix,iy,iz))*(delta**3/vsol)
 
-      sumel = sumel + area(ix,iy,iz)*sigmaq*constq*vsol*(delta**3/vsol)
+      sumel = sumel + psi(ix,iy,iz)*area(ix,iy,iz)*sigmaq*vsol*(delta**3/vsol)
 
       enddo ! ix
 

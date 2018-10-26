@@ -85,20 +85,19 @@ enddo
 !enddo
 
 !#GEOMETRIC CENTER OF PROTEIN#!
-if (pore .eq. 1) then
-
+if ((pore.eq.1).or.(pore.eq.2)) then
    cen=(/0,0,0/)
    do i = 1, naa
       cen=cen+aapos(i,:)/naa
    enddo
-
    do i = 1, naa
       aapos(i,1) = aapos(i,1) + ((dimx/2)*delta - cen(1))
       aapos(i,2) = aapos(i,2) + ((dimy/2)*delta - cen(2))
       aapos(i,3) = aapos(i,3) + ((dimz/2)*delta - cen(3))
-      
 !      norm1(i)=sqrt((aapos(i,1)-(dimx/2)*delta)**2+(aapos(i,2)-(dimy/2)*delta)**2+(aapos(i,3)-(dimz/2)*delta)**2)
    enddo
+endif ! pore = 1
+
 
 !######### CHECKEO DE LA MAYOR DISTANCIA ENTRE AA, SE PUEDE USAR DE ALGUNA FORMA PARA EVITAR CLASHES######
 !   maxnorm=0.0
@@ -119,10 +118,14 @@ if (pore .eq. 1) then
    enddo
 
    do i = 1, naa
-      aapos(i,1) = aapos(i,1) - minxpos + (float(dimx)/2.0)*delta - rad*delta + Rell(1,1)
+      if((pore.eq.1).or.(pore.eq.2))aapos(i,1) = aapos(i,1) - minxpos + (float(dimx)/2.0)*delta - rad*delta + Rell(1,1)
+      if(pore.eq.0) then
+         aapos(i,1) = aapos(i,1) - minxpos + Rell(1,1) ! translate
+         aapos(i,2) = aapos(i,2) + Rell(2,1)
+         aapos(i,3) = aapos(i,3) + Rell(3,1)
+      endif
    enddo
 
-endif
 !#####################################################################################
 
 ! generate amino-acid discretization and generate lists
