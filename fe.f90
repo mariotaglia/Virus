@@ -33,6 +33,10 @@ real*8 gradpsi2
 real*8 fv, fv2
 real*8 t1, t2
 
+
+! update dielectric
+call dielectfcn(volprotT,phi,epsfcn)
+
 Free_Energy = 0.0
 Free_Energy2 = 0.0
 

@@ -141,10 +141,9 @@ enddo ! i
 if (K0fromfile.ne.1) then
 
 ! turns off the wall
-flagwall = 0
+flagwall=0
 
 !#####PORE#####
-
 flagpore=0
 
 do i = 1, naa ! loop over aminoacid
@@ -163,10 +162,8 @@ call solve_one(x1, xg1)
 print*, 'K0:', K0(i)
 print*, 'fdisbulk:', fdisbulk(i)
 
-
 endif
 enddo ! AA
-
 endif ! K0fromfile
 
 
@@ -176,7 +173,6 @@ endif ! K0fromfile
 
 ! turns on the wall
 flagwall = wall ! recover original wall flag
-
 !####PORE#####
 flagpore= pore
 
@@ -261,10 +257,6 @@ counter = 1
 !--------------------------------------------------------------
 ! Solve               
 !--------------------------------------------------------------
-
-! dielectric
-
-call dielectfcn(volprotT,epsfcn)
 
 n=dimx*dimy*dimz
 

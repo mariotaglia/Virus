@@ -1,4 +1,4 @@
-subroutine dielectfcn(prot,epsfcn)
+subroutine dielectfcn(prot,phipore,epsfcn)
 
 ! determines the dielectric function using an average mixing rule
 
@@ -10,15 +10,19 @@ integer ix,iy,iz,ii
 
 real*8 epsfcn(0:dimx+1,0:dimy+1,0:dimz+1)
 real*8 prot(dimx,dimy,dimz)
+real*8 phipore(dimx,dimy,dimz)
 real*8 Depsfcn(0:dimx+1,0:dimy+1,0:dimz+1)
 
 do ix = 1, dimx
 do iy = 1, dimy
 do iz = 1, dimz
-epsfcn(ix,iy,iz) = prot(ix,iy,iz)*dielSr + (1.0-prot(ix,iy,iz))
+if(flagpore.eq.1)epsfcn(ix,iy,iz) = prot(ix,iy,iz)*dielSr + phipore(ix,iy,iz)*dielPr + (1.0-prot(ix,iy,iz)-phipore(ix,iy,iz))
+if(flagpore.eq.0)epsfcn(ix,iy,iz) = prot(ix,iy,iz)*dielSr + (1.0-prot(ix,iy,iz))
 enddo
 enddo
 enddo
+
+! PBC
 
 do ix = 1, dimx
 do iy = 1, dimy

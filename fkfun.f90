@@ -53,19 +53,22 @@ do ix=1,dimx
 enddo
 
 ! Condiciones de borde potencial electrostatico
+
+! calculate dielectric
+call dielectfcn(volprotT,phi,epsfcn)
+
 ! en x
- 
 do iy = 1, dimy
  do iz = 1, dimz
 
 if (flagwall.eq.0) then
-    psi(0, iy, iz) = psi(dimx, iy, iz)
-    psi(dimx+1, iy, iz) = psi(1, iy, iz)
+    psi(0, iy, iz) = psi(dimx, iy, iz) ! PBC x
+    psi(dimx+1, iy, iz) = psi(1, iy, iz) ! PBC x
 endif
    
 if (flagwall.eq.1) then
-    psi(0, iy, iz) = psi(1, iy, iz) + sigmaq*(4.0*pi*lb*delta)
-    psi(dimx+1, iy, iz) = 0.0 !psi(1, iy, iz)
+    psi(0, iy, iz) = psi(1, iy, iz) + sigmaq*(4.0*pi*lb*delta) !  charged surface 
+    psi(dimx+1, iy, iz) = 0.0 ! bulk
 endif
 
  enddo
@@ -87,17 +90,9 @@ do ix = 1, dimx
  enddo
 enddo
 
-! aristas... importantes para lattices no cubicos...
-do iz = 1, dimz
- psi(0, 0, iz) = psi(dimx, dimy, iz)
- psi(dimx+1, dimy+1, iz) = psi(1, 1, iz)
- psi(dimx+1, 0, iz) = psi(1, dimy, iz)
- psi(0, dimy+1, iz) = psi(dimx, 1, iz)
-enddo
+! No importan las esquinas ni aristas
 
-! No importan las esquinas....
 ! Fracciones de volumen inicial	y fdis
-
 do ix=1,dimx
  do iy=1,dimy
   do iz=1,dimz
@@ -197,10 +192,16 @@ endif
 do ix=1,dimx
    do iy=1,dimy
         do iz=1,dimz
-         fv = (1.0-volprotT(ix,iy,iz))
-         qtot(ix, iy, iz) = fv* &
-      ((zpos*xpos(ix, iy, iz)+zneg*xneg(ix, iy, iz))/vsalt + xHplus(ix, iy, iz) - xOHmin(ix, iy, iz))
-        if(fv.ne.1.0)qtot(ix,iy,iz)=0.0
+
+         fv = (1.0-volprotT(ix,iy,iz)-phi(ix,iy,iz))
+
+         qtot(ix, iy, iz) = &
+      fv*((zpos*xpos(ix, iy, iz)+zneg*xneg(ix, iy, iz))/vsalt + xHplus(ix, iy, iz) - xOHmin(ix, iy, iz)) ! solucion
+
+         if(flagpore.eq.1)qtot(ix, iy, iz)=qtot(ix,iy,iz)+area(ix,iy,iz)*sigmaq*vsol ! contribution from pore surface 
+
+!        if(fv.ne.1.0)qtot(ix,iy,iz)=0.0 ! OJO, allow ions in cells that are part protein/pore
+
         enddo
    enddo
 enddo

@@ -43,33 +43,12 @@ write(310,*)'GIT Version: ', _VERSION
 close(310)
 
 !!! General files
-
-do j = 1, NNN
-write(filename,'(A3,I3.3, A4)')'pos',j,'.dat'
-open(file=filename, unit=5000+j)
-write(filename,'(A3,I3.3, A4)')'orn',j,'.dat'
-open(file=filename, unit=6000+j)
-write(filename,'(A3,I3.3, A4)')'rot',j,'.dat'
-open(file=filename, unit=7000+j)
-enddo
-
 open(file='free_energy.dat', unit=9000)
-open(file='acceptance.dat', unit=9001)
 
 verbose = 5
 
-if(infile.eq.1) then
-   call retrivefromdisk(counter)
-   counterr = counter
-   print*, 'Load input from file'
-   print*, 'Free energy', free_energy
-   infile = 2
-endif
-
  counter = 1
  call update_matrix(flag) ! updates 'the matrix'
-
-
 
   if(flag.eqv..true.) then
     print*, 'Initial position of particle does not fit in z'
