@@ -144,6 +144,10 @@ if (K0fromfile.ne.1) then
 ! turns off the wall
 flagwall = 0
 
+!#####PORE#####
+
+flagpore=0
+
 do i = 1, naa ! loop over aminoacid
 if(zpol(i).ne.0) then ! only those with charge
 print*, 'AA #', i
@@ -173,6 +177,10 @@ endif ! K0fromfile
 
 ! turns on the wall
 flagwall = wall ! recover original wall flag
+
+!####PORE#####
+flagpore= pore
+
 volprotT = volprot  ! recover original volume distribution
 
 flagK0 = 0 ! do not solve for individual aminoacids

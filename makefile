@@ -1,6 +1,6 @@
 TARGET = 3Dni
 
-SRC = sphere.f90 modules.f90 SPmain.f90 parser.f90 init.f90 allocation.f90 allocateell.f90 3D.f90 fe.f90  fkfun.f90 kinsol.f90  savetodisk.f90 rands.f90 ellipsoid.f90 dielectric.f90 monomers.definitions.f90  kapfromfile.f90 matrix.f90
+SRC = sphere.f90 modules.f90 SPmain.f90 parser.f90 init.f90 allocation.f90 allocateell.f90 fe.f90  fkfun.f90 kinsol.f90  savetodisk.f90 rands.f90 ellipsoid.f90 dielectric.f90 monomers.definitions.f90 kapfromfile.f90 matrix.f90 pore_gen.f90 pore_surf.f90 3D.f90 
 
 HOST=$(shell hostname)
 $(info HOST is ${HOST})
@@ -8,7 +8,7 @@ $(info HOST is ${HOST})
 
 # some definitions
 SHELL = /bin/bash
-FFLAGS= -O3# -fbacktrace -fbounds-check #  -O3
+FFLAGS= -O3 #-fbounds-check -fbacktrace -fbounds-check #  -O3
 
 GIT_VERSION := $(shell git describe --abbrev=6 --dirty --always --tags)
 GFLAGS=-cpp -D_VERSION=\"$(GIT_VERSION)\"

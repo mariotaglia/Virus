@@ -21,6 +21,7 @@ real*8 theta
 real*8, external :: rands
 logical flag
 character*10 filename
+character*5 title
 integer j
 
 counter = 0
@@ -29,7 +30,12 @@ counterr = 1
 call readinput
 
 call initconst
+
 call allocation
+
+if (pore .eq. 1) then
+call pore_surf
+endif
 
 print*, 'GIT Version: ', _VERSION
 
@@ -64,6 +70,8 @@ endif
  counter = 1
  call update_matrix(flag) ! updates 'the matrix'
 
+
+
   if(flag.eqv..true.) then
     print*, 'Initial position of particle does not fit in z'
     print*, 'or particles collide'
@@ -72,6 +80,7 @@ endif
     print*, 'Particle OK'
   endif
 
+stop
 
  call solve
 

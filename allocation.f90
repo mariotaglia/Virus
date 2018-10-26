@@ -11,6 +11,12 @@ use ellipsoid
 use molecules
 implicit none
 
+! pore_gen, volumen fraction phi
+ALLOCATE(phi(dimx,dimy,dimz))
+ALLOCATE(delta_phi(dimx,dimy,dimz))
+ALLOCATE(phia(dimx,dimy,dimz),phib(dimx,dimy,dimz))
+ALLOCATE(area(dimx,dimy,dimz))
+
 ! fields_fkfun
 ALLOCATE(psi(0:dimx+1, 0:dimy+1, 0:dimz+1))
 ALLOCATE(xh(dimx, dimy, dimz))

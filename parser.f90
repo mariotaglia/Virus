@@ -41,6 +41,8 @@ dimy = ndi
 dimz = ndi
 infile = ndi
 wall = ndi
+pore = ndi
+rad = ndi
 
 dielS = ndr
 pHbulk = ndr
@@ -121,6 +123,14 @@ do while (ios == 0)
 
  case ('wall')
    read(buffer, *, iostat=ios) wall
+   print*,'Set ',trim(label), ' = ',trim(buffer)
+
+ case ('pore')
+   read(buffer, *, iostat=ios) pore
+   print*,'Set ',trim(label), ' = ',trim(buffer)
+
+ case ('rad')
+   read(buffer, *, iostat=ios) rad
    print*,'Set ',trim(label), ' = ',trim(buffer)
 
  case ('sigmaq')
@@ -229,6 +239,8 @@ if(dimx.eq.ndi)call stopundef('dimx')
 if(dimy.eq.ndi)call stopundef('dimy')
 if(dimz.eq.ndi)call stopundef('dimz')
 if(wall.eq.ndi)call stopundef('wall')
+if(pore.eq.ndi)call stopundef('pore')
+if(rad.eq.ndi)call stopundef('rad')
 if(infile.eq.ndi)call stopundef('infile')
 if(kaptype.eq.ndi)call stopundef('kaptype')
 

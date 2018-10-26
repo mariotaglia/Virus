@@ -10,6 +10,8 @@ endmodule
 
 module aa
 real*8, allocatable :: aapos(:,:)
+real*8, allocatable :: cen(:)
+real*8, allocatable :: norm1(:)
 character*1, allocatable :: aal(:)
 integer, allocatable :: xx(:)
 integer, allocatable :: yy(:)
@@ -29,16 +31,20 @@ real*8, allocatable :: vol_list(:,:)
 endmodule
 
 module system 
-real*8 delta 
+real*8 delta
+real*8 rad
 integer  dimx 
 integer  dimy 
 integer  dimz 
 real*8 gama
 integer  wall
+integer  pore
+integer  flagpore
 integer  flagwall
 integer fdisfromfile
 integer K0fromfile
-real*8 sigmaq 
+real*8 sigmaq
+real*8, allocatable :: phi(:,:,:), delta_phi(:,:,:), phib(:,:,:), phia(:,:,:), area(:,:,:) 
 endmodule
 
 module mkinsol
