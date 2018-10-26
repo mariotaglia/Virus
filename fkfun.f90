@@ -198,9 +198,10 @@ do ix=1,dimx
          qtot(ix, iy, iz) = &
       fv*((zpos*xpos(ix, iy, iz)+zneg*xneg(ix, iy, iz))/vsalt + xHplus(ix, iy, iz) - xOHmin(ix, iy, iz)) ! solucion
 
+         if(fv.ne.1.0)qtot(ix,iy,iz)=0.0 ! OJO, allow ions in cells that are part protein/pore
+
          if(flagpore.eq.1)qtot(ix, iy, iz)=qtot(ix,iy,iz)+area(ix,iy,iz)*sigmaq*vsol ! contribution from pore surface 
 
-!        if(fv.ne.1.0)qtot(ix,iy,iz)=0.0 ! OJO, allow ions in cells that are part protein/pore
 
         enddo
    enddo

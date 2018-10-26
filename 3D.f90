@@ -195,6 +195,9 @@ call savetodisk(qprotT, title, counter)
 title = 'poten'
 call savetodisk(psi2, title, counter)
 
+title = 'qtott'
+call savetodisk(qtot, title, counter)
+
  write(9999,*)pHbulk, Gmean
  write(9998,*)pHbulk, sum(qprotT)
 
@@ -272,11 +275,6 @@ do ix=1,dimx
       enddo
    enddo  
 enddo
-
-!title = 'poten'
-!call savetodisk(psi, title, counter)
-!title = 'qtot-'
-!call savetodisk(qtot, title, counter)
 
 ! Chequea si exploto... => Sistema anti-crash
 

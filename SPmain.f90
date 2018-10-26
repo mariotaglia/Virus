@@ -58,7 +58,7 @@ verbose = 5
     print*, 'Particle OK'
   endif
 
-stop
+!stop #FMB TOCÓ###
 
  call solve
 

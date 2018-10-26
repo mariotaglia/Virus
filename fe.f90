@@ -48,7 +48,7 @@ Free_Energy2 = 0.0
       do iy = 1, dimy
       do iz = 1, dimz
       
-      fv=(1.0-volprotT(ix,iy,iz))
+      fv=(1.0-volprotT(ix,iy,iz)-phi(ix,iy,iz))
       if(fv.ne.1.0)fv=0.0
 
 
@@ -72,7 +72,7 @@ Free_Energy2 = 0.0
       do iy = 1, dimy
       do iz = 1, dimz
 
-      fv=(1.0-volprotT(ix,iy,iz))
+      fv=(1.0-volprotT(ix,iy,iz)-phi(ix,iy,iz))
       if(fv.ne.1.0)fv=0.0
 
       F_Mix_neg = F_Mix_neg + xneg(ix, iy,iz) &
@@ -95,7 +95,7 @@ Free_Energy2 = 0.0
       do iy = 1, dimy
       do iz = 1, dimz
 
-      fv=(1.0-volprotT(ix,iy,iz))
+      fv=(1.0-volprotT(ix,iy,iz)-phi(ix,iy,iz))
       if(fv.ne.1.0)fv=0.0
 
       F_Mix_Hplus = F_Mix_Hplus &
@@ -118,7 +118,7 @@ Free_Energy2 = 0.0
       do iy = 1, dimy
       do iz = 1, dimz
 
-      fv=(1.0-volprotT(ix,iy,iz))
+      fv=(1.0-volprotT(ix,iy,iz)-phi(ix,iy,iz))
       if(fv.ne.1.0)fv=0.0
 
       F_Mix_OHmin = F_Mix_OHmin + xOHmin(ix, iy,iz)*(dlog(xOHmin(ix, iy, iz))-1.0-dlog(expmuOHmin))*fv
@@ -192,7 +192,7 @@ Free_Energy2 = 0.0
         do iy=1,dimy
         do iz=1,dimz
 
-      fv=(1.0-volprotT(ix,iy,iz))
+      fv=(1.0-volprotT(ix,iy,iz)-phi(ix,iy,iz))
       if(fv.ne.1.0)fv=0.0
 
            sumrho = sumrho + ( -xHplus(ix, iy, iz)  &
@@ -219,6 +219,8 @@ Free_Energy2 = 0.0
 
       sumel = sumel &
      + ( - 0.5/constq*gradpsi2*epsfcn(ix,iy,iz))*(delta**3/vsol)
+
+      sumel = sumel + area(ix,iy,iz)*sigmaq*constq*vsol*(delta**3/vsol)
 
       enddo ! ix
 
