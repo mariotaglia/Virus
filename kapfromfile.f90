@@ -80,6 +80,12 @@ aapos(i,2) = aapos(i,2) + Rell(2,1)
 aapos(i,3) = aapos(i,3) + Rell(3,1)
 enddo
 
+open(file="coords.dat",unit=328)
+do i=1, naa
+write(328,*) aan(i), aapos(i,1), aapos(i,2), aapos(i,3), aal(i)
+enddo
+close(328)
+
 
 ! generate amino-acid discretization and generate lists
 volprot = 0.0

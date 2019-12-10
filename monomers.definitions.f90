@@ -117,6 +117,11 @@
       zpol(i) = 1
       pKa(i) = 6.04
       radius(i) = 67.1
+      
+      case('Z')    ! CASE FLUOROPHORE OF GFP !
+      zpol(i) = 0
+      pKa(i) = 0
+      radius(i) = 67.1  ! SAME VOLUME AS HIS !
 
       case('B', 'G')
       radius(i) = 31.7

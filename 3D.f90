@@ -2,7 +2,6 @@ subroutine solve
 
 use system
 use const
-use kai
 use molecules
 use results
 use kinsol
@@ -15,7 +14,7 @@ use sphereV
 use mK0
 
 implicit none
-integer ii,i, ix, iy, iz, jx,jy,jz, j
+integer ii,i, ix, iy, iz, jx,jy,jz, j, k, l
 integer counter
 integer counter2
 integer temp
@@ -24,7 +23,8 @@ integer temp
 real*8 x1(2*dimx*dimy*dimz)
 real*8 xg1(2*dimx*dimy*dimz)
 real*8 nada
-real*8 Gmean
+real*8 Gmean,norm
+real*8 dipole(3),dipolen(3)
 integer n
 
 ! Volumen fraction
@@ -64,6 +64,7 @@ endif
 
 open(unit=9999,file='Gmean.dat')
 open(unit=9998,file='sumq.dat')
+open(unit=8001,file='Dipole_moment.dat')
 
 do i = 1, naa
 if(zpol(i).ne.0) then
@@ -74,15 +75,19 @@ if(zpol(i).ne.0) then
     if(aan(i).eq.1)temp = 0 ! N terminal 
     if(aan(i).eq.aan(naa))temp = naa+1    
   endif
- 
+
   write(filename,'(A3, I3.3, A4)')'K0.', temp, '.dat'
   open(unit=20000+i,file=filename)
+  
+  if(verb.eq.1) then
+
 
   write(filename,'(A8, I3.3, A4)')'fdissaa.', temp, '.dat'
   open(unit=30000+i,file=filename)
 
   write(filename,'(A9, I3.3, A4)')'fdisbulk.', temp, '.dat'
   open(unit=60000+i,file=filename)
+  endif
 
   if(fdisfromfile.eq.1) then ! read fdis from file
   write(filename,'(A11, I3.3, A4)')'in-fdissaa.', temp, '.dat'
@@ -198,10 +203,36 @@ call savetodisk(psi2, title, counter)
 flush(9999)
 flush(9998)
 
+do l = 1, 3
+   dipole(l)=0.0
+enddo
+write(*,*) dipole
+do i = 1, naa
+   do k = 1, 3
+      dipole(k)=dipole(k)+zpol(i)*fdis(i)*1.0*aapos(i,k)
+   enddo
+enddo
+norm=0
+norm=sqrt(dipole(1)*dipole(1)+dipole(2)*dipole(2)+dipole(3)*dipole(3))
+dipolen(:)=dipole(:)/norm
+
+write(8001,*)"dipole moment"
+write(8001,*)dipole
+write(8001,*)"normalized dipole moment"
+write(8001,*)dipolen
+close(8001)
+
+do i = 1, naa
+ if(zpol(i).ne.0) then
+   write(20000+i,*)pHbulk, K0(i)
+ endif
+enddo
+
+if(verb.eq.1) then
  do i = 1, naa
   if(zpol(i).ne.0) then
     write(30000+i,*)pHbulk, fdis(i) 
-    write(20000+i,*)pHbulk, K0(i)
+!   write(20000+i,*)pHbulk, K0(i)
     write(60000+i,*)pHbulk, fdisbulk(i)
 
     flush(30000+i)
@@ -209,11 +240,12 @@ flush(9998)
     flush(60000+i)
    endif
   enddo
-
+endif
 pHbulk = pHbulk + pHstep
 
 enddo ! counter
 
+if(verb.eq.1) then
 do i = 1, naa
 if(zpol(i).ne.0) then
 close(30000+i)
@@ -221,13 +253,13 @@ close(20000+i)
 close(60000+i)
 endif
 enddo
+endif
 end subroutine
 
 subroutine solve_one(x1, xg1)
 
 use system
 use const
-use kai
 use molecules
 use results
 use kinsol

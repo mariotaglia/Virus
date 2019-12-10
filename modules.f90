@@ -35,6 +35,7 @@ integer  dimy
 integer  dimz 
 real*8 gama
 integer  wall
+integer verb
 integer  flagwall
 integer fdisfromfile
 integer K0fromfile
