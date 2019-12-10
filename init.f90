@@ -58,7 +58,6 @@ integer ii
 
 constqE = vpol/(2.0d0*constq)
 dielW = 78.54
-dielPr = dielP/dielW
 dielSr = dielS/dielW
 
 do i = 1, naa

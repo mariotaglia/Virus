@@ -81,9 +81,9 @@ real*8, ALLOCATABLE :: xflag(:)
 endmodule
 
 module const
-real*8 dielW, dielP, dielS
+real*8 dielW, dielS
 real*8 constqE
-real*8 dielPr, dielSr
+real*8 dielSr
 real*8 pKw, Kw
 real*8 pi 
 real*8, parameter :: Na = 6.02d23 

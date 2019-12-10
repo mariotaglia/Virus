@@ -45,7 +45,6 @@ verb = ndi
 
 dielS = ndr
 pHbulk = ndr
-dielP = ndr
 delta = ndr
 csalt = ndr
 sigmaq= ndr
@@ -131,10 +130,6 @@ do while (ios == 0)
  case ('sigmaq')
    read(buffer, *, iostat=ios) sigmaq
    print*,'Set ',trim(label), ' = ',trim(buffer)
-
- case ('dielP')
-   read(buffer, *, iostat=ios) dielP
-   print*,'Set ',trim(label),' = ',trim(buffer)
 
  case ('dielS')
    read(buffer, *, iostat=ios) dielS
@@ -240,7 +235,6 @@ if(kaptype.eq.ndi)call stopundef('kaptype')
 
 if(delta.eq.ndr)call stopundef('delta')
 if(dielS.eq.ndr)call stopundef('dielS')
-if(dielP.eq.ndr)call stopundef('dielP')
 if(csalt.eq.ndr)call stopundef('csalt')
 if(pHbulk.eq.ndr)call stopundef('pHbulk')
 

@@ -27,7 +27,6 @@ dimz 50
 !!!!!!! Chain properties
 
 !dielectrics pol diel part (water: 78.54)!
-dielP 20.0
 dielS 20.0
 
 !!!!!!! Solution properties
