@@ -1,0 +1,49 @@
+# 1 "prefpp"
+# 1 "<built-in>"
+# 1 "<command-line>"
+# 1 "/usr/include/stdc-predef.h" 1 3 4
+# 1 "<command-line>" 2
+# 1 "prefpp"
+
+
+verb 1
+
+delta 0.30
+
+wall 0
+sigmaq 0.0
+
+! vtk flag, save as vtk?
+vtkflag 0
+
+! infile
+infile 0
+
+! system dimensions
+dimx 50
+dimy 50
+dimz 50
+
+!!!!!!! Chain properties
+
+!dielectrics pol diel part (water: 78.54)!
+dielP 20.0
+dielS 20.0
+
+!!!!!!! Solution properties
+csalt 0.1
+pHbulk 5.776
+npH 1
+pHstep 0.25
+
+! particle type 1=ellipsoid, 2=from kaps.txt, fixed format follows !
+kaptype 2
+! particle initial position x y z in nm !
+0.6 7.5 7.5
+! initial rotation matrix, rotate pi radians around the x-axis ! ang=0
+1.0 0.0 0.0
+0.0 1.0 0.0
+0.0 0.0 1.0
+
+fdisfromfile 0
+K0fromfile 0
